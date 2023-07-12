@@ -1,0 +1,61 @@
+name: choriso
+channels:
+  - defaults
+  - conda-forge
+  # - fastai
+dependencies:
+  - python=3.8
+  - pip
+  # BASICS
+  - numpy
+  - scipy
+  - pandas=1.5.0
+  - tqdm
+  - click
+  - requests
+  - scikit-learn
+  - matplotlib
+  - seaborn
+  #- ipython
+  #- matplotlib
+  # - altair
+  # - yellowbrick
+  # ML, STATS & DEEP LEARNING
+  # - statsmodels
+  # - scikit-learn
+  # - sktime
+  # - tslearn
+  # - xgboost
+  # - catboost
+  # - lightgbm
+  # - pytorch
+  # - fastai  # activate fastai channel above!
+  # - tensorflow
+  # - keras
+  # - spacy
+  # OTHER TOOLS
+  # - optuna
+  # - dask
+  # - snakeviz
+  - pip:
+     - -e .  # install git checkout of topkretro in editable mode
+     # add here only pip-packages that are not available in conda/conda-forge! E.g.:
+     # - icecream
+     # - jax
+     # - numpyro
+     # - funsor
+     # - neptune-client
+     - einops
+     - JPype1
+     - rxn-chem-utils
+     - torch
+     - torchvision
+     - torchaudio
+     - transformers==4.21.0
+     - rdkit-pypi==2022.9.1
+     - wandb
+
+  # DEVELOPMENT ONLY PACKAGES (could also be kept in a separate environment file)
+  - pytest
+  - pytest-cov
+  - tox
