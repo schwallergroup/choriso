@@ -10,8 +10,12 @@ prune docs/source/api
 recursive-include docs/source *.py
 recursive-include docs/source *.rst
 recursive-include docs/source *.png
+recursive-include assets *.png
+recursive-include data *.csv
+recursive-include data *.rsmi
 
 global-exclude *.py[cod] __pycache__ *.so *.dylib .DS_Store *.gpickle
 
 include README.md LICENSE environment.yml
+include data/test/data_from_CJHIF_utf8
 exclude tox.ini .bumpversion.cfg .readthedocs.yml .cruft.json CITATION.cff docker-compose.yml Dockerfile
