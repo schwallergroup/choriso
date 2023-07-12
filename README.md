@@ -1,3 +1,141 @@
+![build](https://github.com/schwallergroup/ChORISO/actions/workflows/ci.yml/badge.svg) [![DOI:10.1101/2020.07.15.204701](https://zenodo.org/badge/DOI/10.48550/arXiv.2304.05376.svg)](https://doi.org/10.48550/arXiv.2304.05376)
+
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/choriso_logo_dark.png" width='100%'>
+  <source media="(prefers-color-scheme: light)" srcset="./assets/choriso_logo_light.png" width='100%'>
+  <img alt="Choriso logo" src="/assets/" width="100%">
+</picture>
+
+<br>
+<br>
+
+
+**ChORISO** (**Ch**emical **O**rganic **R**eact**I**on **S**miles **O**mnibus) is a benchmarking suite for reaction prediction machine learning models.
+
+We release:
+
+- A highly curated dataset of academic chemical reactions ([download ChORISO and splits](https://drive.switch.ch/index.php/s/VaSVBCiXrmzYzGD))
+- A suite of standardized evaluation metrics ([choriso-metrics](https://github.com/schwallergroup/choriso-metrics))
+- A compilation of models for reaction prediction ([choriso-models](https://github.com/schwallergroup/choriso-models))
+
+
+It is derived from the [CJHIF dataset](https://ieeexplore.ieee.org/document/9440947/footnotes#footnotes-id-fn7).
+This repo provides all the code use for dataset curation, splitting and analysis reported in the paper.
+
+---
+
+## 🚀 Installation
+
+First clone this repo:
+
+```bash
+git clone https://github.com/schwallergroup/choriso.git
+cd choriso
+```
+
+Set up and activate the environment:
+
+```
+conda env create -f environment.yml
+conda activate choriso
+pip install rxnmapper --no-deps
+```
+
+## 🔥 Quick start
+To download the preprocessed dataset and split it randomly, run the following command:
+```
+choriso --download_processed \
+	--run split \
+	--split_mode random
+```
+
+---
+
+##  :brain: Advanced usage
+Using this repo lets you reproduce the results in the paper using different flags and modes.
+
+### 📥 Download preprocessed dataset:
+
+```
+choriso --download_processed \
+	--out-dir data/processed/
+```
+
+### :gear: Preprocessing:
+
+Get the raw datasets (CJHIF, USPTO) and preprocess:
+
+**NOTE: To run the `clean` step you need to have Leadmine (v3.18.1) and NameRXN (v3.4.0) installed.**
+
+```
+choriso --download_raw \
+	--uspto \
+    	--data-dir=data/raw/ \
+	--out-dir data/processed/ \
+	--run clean \
+	--run atom_map
+```
+
+### :mag: Data analysis:
+
+For this step you need to have either downloaded the preprocessed dataset, or running the preprocessing pipeline.
+
+```
+choriso --run analysis
+```
+
+### :heavy_division_sign: Splitting
+In the paper, we describe 3 data splits which can be obtained using the flag `--run split` specifying a `--split_mode`
+- random split
+```
+choriso --run split \
+	--split_mode random
+```
+- split by product
+```
+choriso --run split \
+	--split_mode products
+```
+- split by Molecular Weight:
+  - test on high MW
+  - test on low MW
+
+   For example, to create a split by MW, testing on low MW with a threshold of 150 a.m.u., and another split on high MW with threshold of 700 a.m.u. run
+```
+choriso --run split \
+	--split_mode mw \
+	--low_mw=150
+	--high_mw=700
+```
+
+You can optionally augment the SMILES to double the size of the trainig set:
+```
+choriso --run split \
+	--split_mode products \
+	--augment
+```
+
+---
+
+## 📊 Logging
+
+By default the execution of any step will store all results locally.
+
+Optionally, you can log all results from the preprocessing and analysis to W&B using the `wandb_log` flag at any step.
+
+As an example
+```
+choriso --run analysis \
+	--wandb_log
+```
+will execute the analysis step and upload all results (plots, metrics) to W&B.
+
+
+
+---
+
+
 <!--
 <p align="center">
   <img src="https://github.com/schwallergroup/choriso/raw/main/docs/source/logo.png" height="150">
