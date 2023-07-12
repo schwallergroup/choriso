@@ -54,6 +54,7 @@ dependencies:
      - transformers==4.21.0
      - rdkit-pypi==2022.9.1
      - wandb
+     - pandarallel
 
   # DEVELOPMENT ONLY PACKAGES (could also be kept in a separate environment file)
   - pytest
