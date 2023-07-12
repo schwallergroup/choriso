@@ -1,6 +1,6 @@
 <p align="center">
-    <a href="https://github.com/schwallergroup/choriso-fr/actions/workflows/ci.yml">
-        <img alt="Tests" src="https://github.com/schwallergroup/choriso-fr/actions/workflows/ci.yml/badge.svg" />
+    <a href="https://github.com/schwallergroup/choriso-fr/actions/workflows/tests.yml">
+        <img alt="Tests" src="https://github.com/schwallergroup/choriso-fr/workflows/Tests/badge.svg" />
     </a>
     <a href="https://doi.org/10.48550/arXiv.2304.05376">
         <img alt="DOI" src="https://zenodo.org/badge/DOI/10.48550/arXiv.2304.05376.svg" />
