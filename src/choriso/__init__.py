@@ -2,8 +2,7 @@
 
 """Holistic evaluation of reaction prediction models."""
 
-from .api import *  # noqa
-
 from .analysis import *
+from .api import *  # noqa
 from .processing import *
 from .processing.preproc import leadmine_flag

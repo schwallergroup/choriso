@@ -10,12 +10,7 @@ def print(s):
 
 
 class Logger:
-    def __init__(
-            self,
-            wandb_log=False,
-            report_dir='data/report/',
-            wandb_project=None
-    ):
+    def __init__(self, wandb_log=False, report_dir="data/report/", wandb_project=None):
         self.wandb = wandb_log
         self.report_dir = report_dir
 
@@ -35,18 +30,16 @@ class Logger:
             os.remove(log_file)
         self.log_file = open(log_file, "a")
 
-
-    def log_fig(self,fig=None,fig_name=None):
+    def log_fig(self, fig=None, fig_name=None):
         if self.wandb:
             wandb.log({fig_name: wandb.Image(fig)})
         else:
             fig.savefig(self.report_dir + fig_name)
 
-
-    def log(self,data: dict):
+    def log(self, data: dict):
         """log generic data (numeric), text, etc to wandb if flag is True"""
 
-        if type(data)==dict:
+        if type(data) == dict:
             if self.wandb:
                 wandb.log(data)
             else:
@@ -55,6 +48,3 @@ class Logger:
 
         else:
             self.log_file.write(data)
-
-
-
