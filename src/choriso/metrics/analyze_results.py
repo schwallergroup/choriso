@@ -7,7 +7,7 @@ import click
 import pandas as pd
 from tqdm import tqdm
 
-from choriso.metrics.selectivity import Evaluator, stereo_score
+from choriso.metrics import Evaluator, stereo_score
 
 
 @click.command()

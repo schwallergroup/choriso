@@ -47,7 +47,6 @@ dependencies:
      # - neptune-client
      - einops
      - JPype1
-     - rxn-chem-utils
      - torch
      - torchvision
      - torchaudio
@@ -55,6 +54,7 @@ dependencies:
      - rdkit-pypi==2022.9.1
      - wandb
      - pandarallel
+     - reaction-utils
 
   # DEVELOPMENT ONLY PACKAGES (could also be kept in a separate environment file)
   - pytest

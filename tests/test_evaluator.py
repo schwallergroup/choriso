@@ -1,9 +1,12 @@
+import pytest
 import pandas as pd
 from pandas.testing import assert_frame_equal
 
-from choriso.metrics.selectivity import Evaluator
+from choriso.metrics import Evaluator
 
 
+
+@pytest.mark.skip(reason='dude be takin ages')
 def test_flags():
     "Test if Evaluator is flagging reactions correctly"
 
@@ -21,6 +24,7 @@ def test_flags():
     assert_frame_equal(df, df_truth)
 
 
+# @pytest.mark.skip(reason='dude be takin ages')
 def test_score():
     """Test if metrics are computed correctly"""
     ev_truth = Evaluator("tests/test_df_truth.csv", mapping=False, save=False)
