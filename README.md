@@ -1,5 +1,35 @@
-![build](https://github.com/schwallergroup/ChORISO/actions/workflows/ci.yml/badge.svg) [![DOI:10.1101/2020.07.15.204701](https://zenodo.org/badge/DOI/10.48550/arXiv.2304.05376.svg)](https://doi.org/10.48550/arXiv.2304.05376)
-
+<p align="center">
+    <a href="https://github.com/schwallergroup/choriso-fr/actions/workflows/ci.yml">
+        <img alt="Tests" src="https://github.com/schwallergroup/choriso-fr/actions/workflows/ci.yml/badge.svg" />
+    </a>
+    <a href="https://doi.org/10.48550/arXiv.2304.05376">
+        <img alt="DOI" src="https://zenodo.org/badge/DOI/10.48550/arXiv.2304.05376.svg" />
+    </a>
+    <a href="https://pypi.org/project/choriso">
+        <img alt="PyPI" src="https://img.shields.io/pypi/v/choriso" />
+    </a>
+    <a href="https://pypi.org/project/choriso">
+        <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/choriso" />
+    </a>
+    <a href="https://github.com/schwallergroup/choriso/blob/main/LICENSE">
+        <img alt="PyPI - License" src="https://img.shields.io/pypi/l/choriso" />
+    </a>
+    <a href='https://choriso.readthedocs.io/en/latest/?badge=latest'>
+        <img src='https://readthedocs.org/projects/choriso/badge/?version=latest' alt='Documentation Status' />
+    </a>
+    <a href="https://codecov.io/gh/schwallergroup/choriso/branch/main">
+        <img src="https://codecov.io/gh/schwallergroup/choriso/branch/main/graph/badge.svg" alt="Codecov status" />
+    </a>  
+    <a href="https://github.com/cthoyt/cookiecutter-python-package">
+        <img alt="Cookiecutter template from @cthoyt" src="https://img.shields.io/badge/Cookiecutter-snekpack-blue" /> 
+    </a>
+    <a href='https://github.com/psf/black'>
+        <img src='https://img.shields.io/badge/code%20style-black-000000.svg' alt='Code style: black' />
+    </a>
+    <a href="https://github.com/schwallergroup/choriso/blob/main/.github/CODE_OF_CONDUCT.md">
+        <img src="https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg" alt="Contributor Covenant"/>
+    </a>
+</p>
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./assets/choriso_logo_dark.png" width='100%'>
@@ -130,87 +160,6 @@ choriso --run analysis \
 	--wandb_log
 ```
 will execute the analysis step and upload all results (plots, metrics) to W&B.
-
-
-
----
-
-
-<!--
-<p align="center">
-  <img src="https://github.com/schwallergroup/choriso/raw/main/docs/source/logo.png" height="150">
-</p>
--->
-
-<h1 align="center">
-  ChORISO
-</h1>
-
-<p align="center">
-    <a href="https://github.com/schwallergroup/choriso/actions/workflows/tests.yml">
-        <img alt="Tests" src="https://github.com/schwallergroup/choriso/workflows/Tests/badge.svg" />
-    </a>
-    <a href="https://pypi.org/project/choriso">
-        <img alt="PyPI" src="https://img.shields.io/pypi/v/choriso" />
-    </a>
-    <a href="https://pypi.org/project/choriso">
-        <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/choriso" />
-    </a>
-    <a href="https://github.com/schwallergroup/choriso/blob/main/LICENSE">
-        <img alt="PyPI - License" src="https://img.shields.io/pypi/l/choriso" />
-    </a>
-    <a href='https://choriso.readthedocs.io/en/latest/?badge=latest'>
-        <img src='https://readthedocs.org/projects/choriso/badge/?version=latest' alt='Documentation Status' />
-    </a>
-    <a href="https://codecov.io/gh/schwallergroup/choriso/branch/main">
-        <img src="https://codecov.io/gh/schwallergroup/choriso/branch/main/graph/badge.svg" alt="Codecov status" />
-    </a>  
-    <a href="https://github.com/cthoyt/cookiecutter-python-package">
-        <img alt="Cookiecutter template from @cthoyt" src="https://img.shields.io/badge/Cookiecutter-snekpack-blue" /> 
-    </a>
-    <a href='https://github.com/psf/black'>
-        <img src='https://img.shields.io/badge/code%20style-black-000000.svg' alt='Code style: black' />
-    </a>
-    <a href="https://github.com/schwallergroup/choriso/blob/main/.github/CODE_OF_CONDUCT.md">
-        <img src="https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg" alt="Contributor Covenant"/>
-    </a>
-</p>
-
-Holistic evaluation of reaction prediction models
-
-## 💪 Getting Started
-
-> TODO show in a very small amount of space the **MOST** useful thing your package can do.
-> Make it as short as possible! You have an entire set of docs for later.
-
-### Command Line Interface
-
-The choriso command line tool is automatically installed. It can
-be used from the shell with the `--help` flag to show all subcommands:
-
-```shell
-$ choriso --help
-```
-
-> TODO show the most useful thing the CLI does! The CLI will have documentation auto-generated
-> by `sphinx`.
-
-## 🚀 Installation
-
-<!-- Uncomment this section after your first ``tox -e finish``
-The most recent release can be installed from
-[PyPI](https://pypi.org/project/choriso/) with:
-
-```shell
-$ pip install choriso
-```
--->
-
-The most recent code and data can be installed directly from GitHub with:
-
-```bash
-$ pip install git+https://github.com/schwallergroup/choriso.git
-```
 
 ## 👐 Contributing
 
