@@ -46,12 +46,12 @@
 We release:
 
 - A highly curated dataset of academic chemical reactions ([download ChORISO and splits](https://drive.switch.ch/index.php/s/VaSVBCiXrmzYzGD))
-- A suite of standardized evaluation metrics ([choriso-metrics](https://github.com/schwallergroup/choriso-metrics))
+- A suite of standardized evaluation metrics
 - A compilation of models for reaction prediction ([choriso-models](https://github.com/schwallergroup/choriso-models))
 
 
 It is derived from the [CJHIF dataset](https://ieeexplore.ieee.org/document/9440947/footnotes#footnotes-id-fn7).
-This repo provides all the code use for dataset curation, splitting and analysis reported in the paper.
+This repo provides all the code use for dataset curation, splitting and analysis reported in the paper, as well as the metrics for evaluation of models.
 
 ---
 
