@@ -4,6 +4,5 @@
 
 from .api import *  # noqa
 from .data import *
-from .metrics import *
-
 from .data.processing.preproc import leadmine_flag
+from .metrics import *
