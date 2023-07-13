@@ -73,7 +73,8 @@ def flag_regio_problem(rxn):
         return set(good)
 
     # extract rxn template
-    map_rxn = aam_from_smiles([rxn])[0]["mapped_rxn"]
+    #map_rxn = aam_from_smiles([rxn])[0]["mapped_rxn"]
+    map_rxn = rxn
     template = template_smarts_from_mapped_smiles(map_rxn, radius=1)
 
     if template:
@@ -134,7 +135,8 @@ def flag_stereo_problem(rxn):
     """
 
     # extract rxn template
-    map_rxn = aam_from_smiles([rxn])[0]["mapped_rxn"]
+    # map_rxn = aam_from_smiles([rxn])[0]["mapped_rxn"]
+    map_rxn = rxn
     template = template_smarts_from_mapped_smiles(map_rxn)
 
     if template:
