@@ -46,12 +46,12 @@
 We release:
 
 - A highly curated dataset of academic chemical reactions ([download ChORISO and splits](https://drive.switch.ch/index.php/s/VaSVBCiXrmzYzGD))
-- A suite of standardized evaluation metrics ([choriso-metrics](https://github.com/schwallergroup/choriso-metrics))
+- A suite of standardized evaluation metrics
 - A compilation of models for reaction prediction ([choriso-models](https://github.com/schwallergroup/choriso-models))
 
 
 It is derived from the [CJHIF dataset](https://ieeexplore.ieee.org/document/9440947/footnotes#footnotes-id-fn7).
-This repo provides all the code use for dataset curation, splitting and analysis reported in the paper.
+This repo provides all the code use for dataset curation, splitting and analysis reported in the paper, as well as the metrics for evaluation of models.
 
 ---
 
@@ -80,7 +80,18 @@ choriso --download_processed \
 	--split_mode random
 ```
 
+After executing `some command from choriso-models`, run the analysis of your model's results using:
+
+```
+analysis --path='path/to/results/folder' \
+	 --chemistry=True \
+	 --mapping=False
+```
+
+Results will be stored in the same directory as `benchmarking-results`. 
+
 ---
+
 
 ##  :brain: Advanced usage
 Using this repo lets you reproduce the results in the paper using different flags and modes.
@@ -268,38 +279,3 @@ This script does the following:
 5. Bump the version to the next patch. If you made big changes and want to bump the version by minor, you can
    use `tox -e bumpversion -- minor` after.
 </details>
-
-
-# choriso-metrics  ![build](https://github.com/schwallergroup/choriso-metrics/actions/workflows/ci.yml/badge.svg) [![Project generated with PyScaffold](https://img.shields.io/badge/-PyScaffold-005CA0?logo=pyscaffold)](https://pyscaffold.org/)
-
-This repo contains the code to analyze the benchmarking results for the ChORISO project.
-
-
-
-## 💻 Installation
-
-Set up and activate the environment:
-
-   ```
-   conda env create -f environment.yml
-   conda activate choriso-metrics
-   pip install rxnmapper --no-deps
-   ```
-
-
-
-## 👩‍💻 Usage
-Run analysis script to obtain results file. You should have a folder with the benchmarking results as a standard .csv file. The results file should have the following columns:
-
-| canonical_rxn | target | pred_0 | pred_1 | pred_2 | pred_3 | pred_4 | pred_5 ||
-|--|--|--|--|--|--|--|--|--|
-
-Then you can run the following command:
-
-```
-analysis --path='path/to/results/folder' --chemistry=True --mapping=False
-```
-
-The results file will be saved in the same folder as the benchmarking results. If `chemistry` flag is True, chemistry-specific metrics (regio and stereo score) will be computed apart from top-n accuracy. 
-
-*It is necessary to have a `rxn_template` column in the original dataframe to compute chemistry-specific metrics*. If mapping and template are missing, it is possible to compute them by setting the `mapping` flag to `True`.
