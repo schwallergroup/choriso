@@ -77,7 +77,7 @@ To download the preprocessed dataset and split it randomly, run the following co
 ```
 choriso --download_processed \
 	--run split \
-	--split_mode random
+	--split_mode products
 ```
 
 After executing `some command from choriso-models`, run the analysis of your model's results using:
@@ -150,13 +150,18 @@ choriso --run split \
 	--high_mw=700
 ```
 
-You can optionally augment the SMILES to double the size of the trainig set:
+You can optionally augment the SMILES to double the size of the trainig set for the product split:
 ```
 choriso --run split \
 	--split_mode products \
 	--augment
 ```
-
+By default, the splitting will be done on the choriso dataset, which is called `choriso.tsv`. If you want to split a different dataset, you can specify the path to the dataset using the `--split_file_name` option. For example, to split the USPTO dataset by products, run:
+```
+choriso --run split \
+    --split_mode products \
+    --split_file_name=uspto_atom_mapped_dataset.tsv
+```
 ---
 
 ## 📊 Logging
