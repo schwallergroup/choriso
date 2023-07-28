@@ -167,15 +167,14 @@ def df_atom_map_step(
 
 
 def df_analysis_step(data_dir, report_dir, out_dir, logger):
-    """
-    Run statistical analysis on the processed dataset.
-
-    Description here
-    """
-
-    ###############################
-    ###############################
-
+    '''Analysis step for both datasets. Create plots for different properties computed for the datasets.
+    
+    Args:
+        data_dir (str): Directory where the raw data is stored.
+        report_dir (str): Directory where the report will be stored.
+        out_dir (str): Directory where the processed data is stored.
+        logger (Logger): Logger object.
+    '''
     # Helper functions
     def _get_properties_dataset(out_dir, df, ds_name="uspto"):
         """Helper function to compute properties for both datasets"""
@@ -357,14 +356,27 @@ def df_analysis_step(data_dir, report_dir, out_dir, logger):
         )
 
 
-def df_splitting_step(data_dir, out_dir, mode, low_mw, high_mw, augment):
+def df_splitting_step(data_dir, out_dir, file_name, mode, low_mw, high_mw, augment):
+    '''Split the data into train, val, test sets.
+    
+    Args:
+        data_dir (str): path to data directory
+        out_dir (str): path to output directory
+        file_name (str): name of the file to split
+        mode (str): mode of splitting
+        low_mw (float): lower bound of MW for splitting by MW
+        high_mw (float): upper bound of MW for splitting by MW
+        augment (bool): whether to augment SMILES for the product split
+    
+    '''
     # path to clean df
-    path = data_dir + "choriso.tsv"
+    path = data_dir + file_name
 
     if mode == "mw":
         # Produce two splits by MW
         processing.split.data_split_mw(
             data_dir,
+            file_name,
             low_mw=low_mw,
             high_mw=high_mw,
         )
@@ -372,7 +384,7 @@ def df_splitting_step(data_dir, out_dir, mode, low_mw, high_mw, augment):
     elif mode == "products":
         # Split data by products to train, val, test sets
         processing.split.data_split_by_prod(
-            path, out_dir, test_frac=0.07, val_frac=0.077, augment=augment
+            path, out_dir, file_name, test_frac=0.07, val_frac=0.077, augment=augment
         )
 
     elif mode == "random":
@@ -403,6 +415,7 @@ def df_splitting_step(data_dir, out_dir, mode, low_mw, high_mw, augment):
     default="random",
     help="Mode for dataset splitting",
 )
+@click.option("--split_file_name", default='choriso.tsv')
 @click.option(
     "--augment",
     is_flag=True,
@@ -422,6 +435,7 @@ def main(
     batch,
     testing,
     split_mode,
+    split_file_name,
     low_mw,
     high_mw,
     augment,
@@ -461,7 +475,7 @@ def main(
         df_analysis_step(data_dir, report_dir, out_dir, logger)
 
     if "split" in run:
-        df_splitting_step(out_dir, out_dir, split_mode, low_mw, high_mw, augment)
+        df_splitting_step(out_dir, out_dir, split_file_name, split_mode, low_mw, high_mw, augment)
 
 
 if __name__ == "__main__":

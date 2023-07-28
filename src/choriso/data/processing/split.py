@@ -125,13 +125,14 @@ def rotate_rxn(rxn):
 
 
 def data_split_by_prod(
-    data_path, out_folder, test_frac=0.1, val_frac=0.1, replace_tilde=True, augment=False
+    data_path, out_folder, file_name, test_frac=0.1, val_frac=0.1, replace_tilde=True, augment=False
 ):
     """Function to split data for reaction forward prediction based on products.
 
     Args:
         data_path: str, path to clean dataset
         out_folder: str, folder to save the data
+        file_name: str, name of the file to save
         test_frac: float, fraction of reactions in the test set
         val_frac: float, fraction of reactions in the validation set
         replace_tilde: bool, replace the special character '~' indicating that two chemical
@@ -189,28 +190,30 @@ def data_split_by_prod(
     if not os.path.isdir(products_path):
         os.mkdir(products_path)
 
-    shuffled_train.to_csv(products_path + "choriso_products_train.tsv", sep="\t")
-    test.to_csv(products_path + "choriso_products_test.tsv", sep="\t")
-    val.to_csv(products_path + "choriso_products_val.tsv", sep="\t")
+    name = file_name.split(".")[0]
+
+    shuffled_train.to_csv(products_path + name + "_products_train.tsv", sep="\t")
+    test.to_csv(products_path + name + "_products_test.tsv", sep="\t")
+    val.to_csv(products_path + name + "_products_val.tsv", sep="\t")
 
 
-def data_split_mw(data_path, low_mw=150, high_mw=700):
+def data_split_mw(data_path, file_name, low_mw=150, high_mw=700):
     """Function to split data for reaction forward prediction based on molar weight.
 
     Args:
         data_path: str, path to clean dataset
-        high_mw: float, molar weight to split test and train sets
-        mode: str, 'high' or 'low', if 'high' the test set will contain reactions with
-                molar weight > mw, if 'low' the test set will contain reactions with
-                molar weight < mw
-    Out:
-        train, val, test: tuple, pd.Dfs containing train, validation and test data
+        file_name: str, name of the file to save
+        low_mw: float, lower bound for molar weight
+        high_mw: float, upper bound for molar weight
+
     """
 
     # Read dataset
     print("Reading dataset")
 
-    df = pd.read_csv(data_path + "choriso.tsv", sep="\t").fillna(0)
+    name = file_name.split(".")[0]
+
+    df = pd.read_csv(data_path + name + ".tsv", sep="\t").fillna(0)
 
     # Create products column
     df["products"] = df["canonic_rxn"].apply(lambda x: x.split(">>")[1])
@@ -252,10 +255,10 @@ def data_split_mw(data_path, low_mw=150, high_mw=700):
     highmw_path = data_path + "high_mw_split/"
     if not os.path.isdir(highmw_path):
         os.mkdir(highmw_path)
-
-    train.to_csv(highmw_path + "choriso_high_train.tsv", sep="\t")
-    test.to_csv(highmw_path + "choriso_high_test.tsv", sep="\t")
-    val.to_csv(highmw_path + "choriso_high_val.tsv", sep="\t")
+    
+    train.to_csv(highmw_path + name + "_high_train.tsv", sep="\t")
+    test.to_csv(highmw_path + name + "_high_test.tsv", sep="\t")
+    val.to_csv(highmw_path + name + "_high_val.tsv", sep="\t")
 
     # Low MW
     choriso_test_low = df[df["MolWt"] <= low_mw]
@@ -269,6 +272,6 @@ def data_split_mw(data_path, low_mw=150, high_mw=700):
     if not os.path.isdir(lowmw_path):
         os.mkdir(lowmw_path)
 
-    train.to_csv(lowmw_path + "choriso_low_train.tsv", sep="\t")
-    test.to_csv(lowmw_path + "choriso_low_test.tsv", sep="\t")
-    val.to_csv(lowmw_path + "choriso_low_val.tsv", sep="\t")
+    train.to_csv(lowmw_path + name + "_low_train.tsv", sep="\t")
+    test.to_csv(lowmw_path + name + "_low_test.tsv", sep="\t")
+    val.to_csv(lowmw_path + name + "_low_val.tsv", sep="\t")
