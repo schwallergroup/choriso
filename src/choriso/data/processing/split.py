@@ -242,7 +242,7 @@ def data_split_mw(data_path, file_name, low_mw=150, high_mw=700):
         test = test[columns]
         val = val[columns]
 
-        return train, test, val
+        return train, val, test
 
     # High MW
     choriso_test_high = df[df["MolWt"] >= high_mw]
