@@ -177,6 +177,20 @@ choriso --run analysis \
 ```
 will execute the analysis step and upload all results (plots, metrics) to W&B.
 
+##  📈  Metrics
+You can also use the implemented metrics from the paper to evaluate your own results. We have adapted the evaluation pipeline to the files from the benchmarking repo (). As an example:
+```
+analyse --results_name='OpenNMT_Transformer'
+
+```
+This will launch the analysis on all the files of the `OpenNMT_Transformer` folder. The output files should have the same structure as the ones included in the benchmarking repo.
+
+The program computes the chemistry metrics by default. In order to compute this, your test set needs to include the templates with radius=0 and radius=1 of each reaction. If you want to compute the mapping and templates, you need to specify the `--mapping` flag.
+
+```
+analyse --results_name='OpenNMT_Transformer' --mapping=True
+```
+
 ## 👐 Contributing
 
 Contributions, whether filing an issue, making a pull request, or forking, are appreciated. See

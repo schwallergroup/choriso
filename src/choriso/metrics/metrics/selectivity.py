@@ -8,7 +8,7 @@ from rxnmapper import RXNMapper
 from rxnutils.chem.reaction import ChemicalReaction
 from transformers import logging
 
-pandarallel.initialize(progress_bar=True, nb_workers=24)
+pandarallel.initialize(progress_bar=True, nb_workers=22)
 
 logging.set_verbosity_error()  # Only log errors
 
@@ -47,7 +47,7 @@ def template_smarts_from_mapped_smiles(mapped_smiles, radius=0):
         return rxn.canonical_template.smarts
 
     except:
-        return ""
+        return False
 
 
 def flag_regio_problem(rxn):
@@ -221,7 +221,7 @@ class Evaluator:
         self.mapping = mapping
         self.metrics = {}
         self.save = save
-
+        
         # check if file has mapped_rxn column, and if not, create it and save it
         if self.mapping == True:
             if "mapped_rxn" not in self.file.columns:
@@ -230,15 +230,18 @@ class Evaluator:
                 self.file["mapped_rxn"] = [i["mapped_rxn"] for i in maps]
                 if self.save == True:
                     self.file.to_csv(file, index=False)
-            print("Extracting templates...")
-            self.file["template_r0"] = self.file["mapped_rxn"].parallel_apply(
-                lambda x: template_smarts_from_mapped_smiles(x)
-            )
-            self.file["template_r1"] = self.file["mapped_rxn"].parallel_apply(
-                lambda x: template_smarts_from_mapped_smiles(x, radius=1)
-            )
-            if self.save == True:
-                self.file.to_csv(file, index=False)
+
+            if "template_r0" not in self.file.columns:
+                print("Extracting templates...")
+                self.file["template_r0"] = self.file["mapped_rxn"].parallel_apply(
+                    lambda x: template_smarts_from_mapped_smiles(x)
+                )
+                self.file["template_r1"] = self.file["mapped_rxn"].parallel_apply(
+                    lambda x: template_smarts_from_mapped_smiles(x, radius=1)
+                )
+                if self.save == True:
+                    self.file.to_csv(file, index=False)
+
             self.mapping = False
 
     def top_n_accuracy(self, df, n):
@@ -287,7 +290,7 @@ class Evaluator:
 
         # proceed only if template is not nan
 
-        if pd.isna(template) == False:
+        if pd.isna(template) == False and template != False:
             products = rxn.split(">>")[1]
             # False in case we are counting stereochemistry
             if "@" in products:
@@ -347,7 +350,7 @@ class Evaluator:
 
         if "regio_flag" not in self.file.columns:
             # flag reactions with regiochem problems
-            self.file["regio_flag"] = self.file.parallel_apply(
+            self.file["regio_flag"] = self.file.apply(
                 lambda x: self.flag_regio_problem(
                     x["canonical_rxn"], x["mapped_rxn"], x["template_r1"]
                 ),
@@ -450,7 +453,6 @@ class Evaluator:
 
         self.metrics["top-1"] = self.top_n_accuracy(self.file, 1)
         self.metrics["top-2"] = self.top_n_accuracy(self.file, 2)
-        self.metrics["top-5"] = self.top_n_accuracy(self.file, 5)
 
         if chemistry:
             self.metrics["stereo_score"] = self.stereo_score(negative_acc=True)
@@ -458,23 +460,3 @@ class Evaluator:
 
         return self
 
-
-if __name__ == "__main__":
-    rxnmapper = RXNMapper()
-
-    evaluator = Evaluator("data/predictions/transformer.csv", mapping=True, sample=True)
-
-    print(evaluator.file.head())
-    evaluator.compute_metrics()
-    print(evaluator.metrics)
-
-    print(evaluator.file.head())
-    # rxn = 'CCO.C[C@]12CCC3(CC1=CC[C@@H]1[C@@H]2CC[C@]2(C)C(=O)CC[C@@H]12)OCCO3.[Ni]>>C[C@]12CC[C@H]3[C@@H](CC=C4CC5(CC[C@@]43C)OCCO5)[C@@H]1CC[C@@H]2O'
-    # rxn1 = 'CCO.CCOC(=O)CCCCCC[C@H]1CC(=O)N[C@@H]1C(=O)OC.O=C([O-])[O-].[K+].[K+]>>CCOC(=O)CCCCCC[C@@H]1CC(=O)N[C@H]1C(=O)O'
-    # rxn2 = 'C1CCC(CC)C=C1.Br>>C1CCC(CC)C(Br)C1'
-    # rxn3 = 'C1=CC2C=CC1C2.C=C(NC(C)=O)c1ccc(OC)cc1.CO.[H][H]>>COc1ccc([C@@H](C)NC(C)=O)cc1'
-
-    # print(flag_regio_problem(rxn))
-    # print(flag_regio_problem(rxn1))
-    # print(flag_regio_problem(rxn2))
-    # print(flag_regio_problem(rxn3))
