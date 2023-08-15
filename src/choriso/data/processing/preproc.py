@@ -82,7 +82,7 @@ def download_processed_data(data_dir="data/processed/"):
 
     print("Downloading processed datasets...")
 
-    files = ["cjhif.tar.gz", "choriso.tar.gz", "uspto.tar.gz"]
+    files = ["choriso.tar.gz", "uspto.tar.gz"]
     for fname in files:
         url = base_url.format(fname)
 
