@@ -83,9 +83,9 @@ choriso --download_processed \
 After executing `some command from choriso-models`, run the analysis of your model's results using:
 
 ```
-analysis --path='path/to/results/folder' \
+analyse --results_folders='path/to/results/folder' \
 	 --chemistry=True \
-	 --mapping=False
+	 --mapping=True
 ```
 
 Results will be stored in the same directory as `benchmarking-results`. 

@@ -13,6 +13,23 @@ pandarallel.initialize(progress_bar=True, nb_workers=22)
 logging.set_verbosity_error()  # Only log errors
 
 
+def co2_transform(absval, mode='co2'):
+        '''Transform absolute CO2 and kWh into relative scale.
+
+        Args:
+            absval: float, CO2 or kWh value
+            mode: str, 'co2' or 'kwh', default 'co2'
+        '''
+        
+        if mode == 'co2':
+            k = 5e-1
+        elif mode == 'kwh':
+            k = 5e-2
+
+        y = 100 * np.exp(-k*absval)
+
+        return y
+
 def aam_from_smiles(list_rxn_smiles):
     """Get attention guided atom maps from a list of reaction SMILES.
     Args:

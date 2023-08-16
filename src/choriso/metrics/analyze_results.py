@@ -3,7 +3,7 @@ import os
 import sys
 import click
 import pandas as pd
-from choriso.metrics.metrics.selectivity import Evaluator
+from choriso.metrics.metrics.selectivity import Evaluator, co2_transform
 from tqdm import tqdm
 
 
@@ -18,8 +18,8 @@ def extract_results(names):
 
     if not os.path.exists('results/predictions'):
         os.mkdir('results/predictions')
-    if not os.path.exists('results/co2'):
-        os.mkdir('results/co2')
+    if not os.path.exists('results/sustainability'):
+        os.mkdir('results/sustainability')
 
     for name in names:
         #First, walk through each directory and locate the subfolders with the results
@@ -58,7 +58,7 @@ def extract_results(names):
                     merged_df = pd.concat([predict_df, preprocess_df, train_df])
 
                     #save the merged dataframe to a csv file in results/co2 folder
-                    merged_df.to_csv('results/co2/' + name + '_' + folder + '.csv', index=False)
+                    merged_df.to_csv('results/sustainability/' + name + '_' + folder + '.csv', index=False)
 
                 else:
                     print('No results in ' + path)
@@ -141,53 +141,53 @@ def compute_results(path, chemistry, mapping):
 
         df.to_csv(os.path.join(results_path, 'results.csv'))
 
-    # co2 = []
+    # now compute co2 
+    sustainability_path = os.path.join(path, 'sustainability')
+    
+    sust_files = sorted(os.listdir(sustainability_path))
 
-    # #move files that end with _CO2.csv to co2
-    # for file in files:
-    #     if file.endswith('_CO2.csv'):
-    #         co2.append(file)
-    #         files.remove(file)
+    if 'sustainability_prediction.csv' in sust_files:
+        sust_files.remove('sustainability_prediction.csv')
+    if 'sustainability_train.csv' in sust_files:
+        sust_files.remove('sustainability_train.csv')
 
-    # if 'co2.csv' in files:
-    #     files.remove('co2.csv')
-    # if 'co2.txt' in files:
-    #     files.remove('co2.txt')
 
-    # with open(os.path.join(path, 'co2.txt'), 'w') as f:
+    #create a df to store predictions and another to store train
+    df_pred = pd.DataFrame(columns=['duration(s)','power_consumption(kWh)','kwh_scaled','CO2_emissions(kg)','co2_scaled'])
+    df_train = pd.DataFrame(columns=['duration(s)','power_consumption(kWh)','kwh_scaled','CO2_emissions(kg)','co2_scaled'])
 
-    #     #merge all the .csv files in the co2 list into one with the same columns
-    #     co2_df = pd.DataFrame(columns=['duration(s)','power_consumption(kWh)','CO2_emissions(kg)','co2_scaled','kwh_scaled'])
-    #     #write LATeX table header
-    #     f.write(r'\begin{tabular}{|| c | c | c | c | c ||}')
-    #     f.write('\n')
-    #     f.write(r'\hline')
-    #     f.write('\n')
-    #     f.write(r'model & CO2 (kg) & CO2 scaled & Energy (kWh) & Energy scaled \\')
-    #     f.write('\n')
-    #     f.write(r'\hline\hline')
-    #     f.write('\n') 
+    for file in sust_files:
 
-    #     for file in co2:
-    #         df = pd.read_csv(os.path.join(path, file))
-    #         #set index of row 0 to the file name
-    #         df.index = [file[:-4]]
-    #         co2_df = pd.concat([co2_df, df], axis=0)
-    #         power = df['power_consumption(kWh)'][0].round(2)
-    #         co2 = df['CO2_emissions(kg)'][0].round(2)
-    #         co2_scaled = df['co2_scaled'][0].round(2)
-    #         kwh_scaled = df['kwh_scaled'][0].round(2)
+        df = pd.read_csv(os.path.join(sustainability_path, file))
+        
+        #extract data for pred
+        co2 = df.loc[0, 'CO2_emissions(kg)']
+        power = df.loc[0, 'power_consumption(kWh)']
+        co2_scaled = co2_transform(co2)
+        kwh_scaled = co2_transform(power, mode='kwh')
+        time = df.loc[0, 'duration(s)']
+        
+        #add data to df_pred as a new row
+        df_pred.loc[file[:-4]] = [time, power, kwh_scaled, co2, co2_scaled]
 
-    #         #write results to Latex table
-    #         name = file[:-4].replace('_', ' ')
-    #         f.write(f'{name} & {co2} & {co2_scaled} & {power} & {kwh_scaled} \\\\  [1ex]')
-    #         f.write('\n')
-    #         f.write(r'\hline')
-    #         f.write('\n')
+        #extract data for train
+        co2 = df.loc[2, 'CO2_emissions(kg)']
+        power = df.loc[2, 'power_consumption(kWh)']
+        co2_scaled = co2_transform(co2)
+        kwh_scaled = co2_transform(power, mode='kwh')
+        time = df.loc[2, 'duration(s)']
 
-    #     #round all values to 2 decimals
-    #     co2_df = co2_df.round(2)
-    #     co2_df.to_csv(os.path.join(path, 'co2.csv'))
+        #add data to df_train as a new row
+        df_train.loc[file[:-4]] = [time, power, kwh_scaled, co2, co2_scaled]
+
+
+    #round all values to 2 decimals and save
+    df_pred = df_pred.round(2)
+    df_pred.to_csv(os.path.join(sustainability_path, 'sustainability_prediction.csv'))
+
+    df_train = df_train.round(2)
+    df_train.to_csv(os.path.join(sustainability_path, 'sustainability_train.csv'))
+    
 
 @click.command()
 @click.option('--results_folders', '-r', type=str, multiple=True)
@@ -202,6 +202,7 @@ def main(results_folders, path, chemistry, mapping):
         extract_results(results_folders)
     
     if path:
+        print('Computing results...')
         compute_results(path, chemistry, mapping)
 
 if __name__ == '__main__':
