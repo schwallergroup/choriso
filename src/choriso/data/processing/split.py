@@ -255,7 +255,7 @@ def data_split_mw(data_path, file_name, low_mw=150, high_mw=700):
     highmw_path = data_path + "high_mw_split/"
     if not os.path.isdir(highmw_path):
         os.mkdir(highmw_path)
-    
+
     train.to_csv(highmw_path + name + "_high_train.tsv", sep="\t")
     test.to_csv(highmw_path + name + "_high_test.tsv", sep="\t")
     val.to_csv(highmw_path + name + "_high_val.tsv", sep="\t")

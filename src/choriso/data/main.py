@@ -167,14 +167,15 @@ def df_atom_map_step(
 
 
 def df_analysis_step(data_dir, report_dir, out_dir, logger):
-    '''Analysis step for both datasets. Create plots for different properties computed for the datasets.
-    
+    """Analysis step for both datasets. Create plots for different properties computed for the datasets.
+
     Args:
         data_dir (str): Directory where the raw data is stored.
         report_dir (str): Directory where the report will be stored.
         out_dir (str): Directory where the processed data is stored.
         logger (Logger): Logger object.
-    '''
+    """
+
     # Helper functions
     def _get_properties_dataset(out_dir, df, ds_name="uspto"):
         """Helper function to compute properties for both datasets"""
@@ -357,8 +358,8 @@ def df_analysis_step(data_dir, report_dir, out_dir, logger):
 
 
 def df_splitting_step(data_dir, out_dir, file_name, mode, low_mw, high_mw, augment):
-    '''Split the data into train, val, test sets.
-    
+    """Split the data into train, val, test sets.
+
     Args:
         data_dir (str): path to data directory
         out_dir (str): path to output directory
@@ -367,8 +368,8 @@ def df_splitting_step(data_dir, out_dir, file_name, mode, low_mw, high_mw, augme
         low_mw (float): lower bound of MW for splitting by MW
         high_mw (float): upper bound of MW for splitting by MW
         augment (bool): whether to augment SMILES for the product split
-    
-    '''
+
+    """
     # path to clean df
     path = data_dir + file_name
 
@@ -415,7 +416,7 @@ def df_splitting_step(data_dir, out_dir, file_name, mode, low_mw, high_mw, augme
     default="random",
     help="Mode for dataset splitting",
 )
-@click.option("--split_file_name", default='choriso.tsv')
+@click.option("--split_file_name", default="choriso.tsv")
 @click.option(
     "--augment",
     is_flag=True,

@@ -2,7 +2,7 @@ import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
 
-from choriso.metrics import Evaluator
+from choriso.metrics.metrics.selectivity import Evaluator
 
 
 @pytest.mark.skip(reason="dude be takin ages")

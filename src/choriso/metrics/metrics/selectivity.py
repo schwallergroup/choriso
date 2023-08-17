@@ -13,22 +13,23 @@ pandarallel.initialize(progress_bar=True, nb_workers=22)
 logging.set_verbosity_error()  # Only log errors
 
 
-def co2_transform(absval, mode='co2'):
-        '''Transform absolute CO2 and kWh into relative scale.
+def co2_transform(absval, mode="co2"):
+    """Transform absolute CO2 and kWh into relative scale.
 
-        Args:
-            absval: float, CO2 or kWh value
-            mode: str, 'co2' or 'kwh', default 'co2'
-        '''
-        
-        if mode == 'co2':
-            k = 5e-1
-        elif mode == 'kwh':
-            k = 5e-2
+    Args:
+        absval: float, CO2 or kWh value
+        mode: str, 'co2' or 'kwh', default 'co2'
+    """
 
-        y = 100 * np.exp(-k*absval)
+    if mode == "co2":
+        k = 5e-1
+    elif mode == "kwh":
+        k = 5e-2
 
-        return y
+    y = 100 * np.exp(-k * absval)
+
+    return y
+
 
 def aam_from_smiles(list_rxn_smiles):
     """Get attention guided atom maps from a list of reaction SMILES.
@@ -90,7 +91,7 @@ def flag_regio_problem(rxn):
         return set(good)
 
     # extract rxn template
-    #map_rxn = aam_from_smiles([rxn])[0]["mapped_rxn"]
+    # map_rxn = aam_from_smiles([rxn])[0]["mapped_rxn"]
     map_rxn = rxn
     template = template_smarts_from_mapped_smiles(map_rxn, radius=1)
 
@@ -238,7 +239,7 @@ class Evaluator:
         self.mapping = mapping
         self.metrics = {}
         self.save = save
-        
+
         # check if file has mapped_rxn column, and if not, create it and save it
         if self.mapping == True:
             if "mapped_rxn" not in self.file.columns:
@@ -305,9 +306,9 @@ class Evaluator:
                     pass
             return set(good)
 
-        # proceed only if template is not nan
+        # proceed only if template is not nan or False
 
-        if pd.isna(template) == False and template != False:
+        if pd.isna(template) == False and template != False and template != 'False':
             products = rxn.split(">>")[1]
             # False in case we are counting stereochemistry
             if "@" in products:
@@ -476,4 +477,3 @@ class Evaluator:
             self.metrics["regio_score"] = self.regio_score(negative_acc=True)
 
         return self
-
