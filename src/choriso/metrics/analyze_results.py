@@ -71,8 +71,8 @@ def extract_results(names):
                     preprocess_df["Source"] = "preprocess"
                     train_df["Source"] = "train"
 
-                    # Concatenate the dataframes
-                    merged_df = pd.concat([predict_df, preprocess_df, train_df])
+                    # Concatenate the dataframes (only last result in case we have multiple runs)
+                    merged_df = pd.concat([predict_df.tail(1), preprocess_df.tail(1), train_df.tail(1)])
 
                     # save the merged dataframe to a csv file in results/co2 folder
                     merged_df.to_csv(
@@ -99,65 +99,65 @@ def compute_results(path, chemistry, mapping):
 
     files = sorted(os.listdir(results_path))
 
-    # check if results.txt already exists
-    if "results.txt" in files:
-        files.remove("results.txt")
-    if "results.csv" in files:
-        files.remove("results.csv")
+    # # check if results.txt already exists
+    # if "results.txt" in files:
+    #     files.remove("results.txt")
+    # if "results.csv" in files:
+    #     files.remove("results.csv")
 
-    # write results to file
-    with open(os.path.join(results_path, "results.txt"), "w") as f:
-        # create df to store results
-        df = pd.DataFrame(columns=["top-1", "top-2", "stereo", "regio"])
+    # # write results to file
+    # with open(os.path.join(results_path, "results.txt"), "w") as f:
+    #     # create df to store results
+    #     df = pd.DataFrame(columns=["top-1", "top-2", "stereo", "regio"])
 
-        # write LATeX table header
-        f.write(r"\begin{tabular}{|| c | c | c | c | c | c ||}")
-        f.write("\n")
-        f.write(r"\hline")
-        f.write("\n")
-        f.write(r"model & top-1 & top-2 & stereo & regio \\")
-        f.write("\n")
-        f.write(r"\hline\hline")
-        f.write("\n")
+    #     # write LATeX table header
+    #     f.write(r"\begin{tabular}{|| c | c | c | c | c | c ||}")
+    #     f.write("\n")
+    #     f.write(r"\hline")
+    #     f.write("\n")
+    #     f.write(r"model & top-1 & top-2 & stereo & regio \\")
+    #     f.write("\n")
+    #     f.write(r"\hline\hline")
+    #     f.write("\n")
 
-        for file in tqdm(files):
-            print(file)
-            # use evaluator to compute metrics
-            evaluator = Evaluator(
-                os.path.join(results_path, file), mapping=mapping, sample=False, save=True
-            )
-            evaluator.compute_metrics(chemistry=chemistry)
+    #     for file in tqdm(files):
+    #         print(file)
+    #         # use evaluator to compute metrics
+    #         evaluator = Evaluator(
+    #             os.path.join(results_path, file), mapping=mapping, sample=False, save=True
+    #         )
+    #         evaluator.compute_metrics(chemistry=chemistry)
 
-            top_1 = evaluator.metrics["top-1"]
-            top_2 = evaluator.metrics["top-2"]
+    #         top_1 = evaluator.metrics["top-1"]
+    #         top_2 = evaluator.metrics["top-2"]
 
-            if chemistry:
-                regio = evaluator.metrics["regio_score"][0]
-                stereo = evaluator.metrics["stereo_score"][0]
+    #         if chemistry:
+    #             regio = evaluator.metrics["regio_score"][0]
+    #             stereo = evaluator.metrics["stereo_score"][0]
 
-            # write results to Latex table
-            name = file[:-4].replace("_", " ")
+    #         # write results to Latex table
+    #         name = file[:-4].replace("_", " ")
 
-            if chemistry:
-                f.write(f"{name} & {top_1} & {top_2} & {stereo} & {regio} \\\\  [1ex]")
-                f.write("\n")
-                f.write(r"\hline")
-                f.write("\n")
+    #         if chemistry:
+    #             f.write(f"{name} & {top_1} & {top_2} & {stereo} & {regio} \\\\  [1ex]")
+    #             f.write("\n")
+    #             f.write(r"\hline")
+    #             f.write("\n")
 
-                # write results to df where the index of the row is the model name
-                df.loc[file[:-4]] = [top_1, top_2, stereo, regio]
+    #             # write results to df where the index of the row is the model name
+    #             df.loc[file[:-4]] = [top_1, top_2, stereo, regio]
 
-            else:
-                f.write(f"{name} & {top_1} & {top_2} \\\\  [1ex]")
-                f.write("\n")
-                f.write(r"\hline")
-                f.write("\n")
+    #         else:
+    #             f.write(f"{name} & {top_1} & {top_2} \\\\  [1ex]")
+    #             f.write("\n")
+    #             f.write(r"\hline")
+    #             f.write("\n")
 
-                df.loc[file[:-4]] = [top_1, top_2, "", ""]
+    #             df.loc[file[:-4]] = [top_1, top_2, "", ""]
 
-        f.write(r"\end{tabular}")
+    #     f.write(r"\end{tabular}")
 
-        df.to_csv(os.path.join(results_path, "results.csv"))
+    #     df.to_csv(os.path.join(results_path, "results.csv"))
 
     # now compute co2
     sustainability_path = os.path.join(path, "sustainability")
@@ -222,7 +222,7 @@ def compute_results(path, chemistry, mapping):
 
 @click.command()
 @click.option("--results_folders", "-r", type=str, multiple=True)
-@click.option("--path", type=click.Path(exists=True), default="results")
+@click.option("--path", type=str, default="results")
 @click.option(
     "--chemistry", type=bool, default=True, help="Whether to compute chemistry metrics or not."
 )

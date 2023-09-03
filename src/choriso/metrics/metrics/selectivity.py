@@ -1,6 +1,7 @@
 """This module contains the code for selectivity metrics"""
 import numpy as np
 import pandas as pd
+import signal
 from pandarallel import pandarallel
 from rdkit import Chem
 from rdkit.Chem import AllChem
@@ -50,7 +51,9 @@ def aam_from_smiles(list_rxn_smiles):
 
 
 def template_smarts_from_mapped_smiles(mapped_smiles, radius=0):
-    """Get reaction template from mapped reaction SMILES.
+    """Get reaction template from mapped reaction SMILES. If mapping time 
+    exceeds 60 seconds, return False.
+
     Args:
         mapped_smiles: str, mapped reaction SMILES
         radius: int, radius of the reaction template
@@ -58,7 +61,12 @@ def template_smarts_from_mapped_smiles(mapped_smiles, radius=0):
     Out:
         template: str, reaction template
     """
+    def signal_handler(signum, frame):
+        raise Exception("Timed out!")
 
+    signal.signal(signal.SIGALRM, signal_handler)
+    signal.alarm(60)
+    
     try:
         rxn = ChemicalReaction(mapped_smiles, clean_smiles=False)
         rxn.generate_reaction_template(radius)
@@ -306,9 +314,18 @@ class Evaluator:
                     pass
             return set(good)
 
-        # proceed only if template is not nan or False
+        def _check_template(temp):
+            try:
+                reaction = AllChem.ReactionFromSmarts(temp)
+                return True
+            except:
+                return False
 
-        if pd.isna(template) == False and template != False and template != 'False':
+        # proceed only if template exists
+        check = _check_template(template)
+
+        if check:
+            
             products = rxn.split(">>")[1]
             # False in case we are counting stereochemistry
             if "@" in products:
