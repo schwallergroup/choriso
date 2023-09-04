@@ -72,7 +72,9 @@ def extract_results(names):
                     train_df["Source"] = "train"
 
                     # Concatenate the dataframes (only last result in case we have multiple runs)
-                    merged_df = pd.concat([predict_df.tail(1), preprocess_df.tail(1), train_df.tail(1)])
+                    merged_df = pd.concat(
+                        [predict_df.tail(1), preprocess_df.tail(1), train_df.tail(1)]
+                    )
 
                     # save the merged dataframe to a csv file in results/co2 folder
                     merged_df.to_csv(
