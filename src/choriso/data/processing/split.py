@@ -1,3 +1,5 @@
+"""Data splitting functions"""
+
 import os
 import random
 

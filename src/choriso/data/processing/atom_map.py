@@ -1,3 +1,5 @@
+"""Functions for operations/features dependent on atom mapping for data preprocessing"""
+
 import os
 import re
 import signal

@@ -1,4 +1,5 @@
-# Module with functions to plot stuff
+"""Module with functions to plot stuff"""
+
 import os
 
 import matplotlib.pyplot as plt

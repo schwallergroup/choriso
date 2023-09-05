@@ -1,4 +1,5 @@
 """This module contains the code for selectivity metrics"""
+
 import signal
 
 import numpy as np
@@ -64,6 +65,7 @@ def template_smarts_from_mapped_smiles(mapped_smiles, radius=0):
     """
 
     def signal_handler(signum, frame):
+        """Handle very long requests"""
         raise Exception("Timed out!")
 
     signal.signal(signal.SIGALRM, signal_handler)
@@ -236,12 +238,19 @@ def stereo_score(df):
 
 
 class Evaluator:
-
     """Evaluator class for reaction prediction models. It contains functions to evaluate
     the performance of the model in terms of accuracy and chemistry-specific metrics.
     """
 
     def __init__(self, file, mapping=False, sample=False, save=False):
+        """
+        Args:
+        file: file path where data is stored
+        mapping: Bool. is aam provided in the data file?
+        sample: Bool. evaluate on a subsample of the dataset.
+        save: Bool. Whether to save results.
+        """
+
         self.file_path = file
         self.file = pd.read_csv(file)
         if sample:

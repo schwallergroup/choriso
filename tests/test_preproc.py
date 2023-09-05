@@ -1,3 +1,5 @@
+"""Test data preprocessing functions"""
+
 import pytest
 
 from choriso.data.processing.preproc import *

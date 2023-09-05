@@ -1,4 +1,5 @@
 """General script to analyze benchmarking results implementing different metrics."""
+
 import os
 import sys
 
@@ -235,6 +236,14 @@ def compute_results(path, chemistry, mapping):
     help="Whether to compute mapping and templates or not (these are required for chemistry metrics).",
 )
 def main(results_folders, path, chemistry, mapping):
+    """Main results analysis pipeline for the metrics.
+    Args:
+    results_folders: Path. If previous results exist, load them from this path
+    path: Compute results and store them in this path
+    chemistry: Bool. whether the model is a chemistry model or not
+    mapping: str. mapping to use to compute the metrics
+    """
+
     if results_folders:
         print("Extracting results from folders...")
         extract_results(results_folders)
