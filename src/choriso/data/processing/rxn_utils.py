@@ -1,3 +1,5 @@
+"""Reaction utilities"""
+
 import re
 
 import numpy as np
@@ -42,7 +44,8 @@ def canonical_rxn(rxn_smi):
 
 
 def merge_reagents(rxn_smi):
-    # set reaction type to use fragment bonds (~)
+    """set reaction type to use fragment bonds (~)"""
+
     rxn_type = ReactionFormat.STANDARD_WITH_TILDE
     rxn_eq = parse_reaction_smiles(rxn_smi, rxn_type)
     merged_eq = merge_reactants_and_agents(rxn_eq)
@@ -72,8 +75,9 @@ def join_additives(row):
     return new_rxn
 
 
-# check: molecules in reactions are valid smiles
 def is_reaction_valid(rxn):
+    """check: molecules in reactions are valid smiles"""
+
     # Remove extended smiles appendix
     rxn = re.sub(r" +\|f:\d\..*\|", "", rxn)
     # Remove quotes
@@ -83,12 +87,15 @@ def is_reaction_valid(rxn):
     return np.all(list(map(lambda m: is_valid_smiles(m, check_valence=False), mols)))
 
 
-# remove reactions that are more than 512 tokens long
 def has_more_than_max_tokens(rxn, rxnmapper):
+    """remove reactions that are more than 512 tokens long"""
+
     tokens = rxnmapper.tokenizer.batch_encode_plus([rxn])["input_ids"][0]
     return len(tokens) >= 512
 
 
 def canonical_smiles_mol(smi):
+    """Convert molecular smiles into its canonical smiles"""
+
     smi = remove_atom_mapping(smi)
     return Chem.MolToSmiles(smiles_to_mol(smi, sanitize=False))

@@ -1,3 +1,5 @@
+"""Main preprocessing pipeline"""
+
 import os
 
 import click
@@ -441,6 +443,8 @@ def main(
     high_mw,
     augment,
 ):
+    """Main data preprocessing pipeline."""
+
     # Setup logger
     if testing:
         logger = Logger(wandb_log, wandb_project="cjhif-test-log")

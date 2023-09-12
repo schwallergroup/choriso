@@ -1,3 +1,5 @@
+"""Define functions for data analysis"""
+
 import os
 import tarfile
 
@@ -169,9 +171,16 @@ def n_reacting_atoms(
     df,
     name,
 ):
+    """
+    Count the number of reacting atoms for each reaction in a dataset.
+    Args:
+        df: pd.DataFrame with a 'rxnmapper_aam' field containing mapped reactions
+        name: name of the dataset
+    """
     from itertools import chain
 
     def _n_from_rxn(smi):
+        """Count number of reacting atoms in a single reaction"""
         try:
             rxn = AllChem.ReactionFromSmarts(smi, useSmiles=True)
             rxn.Initialize()

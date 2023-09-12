@@ -1,3 +1,5 @@
+"""Functions for assessing model's performance in a number of metrics"""
+
 import sys
 
 from .metrics import *
