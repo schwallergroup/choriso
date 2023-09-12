@@ -92,8 +92,10 @@ Results will be stored in the same directory as `benchmarking-results`.
 
 ---
 
+<details>
+  <summary>Advanced usage</summary>
 
-##  :brain: Advanced usage
+## 🧠 Advanced usage
 Using this repo lets you reproduce the results in the paper using different flags and modes.
 
 ### 📥 Download preprocessed dataset:
@@ -178,7 +180,7 @@ choriso --run analysis \
 will execute the analysis step and upload all results (plots, metrics) to W&B.
 
 ##  📈  Metrics
-You can also use the implemented metrics from the paper to evaluate your own results. We have adapted the evaluation pipeline to the files from the benchmarking repo (). As an example:
+You can also use the implemented metrics from the paper to evaluate your own results. We have adapted the evaluation pipeline to the files from the [benchmarking repo](https://github.com/schwallergroup/choriso-models). As an example:
 ```
 analyse --results_folders='OpenNMT_Transformer'
 
@@ -190,6 +192,28 @@ The program computes the chemistry metrics by default. In order to compute this,
 ```
 analyse --results_folders='OpenNMT_Transformer' --mapping=True
 ```
+
+### Flagging individual reactions
+You can use the metrics functions to check if a specific reaction is regio or stereoselective. As an example:
+
+```
+from choriso.metrics.metrics.selectivity import flag_regio_problem, flag_stereo_problem
+
+regio_rxn = 'BrCc1ccccc1.C1CCOC1.C=CC(O)CO.[H-].[Na+]>>C=CC(O)COCc1ccccc1'
+stereo_rxn = 'C=C(NC(C)=O)c1ccc(OC)cc1.ClCCl.[H][H].[Rh+]>>COc1ccc([C@@H](C)NC(C)=O)cc1'
+
+print(flag_regio_problem(regio_rxn))
+print(flag_stereo_problem(stereo_rxn))
+
+```
+The output will display the flagging labels 
+
+```
+True
+True
+```
+</details>
+
 
 ## 👐 Contributing
 
