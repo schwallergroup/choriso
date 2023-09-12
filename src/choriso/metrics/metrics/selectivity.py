@@ -87,7 +87,7 @@ def flag_regio_problem(rxn):
     Out:
         bool, True if the reaction is regioselective, False otherwise
     """
-
+    
     def _sanitize_filter_prods(prods):
         good = []
         for prod in prods:
@@ -99,8 +99,7 @@ def flag_regio_problem(rxn):
         return set(good)
 
     # extract rxn template
-    # map_rxn = aam_from_smiles([rxn])[0]["mapped_rxn"]
-    map_rxn = rxn
+    map_rxn = aam_from_smiles([rxn])[0]["mapped_rxn"]
     template = template_smarts_from_mapped_smiles(map_rxn, radius=1)
 
     if template:
@@ -161,76 +160,22 @@ def flag_stereo_problem(rxn):
     """
 
     # extract rxn template
-    # map_rxn = aam_from_smiles([rxn])[0]["mapped_rxn"]
-    map_rxn = rxn
+    map_rxn = aam_from_smiles([rxn])[0]["mapped_rxn"]
     template = template_smarts_from_mapped_smiles(map_rxn)
 
     if template:
+        
         try:
             temp_prods = template.split(">>")[1].split(".")
             # check if any of the strings in prods contain '@'
             if any("@" in prod for prod in temp_prods):
                 return True
+            
+            else:
+                return False
         except:
             return False
 
-
-# Regio
-def regio_score(y_true, y_pred):
-    """Regioselectivity classification score. Regiochemistry is defined supposing that the
-    outcome of a reaction can be any of two isomers. Regio = preference for bonding one
-    atom over another.
-
-    Args:
-        y_true: array, true reaction SMILES
-        y_pred: array, predicted reaction SMILES
-
-    Out:
-        acc: int, accuracy for regiochemistry reactions
-    """
-    # flag reactions with regiochem problems
-    flags = [flag_regio_problem(rxn) for rxn in y_true]
-    print(flags)
-    y_true = y_true[flags]
-    y_pred = y_pred[flags]
-
-    # check if products are the same
-    true_prods = np.array([i.split(">>")[1] for i in y_true])
-    pred_prods = np.array([i.split(">>")[1] for i in y_pred])
-
-    acc = true_prods == pred_prods
-    acc = np.sum(acc) / len(acc)
-
-    return acc
-
-
-# Stereo
-# Consider only reactions with stereocenters
-def stereo_score(df):
-    """Stereoselectivity classification score. Top1 accuracy for stereoselectivity.
-
-    Args:
-        df: dataframe, dataframe with columns 'canonical_rxn', 'target', 'pred_0'
-
-    Out:
-        acc: int, accuracy for stereoselectivity reactions
-
-    """
-
-    # flag reactions with stereochem problems
-    df["flags"] = df["canonical_rxn"].apply(flag_stereo_problem)
-    df = df[df["flags"] == True]
-
-    # check if products are the same
-    true_prods = np.array(df["target"].values)
-
-    # predicted products
-    pred_prods = np.array(df["pred_0"].values)
-
-    acc = true_prods == pred_prods
-    acc = np.sum(acc) / len(acc)
-
-    return acc
 
 
 class Evaluator:
