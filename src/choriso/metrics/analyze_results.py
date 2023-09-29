@@ -133,7 +133,7 @@ def compute_results(path, chemistry, mapping):
             evaluator.compute_metrics(chemistry=chemistry)
 
             top_1 = evaluator.metrics["top-1"]
-            top_3 = evaluator.metrics["top-2"]
+            top_2 = evaluator.metrics["top-2"]
 
             if chemistry:
                 regio = evaluator.metrics["regio_score"][0]
@@ -143,21 +143,21 @@ def compute_results(path, chemistry, mapping):
             name = file[:-4].replace("_", " ")
 
             if chemistry:
-                f.write(f"{name} & {top_1} & {top_3} & {stereo} & {regio} \\\\  [1ex]")
+                f.write(f"{name} & {top_1} & {top_2} & {stereo} & {regio} \\\\  [1ex]")
                 f.write("\n")
                 f.write(r"\hline")
                 f.write("\n")
 
                 # write results to df where the index of the row is the model name
-                df.loc[file[:-4]] = [top_1, top_3, stereo, regio]
+                df.loc[file[:-4]] = [top_1, top_2, stereo, regio]
 
             else:
-                f.write(f"{name} & {top_1} & {top_3} \\\\  [1ex]")
+                f.write(f"{name} & {top_1} & {top_2} \\\\  [1ex]")
                 f.write("\n")
                 f.write(r"\hline")
                 f.write("\n")
 
-                df.loc[file[:-4]] = [top_1, top_3, "", ""]
+                df.loc[file[:-4]] = [top_1, top_2, "", ""]
 
         f.write(r"\end{tabular}")
 
@@ -252,7 +252,6 @@ def main(results_folders, path, chemistry, mapping):
     if path:
         print("Computing results...")
         compute_results(path, chemistry, mapping)
-
 
 if __name__ == "__main__":
     main()
