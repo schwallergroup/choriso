@@ -27,7 +27,16 @@ def df_cleaning_step(data_dir, raw_file_name, out_dir, name, logger):
     Process additives: text2smiles w leadmine
     Combine reagents
     Reaction smiles canonicalization
+
+    Args:
+        data_dir (str): Directory where the raw data is stored.
+        raw_file_name (str): Name of the raw file.
+        out_dir (str): Directory where the processed data will be stored.
+        name (str): Name of the dataset.
+        logger (Logger): Logger object.
+
     """
+    
     if name == "cjhif":
         # Get SMILES from text using leadmine
         df = preproc.preprocess_additives(data_dir, raw_file_name, "cjhif", logger)

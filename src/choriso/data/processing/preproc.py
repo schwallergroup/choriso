@@ -19,36 +19,30 @@ from rxn.chemutils.reaction_smiles import (
     to_reaction_smiles,
 )
 from tqdm.auto import tqdm
+from pandarallel import pandarallel
 
 from choriso.data.processing import rxn_utils
 from choriso.data.processing.logging import print
 
-tqdm.pandas()
+pandarallel.initialize(progress_bar=True)
 
+# Get correction dictionary (combination)
 try:
-    import jpype
-    import jpype.imports
+    #load general dictionary
+    df_general_dict = pd.read_csv("data/helper/cjhif_translation_table.tsv", sep="\t",
+                                  usecols=['Compound', 'pubchem']).fillna("empty_translation")
+    general_dict = {row['Compound']: row['pubchem'] for _, row in df_general_dict.iterrows()}
 
-    try:
-        jpype.startJVM("-Djava.awt.headlines=true", classpath=["/opt/leadmine.jar"])
-    except:
-        pass
-    from com.nextmovesoftware import leadmine
-
-    extract = leadmine.LeadMine()
-    leadmine_flag = True
-
-except:
-    leadmine_flag = False
-    print("We don't have leadmine")
-
-
-# Get correction dictionary
-try:
+    #load manual correction dictionary
     df = pd.read_csv("data/helper/corrected_leadmine.csv", sep="\t", header=None, index_col=0)
+    
     correct_dict = {row[0]: row[1].values[0] for row in df.iterrows()}
+
+    #merge dictionaries
+    full_dict = {**general_dict, **correct_dict}
+
 except:
-    correct_dict = {}
+    full_dict = {}
     print("Correction dictionary not available")
 
 
@@ -80,6 +74,7 @@ def download_raw_data(data_dir="data/raw/"):
 def download_processed_data(data_dir="data/processed/"):
     """Download processed data (after cleaning and atom mapping)."""
 
+    #CHANGE THIS WITH THE CORRECTED CHORISO (CLEAN CJHIF + USPTO)
     base_url = "https://drive.switch.ch/index.php/s/VaSVBCiXrmzYzGD/download?path=%2F&files={}"
 
     print("Downloading processed datasets...")
@@ -102,82 +97,72 @@ def download_processed_data(data_dir="data/processed/"):
         with tarfile.open(data_dir + fname) as f:
             f.extractall(data_dir)
 
+def parse_entities(entity):
+    """Return SMILES from detected text entity"""
 
+    # If the name is empty, return the same to mark the column
+    if entity == "empty":
+        return "empty"
+
+    # If entity in 'correct_dict', correct
+    else:
+        try:
+            smiles = full_dict[entity]
+
+            if smiles is not None:
+                return smiles
+
+            else:
+                return "empty_translation"
+        
+        except KeyError:
+            return "empty_translation"
+        
 def get_structures_from_name(names, format_bond=True):
     """Convert text with chemical structures to their corresponding SMILES
     using LeadMine.
 
     Args:
-        names: str or set, text containing chemical structures
+        names: str or set, text containing chemical structures separated by the '|' character
         format_bond: bool, use '~' to represent chemical species from the same compound
                      e.g: [Na+]~[Cl-] instead of [Na+].[Cl-]
 
     Returns:
-        structures: set, chemical entities SMILES from text"""
-
-    if leadmine_flag:
-        names_list = names.split("|")
-
-        def parse_entities(entity):
-            """Return SMILES from detected text entity"""
-            # If the name is empty, return the same to mark the column
-            if entity == "empty":
-                return "empty"
-
-            # If entity in `correct_dict`, correct
-            elif entity in correct_dict.keys():
-                return correct_dict[entity]
-
-            # Else apply default LeadMine
-            found = extract.findEntities(entity)
-            smiles = [extract.resolveEntity(obj) for obj in found]
-
-            if smiles:  # If not empty
-                return smiles[0]
-
-        structures = {str(parse_entities(name)) for name in names_list}
-        structures.discard("None")
-        structures.discard("")
-
-        if format_bond:
-            structures = [structure.replace(".", "~") for structure in structures]
-
-        structures = ".".join(structures)
-
-        return structures
-
-    else:
-        print("Leadmine is not available")
-        return 0
-
-
-def column_check(row, original, new):
-    """Check if original and new columns contain the same number
-    of elements.
-
-    Args:
-       row: pd.DataFrame row, row to check
-       original: str, name of the original column
-       new: str, name of the column that was created from the original
-
-    Returns:
-       match: bool, True if the number of element in both columns is equal
+        structures: set, chemical entities SMILES from text
+    
     """
 
-    # if the original column is empty, this is True
-    if row[original] == "":
-        match = True
+    # split names by '|'
+    names_list = names.split("|")
 
-    # If the new column is empty, this is False (leadmine didn't work)
-    elif row[new] == "":
-        match = False
+    # parse each entity
+    structures = [parse_entities(name) for name in names_list]
 
+    if format_bond:
+        structures = [structure.replace(".", "~") for structure in structures]
+
+    structures = ".".join(structures)
+
+    return structures
+
+
+def column_check(entry):
+    """Check if translation was correct. A correct translation does not contain
+    the 'empty_translation' string.
+
+    Args:
+        entry: str, text containing translated SMILES 
+    
+    Returns:    
+        match: bool, True if translation was correct, False otherwise
+    """
+    
+    smiles = entry.split(".")
+    
+    if 'empty_translation' in smiles:
+        return False
     else:
-        original = len(row[original].split("|"))
-        new = len(row[new].split("."))
-        match = original == new
-
-    return match
+        return True
 
 
 def preprocess_additives(data_dir, file_name, name="cjhif", logger=False):
@@ -208,24 +193,24 @@ def preprocess_additives(data_dir, file_name, name="cjhif", logger=False):
 
     # Map reagent text to SMILES
     print("Getting reagent SMILES")
-    cjhif["reagent_SMILES"] = cjhif["reagent"].progress_apply(get_structures_from_name)
+    cjhif["reagent_SMILES"] = cjhif["reagent"].parallel_apply(get_structures_from_name)
 
     # Map solvent text to SMILES
     print("Getting solvent SMILES")
-    cjhif["solvent_SMILES"] = cjhif["solvent"].progress_apply(get_structures_from_name)
+    cjhif["solvent_SMILES"] = cjhif["solvent"].parallel_apply(get_structures_from_name)
 
     # Map catalyst text to SMILES
     print("Getting catalyst SMILES")
-    cjhif["catalyst_SMILES"] = cjhif["catalyst"].progress_apply(get_structures_from_name)
+    cjhif["catalyst_SMILES"] = cjhif["catalyst"].parallel_apply(get_structures_from_name)
 
     # Check if reagents and catalyst name have been correctly processed by Leadmine
     print("Checking reagent number")
-    reagent_flag = cjhif.progress_apply(
-        lambda x: column_check(x, "reagent", "reagent_SMILES"), axis=1
+    reagent_flag = cjhif['reagent_SMILES'].parallel_apply(
+        lambda x: column_check(x)
     )
     print("Checking catalyst number")
-    catalyst_flag = cjhif.progress_apply(
-        lambda x: column_check(x, "catalyst", "catalyst_SMILES"), axis=1
+    catalyst_flag = cjhif['catalyst_SMILES'].parallel_apply(
+        lambda x: column_check(x)
     )
 
     # Remove rows where text2smiles translation is faulty
