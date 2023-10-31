@@ -115,10 +115,10 @@ sncl2路2h2o	Cl[Sn]Cl.O.O
 (r)-2,2'-dihydroxy-1,1'-binaphthyl	OC1=CC=C2C=CC=CC2=[C@@]1[C@@]3=C4C=CC=CC4=CC=C3O
 (r)-segphos庐	C1OC2=C(O1)C(=C(C=C2)P(C3=CC=CC=C3)C4=CC=CC=C4)C5=C(C=CC6=C5OCO6)P(C7=CC=CC=C7)C8=CC=CC=C8
 l-(+)-diisopropyl tartrate	CC(C)OC(=O)[C@H](O)[C@@H](O)C(=O)OC(C)C
-(r)-(?)-dtbm-segphos	Cl[Au].Cl[Au].COC1=C(C(C)(C)C)C=C(P(C2=C(C3=C(P(C4=CC(C(C)(C)C)=C(OC)C(C(C)(C)C)=C4)C5=CC(C(C)(C)C)=C(OC)C(C(C)(C)C)=C5)C=CC6=C3OCO6)C7=C(OCO7)C=C2)C8=CC(C(C)(C)C)=C(OC)C(C(C)(C)C)=C8)C=C1C(C)(C)C
+(r)-(?)-dtbm-segphos	COC1=C(C(C)(C)C)C=C(P(C2=C(C3=C(P(C4=CC(C(C)(C)C)=C(OC)C(C(C)(C)C)=C4)C5=CC(C(C)(C)C)=C(OC)C(C(C)(C)C)=C5)C=CC6=C3OCO6)C7=C(OCO7)C=C2)C8=CC(C(C)(C)C)=C(OC)C(C(C)(C)C)=C8)C=C1C(C)(C)C
 (s)-3,3'-bis-(2,4,6-triisopropylphenyl)-binol phosphoric acid	CC(C1=CC(C(C)C)=C(C2=C(OP(O)(OC3=C4C5=CC=CC=C5C=C3C6=C(C(C)C)C=C(C(C)C)C=C6C(C)C)=O)C4=C7C=CC=CC7=C2)C(C(C)C)=C1)C
 (+)-weinsaeure-diethylester	O=C(O)[C@H](O)[C@@H](O)C(O)=O.CCOCC
-(r)-dtbm-segphos庐	Cl[Au].Cl[Au].COC1=C(C(C)(C)C)C=C(P(C2=C(C3=C(P(C4=CC(C(C)(C)C)=C(OC)C(C(C)(C)C)=C4)C5=CC(C(C)(C)C)=C(OC)C(C(C)(C)C)=C5)C=CC6=C3OCO6)C7=C(OCO7)C=C2)C8=CC(C(C)(C)C)=C(OC)C(C(C)(C)C)=C8)C=C1C(C)(C)C
+(r)-dtbm-segphos庐	COC1=C(C(C)(C)C)C=C(P(C2=C(C3=C(P(C4=CC(C(C)(C)C)=C(OC)C(C(C)(C)C)=C4)C5=CC(C(C)(C)C)=C(OC)C(C(C)(C)C)=C5)C=CC6=C3OCO6)C7=C(OCO7)C=C2)C8=CC(C(C)(C)C)=C(OC)C(C(C)(C)C)=C8)C=C1C(C)(C)C
 (s)-(?)-segphos	C1OC2=C(O1)C(=C(C=C2)P(C3=CC=CC=C3)C4=CC=CC=C4)C5=C(C=CC6=C5OCO6)P(C7=CC=CC=C7)C8=CC=CC=C8
 ?ni(pcy3)2cl2	Cl[Ni]Cl.C1CCC(CC1)P(C2CCCCC2)C3CCCCC3.C4CCC(CC4)P(C5CCCCC5)C6CCCCC6
 n,n,n',n'-tetra-methylnaphthalene-1,8-diamine	CN(C)C1=CC=CC2=CC=CC(N(C)C)=C12
@@ -153,3 +153,4 @@ amalgamated zinc	[Zn][Hg]
 ruthenium(ii)-carbonyl-tris(triphenylphosphine) dihydride	[H][Ru]([C]=O)[H].C1(P(C2=CC=CC=C2)C3=CC=CC=C3)=CC=CC=C1.C4(P(C5=CC=CC=C5)C6=CC=CC=C6)=CC=CC=C4.C7(P(C8=CC=CC=C8)C9=CC=CC=C9)=CC=CC=C7
 bis(1,2-diphenylphosphino)benzene	C1(PC2=CC=CC=C2C3=CC=CC=C3)=CC=CC=C1PC4=CC=CC=C4C5=CC=CC=C5
 bis(acetylacetonato) palladium	O=C(C)/C=C(C)\[O-].O=C(C)/C=C(C)\[O-].[Pd+2]
+aghmds [Ag+].C[Si](C)(C)N[Si](C)(C)C
