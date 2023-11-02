@@ -1,0 +1,526 @@
+Name	SMILES
+(+)-weinsaeure-diethylester	O=C(O)[C@H](O)[C@@H](O)C(O)=O.CCOCC
+(-)-2,2?-isopropylidenebis[(4s)-4-phenyl-2-oxazoline]	CC(C1=N[C@@H](C2=CC=CC=C2)CO1)(C3=N[C@@H](C4=CC=CC=C4)CO3)C
+(2,2'-bpy)	C1(C2=NC=CC=C2)=CC=CC=N1
+(benzotriazo-1-yloxy)tris(dimethylamino)phosphonium hexafluorophosphate	F[P-](F)(F)(F)(F)F.n1nn(O[P+](N(C)C)(N(C)C)N(C)C)c2ccccc12
+(eta3-allyl)(eta5-cp)pd	C=CC[Pd]C1=CC=CC1
+(nh4)2co3	[NH4+].[NH4+].[O-]C(=O)[O-]
+(nh4)2s2o8	[O-]S(=O)(OOS(=O)([O-])=O)=O.[NH4+].[NH4+]
+(r)-(?)-dtbm-segphos	COC1=C(C(C)(C)C)C=C(P(C2=C(C3=C(P(C4=CC(C(C)(C)C)=C(OC)C(C(C)(C)C)=C4)C5=CC(C(C)(C)C)=C(OC)C(C(C)(C)C)=C5)C=CC6=C3OCO6)C7=C(OCO7)C=C2)C8=CC(C(C)(C)C)=C(OC)C(C(C)(C)C)=C8)C=C1C(C)(C)C
+(r)-2,2'-dihydroxy-1,1'-binaphthyl	OC1=CC=C2C=CC=CC2=[C@@]1[C@@]3=C4C=CC=CC4=CC=C3O
+(r)-3,3'-dibromo-[1,1'-binaphthalene]-2,2'-diol	OC1=C(Br)C=C2C=CC=CC2=[C@@]1[C@@]3=C4C=CC=CC4=CC(Br)=C3O
+(r)-3,5-di-tert-butyl-4-methoxy-meo-biphep	COC1=[C@@]([C@@]2=C(OC)C=CC=C2P(C3=CC(C(C)(C)C)=C(OC)C(C(C)(C)C)=C3)C4=CC(C(C)(C)C)=C(OC)C(C(C)(C)C)=C4)C(P(C5=CC(C(C)(C)C)=C(OC)C(C(C)(C)C)=C5)C6=CC(C(C)(C)C)=C(OC)C(C(C)(C)C)=C6)=CC=C1
+(r)-binol-phosphoric acid	O=P1(O)OC2=C(C3=C(O1)C=CC4=CC=CC=C43)C5=CC=CC=C5C=C2
+(r)-cl,meo-biphep	ClC1=C(OC)C(C2=C(OC)C(Cl)=CC=C2P(C3=CC=CC=C3)C4=CC=CC=C4)=C(P(C5=CC=CC=C5)C6=CC=CC=C6)C=C1
+(r)-dtbm-segphos庐	COC1=C(C(C)(C)C)C=C(P(C2=C(C3=C(P(C4=CC(C(C)(C)C)=C(OC)C(C(C)(C)C)=C4)C5=CC(C(C)(C)C)=C(OC)C(C(C)(C)C)=C5)C=CC6=C3OCO6)C7=C(OCO7)C=C2)C8=CC(C(C)(C)C)=C(OC)C(C(C)(C)C)=C8)C=C1C(C)(C)C
+(r)-p-tol-binap	CC1=CC=C(P(C2=C(C3=C4C=CC=CC4=CC=C3P(C5=CC=C(C)C=C5)C6=CC=C(C)C=C6)C7=CC=CC=C7C=C2)C8=CC=C(C)C=C8)C=C1
+(r)-segphos庐	C1OC2=C(O1)C(=C(C=C2)P(C3=CC=CC=C3)C4=CC=CC=C4)C5=C(C=CC6=C5OCO6)P(C7=CC=CC=C7)C8=CC=CC=C8
+(s)-(+)-n-(3,5-dioxa-4-phosphacyclohepta-[2,1-a;3,4-a?]dinaphthalen-4-yl)dibenz[b,f]azepine	N1(P2OC3=CC=C4C=CC=CC4=C3C5=C6C=CC=CC6=CC=C5O2)C7=CC=CC=C7C=CC8=CC=CC=C81
+(s)-(?)-segphos	C1OC2=C(O1)C(=C(C=C2)P(C3=CC=CC=C3)C4=CC=CC=C4)C5=C(C=CC6=C5OCO6)P(C7=CC=CC=C7)C8=CC=CC=C8
+(s)-(minus;)-1,1'-bi-2-naphthol	OC1=CC=C2C=CC=CC2=[C@]1[C@]3=C4C=CC=CC4=CC=C3O
+(s)-3,3'-bis-(2,4,6-triisopropylphenyl)-binol phosphoric acid	CC(C1=CC(C(C)C)=C(C2=C(OP(O)(OC3=C4C5=CC=CC=C5C=C3C6=C(C(C)C)C=C(C(C)C)C=C6C(C)C)=O)C4=C7C=CC=CC7=C2)C(C(C)C)=C1)C
+(s)-[alpha,alpha-bis(3,5-bistrifluoromethyl)phenyl]-2-pyrrolidine methanol trimethylsilyl ether	FC(C1=CC(C(F)(F)F)=CC(C([C@H]2NCCC2)(C3=CC(C(F)(F)F)=CC(C(F)(F)F)=C3)O[Si](C)(C)C)=C1)(F)F
+(s)-tf-biphamphos	BrC1=C(C(F)(F)F)C=C(C(F)(F)F)C(C2=C(C(F)(F)F)C=C(C(F)(F)F)C(Br)=C2NP(C3=CC=CC=C3)C4=CC=CC=C4)=C1N
+1 pd/c	[Pd]
+1,4-bis(9-o-dihydroquinidine)phthalazine	CCC1CN2CCC1C[C@H]2[C@@H](C3=C4C=C(C=CC4=NC=C3)OC)OC5=NN=C(C6=CC=CC=C65)O[C@@H]([C@@H]7CC8CCN7CC8CC)C9=C1C=C(C=CC1=NC=C9)OC
+1-ethyl-(3-(3-dimethylamino)propyl)-carbodiimide hydrochloride	CCN=C=NCCCN(C)C
+1.2 pd/c	[Pd]
+1.2percent aq. naoh	[OH-].[Na+]
+10  wpercent aq. naoh	[OH-].[Na+]
+10 palladium hydroxide on charcoal	O[Pd]O
+10 palladium on activated carbon	[Pd]
+10 palladium on activated charcoal	[Pd]
+10 palladium on active carbon	[Pd]
+10 pd/c	[Pd]
+10 percent aq. koh	[OH-].[K+]
+10 percent aq. na2co3	C(=O)([O-])[O-].[Na+].[Na+]
+10 wt  palladium on activated carbon	[Pd]
+10percent aq, naoh	[OH-].[Na+]
+10percent aq. acoh	CC(=O)O
+10percent aq. hcl	Cl
+10percent aq. k2co3	C(=O)([O-])[O-].[K+].[K+]
+10percent aq. koh	[OH-].[K+]
+10percent aq. na2co3	C(=O)([O-])[O-].[Na+].[Na+]
+10percent aq. naco3	[Na+].[Na+].[O-]C([O-])=O
+10percent aq. naoh	[OH-].[Na+]
+10percent pd/c	[Pd]
+12 pd/c	[Pd]
+13 pd/c	[Pd]
+14 pd/c	[Pd]
+15 pd/c	[Pd]
+15percent aq. koh	[OH-].[K+]
+15percent aq. naoh	[OH-].[Na+]
+15percent aq. nh3	N
+18percent aq. nh4oh	[NH4+].[OH-]
+1percent aq. hcl	Cl
+1percent aq. na2co3	C(=O)([O-])[O-].[Na+].[Na+]
+1percent aq. naoh	[OH-].[Na+]
+2 pd/c	[Pd]
+2,2,6,6-tetramethyl-1-piperidinyloxy free radical	[O]N1C(C)(C)CCCC1(C)C
+2,2,6,6-tetramethyl-1-piperidinyloxy, free radical	[O]N1C(C)(C)CCCC1(C)C
+2,2,6,6-tetramethyl-piperidine-n-oxyl	[O]N1C(C)(C)CCCC1(C)C
+2-(dicyclohexylphosphino)-2',4',6'-tri-i-propyl-1,1?-biphenyl	CC(C1=C(C2=CC=CC=C2P(C3CCCCC3)C4CCCCC4)C(C(C)C)=CC(C(C)C)=C1)C
+2-dicyclohexylphosphino-2?,4?,6?-triisopropylbiphenyl	CC(C)C1=CC(C(C)C)=CC(C(C)C)=C1C2=CC=CC=C2P(C3CCCCC3)C4CCCCC4
+2.5percent aq. hcl	Cl
+20 palladium hydroxide on carbon	O[Pd]O
+20 palladium hydroxide on charcoal	O[Pd]O
+20 palladium(ii) hydroxide on carbon	O[Pd]O
+20 pd/c	[Pd]
+20 percent aq. hcl	Cl
+20percent aq. hcl	Cl
+20percent aq. koh	[OH-].[K+]
+25 pd/c	[Pd]
+25percent aq. hco2nh2	Not Found
+25percent aq. na2so3	[O-]S(=O)[O-].[Na+].[Na+]
+25percent aq. naoh	[OH-].[Na+]
+25percent aq. nh3	N
+28percent aq. nh3	N
+28percent aq. nh4oh	[NH4+].[OH-]
+2percent aq. hcl	Cl
+2percent aq. na2co3	C(=O)([O-])[O-].[Na+].[Na+]
+3 a molecular sieve	
+3 angstroem ms	
+3 angstroems	
+3 angstroems ms	
+3 pd/c	[Pd]
+3-angstroem ms	
+30 pd/c	[Pd]
+30percent aq. naoh	[OH-].[Na+]
+30percent aq. nh3	N
+30percent aq. nh4oh	[NH4+].[OH-]
+32percent aq. nh4oh	[NH4+].[OH-]
+35percent aq. hclo4	OCl(=O)(=O)=O
+36percent aq. hcl	Cl
+37percent aq. hcl	Cl
+3a molecular sives	
+3percent aq. naoh	[OH-].[Na+]
+4 a molecular sieve	
+4 a molecular sieves	
+4 amgstroem ms	
+4 angsteroem ms	
+4 angstroem ms	
+4 angstroems ms	
+4,4,5,5-tetramethyl-1,3,2-dioxaborolan-2-yl-4',4',5',5'-tetramethyl-1,3,2-dioxaborolane	CC1(C)OB(OC1(C)C)B2OC(C)(C)C(C)(C)O2
+4-(n,n-dimethlyamino)pyridine	CN(C)C1=CC=NC=C1
+4-(n,n-dimethylamino)pyridine	CN(C)C1=CC=NC=C1
+4-angstroem ms	
+40 percent aq. koh	[OH-].[K+]
+40percent aq. hbr	Br
+40percent aq. hf	[Hf]
+40percent aq. naoh	[OH-].[Na+]
+45percent aq. hf	[Hf]
+47 percent aq. hbr	Br
+47percent aq. hbr	Br
+48percent aq. hbr	Br
+48percent aq. hf	[Hf]
+49percent aq. hf	[Hf]
+4a molecular sieves	
+4a molecular sives	
+4percent aq. na2co3	C(=O)([O-])[O-].[Na+].[Na+]
+5 angstroem ms	
+5 palladium on activated carbon	[Pd]
+5 palladium on charcoal	[Pd]
+5 pd(ii)/c(eggshell)	[Pd]
+5 pd/c	[Pd]
+5-palladium/activated carbon	[Pd]
+50  pd/c	[Pd]
+50 pd/c	[Pd]
+50percent aq. acoh	CC(=O)O
+50percent aq. h2noh	NO
+50percent aq. hcooh	C(=O)O
+50percent aq. naoh	[OH-].[Na+]
+57percent aq. hi	Not Found
+5a molecular sieve	
+5percent aq. hcl	Cl
+5percent aq. hf	[Hf]
+5percent aq. koh	[OH-].[K+]
+5percent aq. na2co3	C(=O)([O-])[O-].[Na+].[Na+]
+5percent aq. nahco3	C(=O)(O)[O-].[Na+]
+5percent aq. nahno3	Not Found
+5percent aq. naoh	[OH-].[Na+]
+5percent pd/c	[Pd]
+60percent aq. acoh	CC(=O)O
+60percent aq. hco2h	C(=O)O
+60percent aq. hcooh	C(=O)O
+6percent aq. hcl	Cl
+70percent aq. acoh	CC(=O)O
+75percent aq. acoh	CC(=O)O
+75percent aq. hco2h	C(=O)O
+80percent aq. acoh	CC(=O)O
+85percent aq. koh	[OH-].[K+]
+96percent aq. hco2h	C(=O)O
+?ni(pcy3)2cl2	Cl[Ni]Cl.C1CCC(CC1)P(C2CCCCC2)C3CCCCC3.C4CCC(CC4)P(C5CCCCC5)C6CCCCC6
+[(-)-dip-chloride?]	C[C@H]1[C@@H](CC2CCC1C2(C)C)B(Cl)[C@@H]3CC4CCC([C@H]3C)C4(C)C
+[co(acetylacetonate)2]	CC(/C=C(O[Co]O/C(C)=C\C(C)=O)/C)=O
+[cp*rh(ch3cn)3](sbf6)2	CC#N.CC#N.CC#N.F[Sb-](F)(F)(F)(F)F.F[Sb-](F)(F)(F)(F)F.[Rh]C1C=CC=C1
+[cp*rh(ch3cn)3][sbf6]2	CC#N.CC#N.CC#N.F[Sb-](F)(F)(F)(F)F.F[Sb-](F)(F)(F)(F)F.[Rh]C1C=CC=C1
+[cp*ru(ch3cn)3][sbf6]2	CC#N.CC#N.CC#N.F[Sb-](F)(F)(F)(F)F.F[Sb-](F)(F)(F)(F)F.[Ru]C1C=CC=C1
+[cu(mecn)4]+[pf6]-	CC#N.CC#N.CC#N.CC#N.F[P-](F)(F)(F)(F)F.[Cu+]
+[cu(ncch3)4]+pf6-	CC#N.CC#N.CC#N.CC#N.F[P-](F)(F)(F)(F)F.[Cu+]
+[cu(ncch3)4]pf6	CC#N.CC#N.CC#N.CC#N.F[P-](F)(F)(F)(F)F.[Cu+]
+[ir(2-phenylpyridine)-2-(4,4?-di-tert-butyl-2,2?-bipyridine)]pf6	CC(C1=CC(C2=NC=CC(C(C)(C)C)=C2)=NC=C1)(C)C.F[P-](F)(F)(F)(F)F.C3([Ir+]C4=CC=CC=C4C5=NC=CC=C5)=CC=CC=C3C6=NC=CC=C6
+[ir(2-phenylpyridine)2(4,4?-di-tert-butyl-2,2?-bipyridine)pf6]	CC(C1=CC(C2=NC=CC(C(C)(C)C)=C2)=NC=C1)(C)C.F[P-](F)(F)(F)(F)F.C3([Ir+]C4=CC=CC=C4C5=NC=CC=C5)=CC=CC=C3C6=NC=CC=C6
+[ir(mu-cl)(cis-cyclooctene)2]2	C1CCCC=CCC1.C1CCCC=CCC1.C1CCCC=CCC1.C1CCCC=CCC1.[Cl-].[Cl-].[Ir].[Ir]
+[ir(mu-cl)(cyclooctene)2]2	C1CCCC=CCC1.C1CCCC=CCC1.C1CCCC=CCC1.C1CCCC=CCC1.[Cl-].[Cl-].[Ir].[Ir]
+[ir(phenylpyridine(-1h))2(4,4?-di-tert-butyl-2,2?-bipyridine)](pf6)	CC(C1=CC(C2=NC=CC(C(C)(C)C)=C2)=NC=C1)(C)C.F[P-](F)(F)(F)(F)F.C3([Ir+]C4=CC=CC=C4C5=NC=CC=C5)=CC=CC=C3C6=NC=CC=C6
+[iridium(iii)(2-phenylpyridine)3]	C1([Ir](C2=CC=CC=C2C3=CC=CC=N3)C4=CC=CC=C4C5=CC=CC=N5)=CC=CC=C1C6=CC=CC=N6
+[mecnau((1,1?-biphenyl-2-yl)-di-tert-butylphosphine)]+sbf6?	CC#N.CC(C)(P(C(C)(C)C)c1c(c2ccccc2)cccc1)C.F[Sb-](F)(F)(F)(F)F.[Au+]
+[na2pdcl4]	[Na+].[Na+].Cl[Pd+2](Cl)(Cl)Cl
+[ni(o2cch3)2]*4h2o	O.O.O.O.CC(O[Ni]OC(C)=O)=O
+[ni0(1,5-cyclooctadiene)2]	C1CC=CCCC=C1.C1CC=CCCC=C1.[Ni]
+[nicl2(1,2-dimethoxyethane)]	CC(OC)OC.Cl[Ni]Cl
+[rh(oh)(cycloocta-1,5-diene)]2	[Rh]O.C1=C\CC/C=C\CC/1.C2=C\CC/C=C\CC/2
+[rh2(octanoate)4]	CCCCCCCC(=O)O[Rh](OC(=O)CCCCCCC)[Rh](OC(=O)CCCCCCC)OC(=O)CCCCCCC
+[ru(2,2'-bipyridine)3]2+	C1(C2=CC=CC=N2)=CC=CC=N1.C3(C4=CC=CC=N4)=CC=CC=N3.C5(C6=CC=CC=N6)=CC=CC=N5.[Ru+2]
+[ru(2,2?-bipyridine)3]1+	C1(C2=CC=CC=N2)=CC=CC=N1.C3(C4=CC=CC=N4)=CC=CC=N3.C5(C6=CC=CC=N6)=CC=CC=N5.[Ru+2]
+[ru(2,2?-bipyridine)3][hexafluorophosphate]2	F[P-](F)(F)(F)(F)F.F[P-](F)(F)(F)(F)F.C1(C2=NC=CC=C2)=NC=CC=C1.C3(C4=NC=CC=C4)=NC=CC=C3.C5(C6=NC=CC=C6)=NC=CC=C5.[Ru2+]
+[ru(2,2?-bipyridine)3]cl2	C1=CC=NC(=C1)C2=CC=CC=N2.C1=CC=NC(=C1)C2=CC=CC=N2.C1=CC=NC(=C1)C2=CC=CC=N2.Cl[Ru]Cl
+[ru(ii)(2,2?-bipyridine)3]cl2	C1=CC=NC(=C1)C2=CC=CC=N2.C1=CC=NC(=C1)C2=CC=CC=N2.C1=CC=NC(=C1)C2=CC=CC=N2.Cl[Ru]Cl
+[ru(tris(2,2'-bipyridyl))3]cl2路6h2o	C1=CC2=C(C3=C(C=CC=N3)C=C2)N=C1.C1=CC2=C(C3=C(C=CC=N3)C=C2)N=C1.C1=CC2=C(C3=C(C=CC=N3)C=C2)N=C1.O.O.O.O.O.O.[Cl-].[Cl-].[Ru+2]
+[{ir(mu-cl)(cis-cyclooctene)2}2]	C1CCCC=CCC1.C1CCCC=CCC1.C1CCCC=CCC1.C1CCCC=CCC1.[Cl-].[Cl-].[Ir].[Ir]
+acetate buffer	[Na+].CC([O-])=O
+agno2	N(=O)[O-].[Ag+]
+air	O=O.N#N
+alcl3, aluminium chloride	Cl[Al](Cl)Cl
+aliquatreg; 336	CCCCCCCC[N+](C)(CCCCCCCC)CCCCCCCC.[Cl-]
+alkali solution	[OH-].[Na+]
+alkali-solution	[OH-].[Na+]
+alkaline solution	[OH-].[Na+]
+alkaline solutions	[OH-].[Na+]
+aluminium amalgam	[Al].[Hg]
+aluminum amalgam	[Al].[Hg]
+amalgamated zinc	[Zn][Hg]
+anhydrous butyl ether	CCCCOCCCC
+anhydrous cobalt diacetate	O=C(C)O[Co]OC(C)=O
+anhydrous copper acetate	CC([O-])=O.CC([O-])=O.[Cu+2]
+anhydrous dichloroethane	ClCCCl
+anhydrous iron chloride	Cl[Fe](Cl)Cl
+anhydrous potassium trimethylsilanolate	[K+].C[Si](C)(C)[O-]
+anhydrous propionitrile	CCC#N
+anhydrous sodium benzoate	[O-]C(C1=CC=CC=C1)=O.[Na+]
+anhydrous xylene	CC1=CC=C(C)C=C1
+aq. acetate buffer	[Na+].CC([O-])=O
+aq. phosphate buffer	[O-]P([O-])(O)=O.OP(O)([O-])=O.[Na+].[Na+].[K+].[Cl-].[K+].[Na+].[Cl-].O
+ascorbic acid powder	OC[C@H](O)[C@H]1OC(=O)C(O)=C1O
+ba(oh)2*8h2o	[Ba+2].[OH-].[OH-].O.O.O.O.O.O.O.O
+ba(oh)2路8h2o	[Ba+2].[OH-].[OH-].O.O.O.O.O.O.O.O
+ba2(oh)2*8h2o	[Ba+2].[OH-].[OH-].O.O.O.O.O.O.O.O
+benzylidene[1,3-bis(2,4,6-trimethylphenyl)-2-imidazolidinylidene] dichloro (tricyclohexylphosphine)ruthenium	Cl/[Ru](Cl)=C1N(C2=C(C)C=C(C)C=C2C)C(CNC3=C(C)C=C(C)C=C3C)=CC4=CC=CC=C4.P(C5CCCCC5)(C6CCCCC6)C7CCCCC7
+bis(1,2-diphenylphosphino)benzene	C1(PC2=CC=CC=C2C3=CC=CC=C3)=CC=CC=C1PC4=CC=CC=C4C5=CC=CC=C5
+bis(acetylacetonate)nickel(ii)	C/C(=C/C(=O)C)/O.C/C(=C/C(=O)C)/O.[Ni]
+bis(acetylacetonate)oxovanadium	CC(=O)[CH-]C(=O)C.CC(=O)[CH-]C(=O)C.O=[V+2]
+bis(acetylacetonato) palladium	O=C(C)/C=C(C)\[O-].O=C(C)/C=C(C)\[O-].[Pd+2]
+bis(dibenzylideneacetone)-palladium(0)	C1=CC=C(C=C1)C=CC(=O)C=CC2=CC=CC=C2.C1=CC=C(C=C1)C=CC(=O)C=CC2=CC=CC=C2.[Pd]
+bis(eta3-allyl-mu-chloropalladium(ii))	Cl[Pd]CC=C.C=CC[Pd]Cl
+bis(eta4-1,5-cyclooctadiene)-di-mu-methoxy-diiridium(i)	C[O+]1[Ir-]2[O+](C)[Ir-]12.C3CC=CCCC=C3.C4CC=CCCC=C4
+bis-triphenylphospine-palladium(ii) chloride	C1=CC=C(C=C1)P(C2=CC=CC=C2)C3=CC=CC=C3.C1=CC=C(C=C1)P(C2=CC=CC=C2)C3=CC=CC=C3.[Cl-].[Cl-].[Pd+2]
+borane-thf	[BH3-][O+]1CCCC1
+borate(1-), tetrafluoro-,hydrogen (1:1) ethane, 1,1'-oxybis-	CCOCC.F[B-](F)(F)F
+c39h60n4o4	CC(C)C1=C(C(=CC=C1)C(C)C)NC(=O)[C@@H]2CCCC[N@+]2(CCC[N@@+]3(CCCC[C@H]3C(=O)NC4=C(C=CC=C4C(C)C)C(C)C)[O-])[O-]
+c43h64n4o4	CC(C)C1=C(C(=CC=C1)C(C)C)NC(=O)[C@@H]2C[C@@H]3CCC[C@@H]3[N@+]2(CCC[N@@+]4([C@H]5CCC[C@H]5C[C@H]4C(=O)NC6=C(C=CC=C6C(C)C)C(C)C)[O-])[O-]
+chloro(1,5-cyclooctadiene)(pentamethylcyclopentadienyl)ruthenium(ii)	Cl[Ru]C1=C(C)C(C)=C(C)C1(C)C.C2=C\CC/C=C\CC/2
+cl2ni(1,2-bis(diphenylphosphino)ethane)	Cl[Ni]Cl.P(CCP(C1=CC=CC=C1)C2=CC=CC=C2)(C3=CC=CC=C3)C4=CC=CC=C4
+clau(di(tert-butyl)(1,1?-biphenyl-2-yl)-phosphine)	CC(P(C(C)(C)C)C1=CC=CC=C1C2=CC=CC=C2)(C)C.[Au]Cl
+clso2f (sulfuryl chloride fluoride)	O=S(Cl)(F)=O
+co(acetylacetonate)3	C/C(=C\C(=O)C)/[O-].C/C(=C\C(=O)C)/[O-].C/C(=C\C(=O)C)/[O-].[Co+3]
+copper(i) bromide dimethylsulfide complex	CSC.[Cu+].[Br-]
+copper(l) chloride	Cl[Cu]
+copper(l) iodide	[Cu]I
+cr(acetylacetonate)3	C/C(=C\C(=O)C)/[O-].C/C(=C\C(=O)C)/[O-].C/C(=C\C(=O)C)/[O-].[Cr+3]
+cu(i)[(ch3cn)4]bf4	CC#N.CC#N.CC#N.CC#N.F[P-](F)(F)(F)(F)F.[Cu+]
+cu(no3)2*3h2o	[Cu+2].[O-][N+]([O-])=O.[O-][N+]([O-])=O.O.O
+cu(no3)2*6h2o	[Cu+2].[O-][N+]([O-])=O.[O-][N+]([O-])=O.O.O.O.O.O
+cucl2*(2)h2o	[Cu+2].[Cl-].[Cl-].O.O
+cucl2*2h2o	[Cu+2].[Cl-].[Cl-].O.O
+cucl2*h2o	[Cu+2].[Cl-].[Cl-].O
+cucl2*xh2o	[Cu+2].[Cl-].[Cl-].O
+cucl2路2h2o	[Cu+2].[Cl-].[Cl-]
+cuso4?5h2o	[O-]S(=O)(=O)[O-].[Cu+2]
+cypf-t-bu	CC(C)(C)P(C1CCCCC1)F
+deuterated toluene	[2H]C([2H])([2H])C1=C([2H])C([2H])=C([2H])C([2H])=C1[2H]
+di-mu-chloro-bis(eta4-1,5-cyclooctadiene)diiridium	Cl[Ir].Cl[Ir].C1CC=CCCC=C1.C2CC=CCCC=C2
+di-tert-butyl(2?,4?,6?-triisopropylbiphenyl-2-yl)phosphine	CC(C1=CC(C(C)C)=C(C2=C(P(C(C)(C)C)C(C)(C)C)C=CC=C2)C(C(C)C)=C1)C
+dichloro bis(acetonitrile) palladium(ii)	CC#N.CC#N.Cl[Pd]Cl
+dichloro(1,1'-bis(diphenylphosphanyl)ferrocene)palladium(ii) dichloromethane adduct	[Fe].ClCCl.Cl[Pd]Cl.[CH]1[CH][CH][C]([CH]1)P(c2ccccc2)c3ccccc3.[CH]4[CH][CH][C]([CH]4)P(c5ccccc5)c6ccccc6
+dichloro(cycloocta-1,5-diene)palladium(ii)	C1CC=CCCC=C1.Cl[Pd]Cl
+dicobalt octacarbonyl	O=C=[Co]1(=C=O)(=C=O)C(=O)[Co](=C=O)(=C=O)(=C=O)C1=O
+dicyclohexyl(2?,6?-diisopropoxybiphenyl-2-yl)phosphine	C1(CCCCC1)P(C1(C(=C(C=CC1)OC(C)C)C1=CC=CC=C1)OC(C)C)C1CCCCC1
+dicyclohexyl(2?,6?-dimethoxybiphenyl-2-yl)phosphine	C1(CCCCC1)P(C1(C(=C(C=CC1)OC)C1=CC=CC=C1)OC)C1CCCCC1
+diisopropyl diazenedicarboxylate	O=C(N=NC(OC(C)C)=O)OC(C)C
+dimethylsulfide borane complex	[BH3-][S+](C)C
+dipotassium peroxodisulfate	[O-]S(=O)(=O)OOS(=O)(=O)[O-].[K+].[K+]
+dmaa	CCC(C)CC(C)N
+dme	COC
+dmfa	CN(C)C=O
+dovex 50x8 (h+)	OS(=O)(=O)O
+dowex (50-x8)	OS(=O)(=O)O
+dowex (50wx8)	OS(=O)(=O)O
+dowex (50x)	OS(=O)(=O)O
+dowex (h(1+))	OS(=O)(=O)O
+dowex (h+)	OS(=O)(=O)O
+dowex 50	OS(=O)(=O)O
+dowex 50 (h+)	OS(=O)(=O)O
+dowex 50 (w-x 8)	OS(=O)(=O)O
+dowex 50 h(1+)	OS(=O)(=O)O
+dowex 50 h+	OS(=O)(=O)O
+dowex 50 na(1+)	OS(=O)(=O)O
+dowex 50 w	OS(=O)(=O)O
+dowex 50 w (h+)	OS(=O)(=O)O
+dowex 50 w x 2	OS(=O)(=O)O
+dowex 50 w-x1	OS(=O)(=O)O
+dowex 50 w-x8	OS(=O)(=O)O
+dowex 50 wx 8	OS(=O)(=O)O
+dowex 50 wx4	OS(=O)(=O)O
+dowex 50 x 4 (h+)	OS(=O)(=O)O
+dowex 50 x 8	OS(=O)(=O)O
+dowex 50 xw-8	OS(=O)(=O)O
+dowex 50(h(1+))	OS(=O)(=O)O
+dowex 50(h+)	OS(=O)(=O)O
+dowex 50*8 (h+)	OS(=O)(=O)O
+dowex 50*8-200	OS(=O)(=O)O
+dowex 50-x	OS(=O)(=O)O
+dowex 50-x4 (h+)	OS(=O)(=O)O
+dowex 50-x8	OS(=O)(=O)O
+dowex 50-x8 (h+)	OS(=O)(=O)O
+dowex 50-x8(h+)	OS(=O)(=O)O
+dowex 500-x8 h+	OS(=O)(=O)O
+dowex 500wx8	OS(=O)(=O)O
+dowex 50w	OS(=O)(=O)O
+dowex 50w (h+)	OS(=O)(=O)O
+dowex 50w * 8 (h+)	OS(=O)(=O)O
+dowex 50w h+	OS(=O)(=O)O
+dowex 50w x 2-100	OS(=O)(=O)O
+dowex 50w x 4-200	OS(=O)(=O)O
+dowex 50w x 8	OS(=O)(=O)O
+dowex 50w x-8 (h+)	OS(=O)(=O)O
+dowex 50w x2	OS(=O)(=O)O
+dowex 50w x8	OS(=O)(=O)O
+dowex 50w x8-200	OS(=O)(=O)O
+dowex 50w(h(+))	OS(=O)(=O)O
+dowex 50w*4	OS(=O)(=O)O
+dowex 50w*8	OS(=O)(=O)O
+dowex 50w*8 (h+)	OS(=O)(=O)O
+dowex 50w,h+	OS(=O)(=O)O
+dowex 50w-4x	OS(=O)(=O)O
+dowex 50w-8 (h+)	OS(=O)(=O)O
+dowex 50w-8x	OS(=O)(=O)O
+dowex 50w-x1	OS(=O)(=O)O
+dowex 50w-x1 (h(1+))	OS(=O)(=O)O
+dowex 50w-x1 (h+)	OS(=O)(=O)O
+dowex 50w-x1(h+)	OS(=O)(=O)O
+dowex 50w-x12	OS(=O)(=O)O
+dowex 50w-x2	OS(=O)(=O)O
+dowex 50w-x2-200	OS(=O)(=O)O
+dowex 50w-x4	OS(=O)(=O)O
+dowex 50w-x8	OS(=O)(=O)O
+dowex 50w-x8 (h+)	OS(=O)(=O)O
+dowex 50w-xb	OS(=O)(=O)O
+dowex 50w2-100	OS(=O)(=O)O
+dowex 50w4x	OS(=O)(=O)O
+dowex 50wx-200	OS(=O)(=O)O
+dowex 50wx-4-400	OS(=O)(=O)O
+dowex 50wx-8-200	OS(=O)(=O)O
+dowex 50wx2	OS(=O)(=O)O
+dowex 50wx2(h+)	OS(=O)(=O)O
+dowex 50wx2-100	OS(=O)(=O)O
+dowex 50wx2-200	OS(=O)(=O)O
+dowex 50wx28-200	OS(=O)(=O)O
+dowex 50wx2h+	OS(=O)(=O)O
+dowex 50wx4	OS(=O)(=O)O
+dowex 50wx4 (h+)	OS(=O)(=O)O
+dowex 50wx4-200	OS(=O)(=O)O
+dowex 50wx4-50	OS(=O)(=O)O
+dowex 50wx400	OS(=O)(=O)O
+dowex 50wx8	OS(=O)(=O)O
+dowex 50wx8 (h(1+))	OS(=O)(=O)O
+dowex 50wx8-100	OS(=O)(=O)O
+dowex 50wx8-100h+	OS(=O)(=O)O
+dowex 50wx8-200	OS(=O)(=O)O
+dowex 50wx8-400	OS(=O)(=O)O
+dowex 50wx80-200	OS(=O)(=O)O
+dowex 50x h+	OS(=O)(=O)O
+dowex 50x-100	OS(=O)(=O)O
+dowex 50x2-400	OS(=O)(=O)O
+dowex 50x4-400	OS(=O)(=O)O
+dowex 50x8	OS(=O)(=O)O
+dowex 50x8-100	OS(=O)(=O)O
+dowex 50x8-200	OS(=O)(=O)O
+dowex 50xb	OS(=O)(=O)O
+dowex 5owx8-200	OS(=O)(=O)O
+dowex r 50w	OS(=O)(=O)O
+dowex w50-1x	OS(=O)(=O)O
+dowex w50-x1	OS(=O)(=O)O
+dowex w50x8	OS(=O)(=O)O
+dowex(500wx8)	OS(=O)(=O)O
+dowex(h(1+))	OS(=O)(=O)O
+dowex(h+)	OS(=O)(=O)O
+dowex(r) (50wx8)	OS(=O)(=O)O
+dowex(r) 50 w-x8-100	OS(=O)(=O)O
+dowex(r) 50wx2-100	OS(=O)(=O)O
+dowex(r) 50wx2-200	OS(=O)(=O)O
+dowex(r) 50wx8-200	OS(=O)(=O)O
+dowex(r) 50x8-100	OS(=O)(=O)O
+dowex(r)(50wx8)	OS(=O)(=O)O
+dowex- 50w	OS(=O)(=O)O
+dowex-50	OS(=O)(=O)O
+dowex-50 (h(+))	OS(=O)(=O)O
+dowex-50 (h(1+)	OS(=O)(=O)O
+dowex-50 (h+)	OS(=O)(=O)O
+dowex-50 h(1+)	OS(=O)(=O)O
+dowex-50 h+	OS(=O)(=O)O
+dowex-50 w-x2	OS(=O)(=O)O
+dowex-50 x 8	OS(=O)(=O)O
+dowex-50(h+)	OS(=O)(=O)O
+dowex-50-h+	OS(=O)(=O)O
+dowex-50-x8 (h+)	OS(=O)(=O)O
+dowex-50h+	OS(=O)(=O)O
+dowex-50w	OS(=O)(=O)O
+dowex-50w (h+)	OS(=O)(=O)O
+dowex-50w x 8	OS(=O)(=O)O
+dowex-50w(h+)	OS(=O)(=O)O
+dowex-50w-4	OS(=O)(=O)O
+dowex-50w-8x	OS(=O)(=O)O
+dowex-50w-x8	OS(=O)(=O)O
+dowex-50w-x8 (h+)	OS(=O)(=O)O
+dowex-50w8x(h+).	OS(=O)(=O)O
+dowex-50wx	OS(=O)(=O)O
+dowex-50wx2	OS(=O)(=O)O
+dowex-50wx2-400	OS(=O)(=O)O
+dowex-50wx8(h+)	OS(=O)(=O)O
+dowex-50wx8-200	OS(=O)(=O)O
+dowex-50wx8-400	OS(=O)(=O)O
+dowex-50x	OS(=O)(=O)O
+dowex-50x4-400	OS(=O)(=O)O
+dowex-50x8	OS(=O)(=O)O
+dowex-50x8-400	OS(=O)(=O)O
+dowex-w50-x8	OS(=O)(=O)O
+dowex50	OS(=O)(=O)O
+dowex50w-x8	OS(=O)(=O)O
+dowex50wx2	OS(=O)(=O)O
+dowex50wx8	OS(=O)(=O)O
+dowex50wx8-100h+	OS(=O)(=O)O
+dpwex 50w-x4	OS(=O)(=O)O
+epoxysulfonyl fluoride	O=S(OS(=O)(F)=O)(F)=O
+fe(acetylacetonate)3	C/C(=C\C(=O)C)/[O-].C/C(=C\C(=O)C)/[O-].C/C(=C\C(=O)C)/[O-].[Fe+3]
+fecl3路6h2o	Cl[Fe](Cl)Cl.O.O.O.O.O.O
+further solvent(s)	
+grubb's 2nd generation catalyst	CC1=CC(=C(C(=C1)C)N2CCN(C2=[Ru](=CC3=CC=CC=C3)(Cl)Cl)C4=C(C=C(C=C4C)C)C)C.C1CCC(CC1)P(C2CCCCC2)C3CCCCC3
+grubbs catalyst 2st generation	Cl[Ru-2](Cl)([C+]1n(CCn1c2=C(C)C=C(C)C=C2C)c3=C(C)C=C(C)C=C3C)([P+](C4CCCCC4)(C5CCCCC5)C6CCCCC6)=CC7=CC=CC=C7
+grubbs catalyst first generation	Cl[Ru-2](Cl)([P+](C1CCCCC1)(C2CCCCC2)C3CCCCC3)([P+](C4CCCCC4)(C5CCCCC5)C6CCCCC6)=CC7=CC=CC=C7
+hydrochlorid acid	Cl
+hydrogen	[H][H]
+iodine cloride	ClI
+ir(2-phenylpyridine)2(4,4'-di-tert-butyl-2,2'-bipyridine)pf6	CC(C1=CC(C2=NC=CC(C(C)(C)C)=C2)=NC=C1)(C)C.F[P-](F)(F)(F)(F)F.C3([Ir+]C4=CC=CC=C4C5=NC=CC=C5)=CC=CC=C3C6=NC=CC=C6
+jone's reagent	O=[Cr](=O)=O.OS(=O)(O)=O.O
+jones reagent	O=[Cr](=O)=O.OS(=O)(O)=O.O
+k2oso2*2h2o	[O-][Os][O-].O.O.[K+].[K+]
+k2oso4*2h2o	O.O.[K+].[K+].[O-][Os]([O-])(=O)=O
+k2oso4*h2o	O.O.[K+].[K+].[O-][Os]([O-])(=O)=O
+k3po4*3h2o	[K+].[K+].[K+].[O-]P([O-])([O-])=O.O.O.O
+knh2	[NH2-].[K+]
+l-(+)-diisopropyl tartrate	CC(C)OC(=O)[C@H](O)[C@@H](O)C(=O)OC(C)C
+l-selectridereg;	[Li+].CCC(C)[BH-](C(C)CC)C(C)CC
+lawesson's  reagent	S=P1(SP(=S)(S1)c2ccc(OC)cc2)c3ccc(OC)cc3
+mgbr2(et2o)	Br[Mg]Br.CCOCC
+mineral oil	
+molecualar sieves	
+molecuar sieves	
+molecular sieves	
+n(et)4clo4	CC[N+](CC)(CC)CC.[O-][Cl+3]([O-])([O-])[O-]
+n,n'-dimethyl-barbituric acid	CN(C1=O)C(CC(N1C)=O)=O
+n,n'-dimethyl-n,n'-propyleneurea	O=C(N1C)N(C)CC1C
+n,n,n',n'-tetra-methylnaphthalene-1,8-diamine	CN(C)C1=CC=CC2=CC=CC(N(C)C)=C12
+n,n,n',n,-tetramethylethylenediamine	CN(C)CCN(C)C
+n,n-dimethyl acetamide	CC(=O)N(C)C
+n,n-dimethyl-formamide	CN(C)C=O
+n-benzyl-trimethylammonium hydroxide	C[N+](C)(CC1=CC=CC=C1)C.[OH-]
+n-bromosuccinmide	C1CC(=O)N(C1=O)Br
+n-bu4n+pf6-	CCCC[N+](CCCC)(CCCC)CCCC.F[P-](F)(F)(F)(F)F
+n-bu4npf6	CCCC[N+](CCCC)(CCCC)CCCC.F[P-](F)(F)(F)(F)F
+n-ethyl-n,n-diisopropylamine	CCN(C(C)C)C(C)C
+n-trimethylamine hydrochloride	CCN(CC)CC.Cl
+na acetate buffer	[Na+].CC([O-])=O
+na ascorbate	OC1=C([O-])[C@]([C@@H](O)CO)([H])OC1=O.[Na+]
+na-ascorbate	OC1=C([O-])[C@]([C@@H](O)CO)([H])OC1=O.[Na+]
+na2[pdcl4]	[Na+].[Na+].Cl[Pd+2](Cl)(Cl)Cl
+na[b(3,5-(cf3)2c6h3)4]	FC(F)(F)C1=CC(C(F)(F)F)=CC([B-](C2=CC(C(F)(F)F)=CC(C(F)(F)F)=C2)(C3=CC(C(F)(F)F)=CC(C(F)(F)F)=C3)C4=CC(C(F)(F)F)=CC(C(F)(F)F)=C4)=C1.[Na+]
+nbu4npf6	CCCC[N+](CCCC)(CCCC)CCCC.F[P-](F)(F)(F)(F)F
+neat (no solvent)	
+ni(br)2(dppe)	Br[Ni]Br.C1(P(C2=CC=CC=C2)CCP(C3=CC=CC=C3)C4=CC=CC=C4)=CC=CC=C1
+ni(clo4)2路6h2o	[O-]Cl(=O)(=O)=O.[O-]Cl(=O)(=O)=O.[Ni+2].O.O.O.O.O.O
+niii chloride hexahydrate	Cl[Ni]Cl.O.O.O.O.O.O
+not given	
+o-(6-chloro-1h-benzotriazol-1-yl)-1,1,3,3-tetramethyluronium hexafluorophosphate	CN(C)/C(N(C)C)=[O+]\N1N=NC2=CC=C(Cl)C=C21.F[P-](F)(F)(F)(F)F
+o-nitrobenzenesulfonyl hydrazide	O=S(C1=CC=CC=C1[N+]([O-])=O)(NN)=O
+oxonereg;	OS([O-])(=O)=O.[O-]S([O-])(=O)=O.OS(=O)(O[O-])=O.OS(=O)(O[O-])=O.[K+].[K+].[K+].[K+].[K+]
+p-benozquinone	C1=CC(=O)C=CC1=O
+palladium 10 on activated carbon	[Pd]
+palladium hydroxide on carbon 20	O[Pd]O
+palladium on activated carbon	[Pd]
+palladium on activated charcoal	[Pd]
+paraffin oil	
+pcy3?hbf4	F[B-](F)(F)F.[H][P+](C1CCCCC1)(C2CCCCC2)C3CCCCC3
+pd(opiv)2	CC(C)(C)C(=O)O[Pd]OC(=O)C(C)(C)C
+pd-baso4	[O-]S(=O)(=O)[O-].[Pd].[Ba+2]
+pd0(tris(tert-butyl)phosphine)2	CC(C)(P(C(C)(C)C)C(C)(C)C)C.CC(C)(P(C(C)(C)C)C(C)(C)C)C.[Pd]
+pearlman's catalist	O[Pd]O
+petroleum ether	
+phosphate buffer	[O-]P([O-])(O)=O.OP(O)([O-])=O.[Na+].[Na+].[K+].[Cl-].[K+].[Na+].[Cl-]
+phosphorus trichoride	ClP(Cl)Cl
+platinum on activated charcoal	[Pt]
+poluphosphoric acid	O=P(O)(OP(O)(O)=O)O
+poly (phosphoric acid)	O=P(O)(OP(O)(O)=O)O
+poly phosphoric acid	O=P(O)(OP(O)(O)=O)O
+poly(methoxyhydrosilane)	C[Si](C)(C)O[Si](O[Si]([H])(O[Si](C)(C)C)C)([H])C
+poly(methylhydrosiloxane)	C[Si](C)(C)O[Si](O[Si]([H])(O[Si](C)(C)C)C)([H])C
+poly(phosphoric acid)	O=P(O)(OP(O)(O)=O)O
+poly-phosphoric acid	O=P(O)(OP(O)(O)=O)O
+polymethylhydrogen siloxane	C[Si](C)(C)O[Si](O[Si]([H])(O[Si](C)(C)C)C)([H])C
+polymethylhydrosiloxane	C[Si](C)(C)O[Si](O[Si]([H])(O[Si](C)(C)C)C)([H])C
+polyphocphoric acid	O=P(O)(OP(O)(O)=O)O
+polyphoshoric acid	O=P(O)(OP(O)(O)=O)O
+polyphosphonic acid	O=P(O)(OP(O)(O)=O)O
+polyphosphoric acid	O=P(O)(OP(O)(O)=O)O
+polyphosphoric acide	O=P(O)(OP(O)(O)=O)O
+polyphosphoric aicd	O=P(O)(OP(O)(O)=O)O
+polyphosphoricacid	O=P(O)(OP(O)(O)=O)O
+polyphosphosphoric acid	O=P(O)(OP(O)(O)=O)O
+polyphosporic acid	O=P(O)(OP(O)(O)=O)O
+polyphposphoric acid	O=P(O)(OP(O)(O)=O)O
+potassium hexamethylsilazane	C[Si]([N-][Si](C)(C)C)(C)C.[K+]
+ppa	OP(O)(OP(O)(O)=O)=O
+pph3 gold(i) chloro complex	C1=CC=C(C=C1)P(C2=CC=CC=C2)C3=CC=CC=C3.Cl[Au]
+pyridine-so3 complex	O=S(=O)=O.n1ccccc1
+rh/al2o3	O=[Al]O[Al]=O.[Rh]
+rh2[n-[(4-dodecylphenyl)sulfonyl]-(s)-prolinato]4	CCCCCCCCCCCCC1=CC=C(S(=O)(N2CCC[C@H]2C(O)=O)=O)C=C1.CCCCCCCCCCCCC3=CC=C(S(=O)(N4CCC[C@H]4C(O)=O)=O)C=C3.CCCCCCCCCCCCC5=CC=C(S(=O)(N6CCC[C@H]6C(O)=O)=O)C=C5.CCCCCCCCCCCCC7=CC=C(S(=O)(N8CCC[C@H]8C(O)=O)=O)C=C7.[Rh].[Rh]
+rhcl(pph3)3	C1=CC=C(C=C1)P(C2=CC=CC=C2)C3=CC=CC=C3.C1=CC=C(C=C1)P(C2=CC=CC=C2)C3=CC=CC=C3.C1=CC=C(C=C1)P(C2=CC=CC=C2)C3=CC=CC=C3.[Cl-].[Rh]
+ru(2,2?-bipyridine)3cl2	C1=CC=NC(=C1)C2=CC=CC=N2.C1=CC=NC(=C1)C2=CC=CC=N2.C1=CC=NC(=C1)C2=CC=CC=N2.Cl[Ru]Cl
+ru(acetylacetonate)3	C/C(=C\C(=O)C)/[O-].C/C(=C\C(=O)C)/[O-].C/C(=C\C(=O)C)/[O-].[Ru+3]
+rucl2(tricyclohexylphosphine)2(benzylidene)	Cl/[Ru](Cl)=C\C1=CC=CC=C1.C2(P(C3CCCCC3)C4CCCCC4)CCCCC2.C5(P(C6CCCCC6)C7CCCCC7)CCCCC5
+ruthenium(ii)-carbonyl-tris(triphenylphosphine) dihydride	[H][Ru]([C]=O)[H].C1(P(C2=CC=CC=C2)C3=CC=CC=C3)=CC=CC=C1.C4(P(C5=CC=CC=C5)C6=CC=CC=C6)=CC=CC=C4.C7(P(C8=CC=CC=C8)C9=CC=CC=C9)=CC=CC=C7
+silver(l) oxide	[O-2].[Ag+].[Ag+]
+sncl2路2h2o	Cl[Sn]Cl.O.O
+sodium peroxodisulphate	[Na+].[Na+].O=S(=O)([O-])OOS([O-])(=O)=O
+sodium salt of phosphorous acid	[O-]P([O-])=O.[Na+].[Na+]
+sodiumsalt of phosphorous acid	[O-]P([O-])=O.[Na+].[Na+]
+sulfur trioxide pyridine complex	O=S(=O)=O.n1ccccc1
+t-bu brett phos	COC1=C(P(C(C)(C)C)C(C)(C)C)C(C2=C(C(C)C)C=C(C(C)C)C=C2C(C)C)=C(OC)C=C1
+t-bubrett-phos	COC1=C(P(C(C)(C)C)C(C)(C)C)C(C2=C(C(C)C)C=C(C(C)C)C=C2C(C)C)=C(OC)C=C1
+t-butyldimethylsiyl triflate	CC(C)(C)[Si](C)(C)OS(=O)(=O)C(F)(F)F
+tea	CCN(CC)CC
+tetra-n-butylammonium difluorotriphenylsilicate(iv)	CCCC[N+](CCCC)(CCCC)CCCC.F[Si-](C1=CC=CC=C1)(C2=CC=CC=C2)(C3=CC=CC=C3)F
+tetracarbonylbis(mu-chloro)dirhodium(i)	[C-]#[O+].[C-]#[O+].[C-]#[O+].[C-]#[O+].[Cl+]1[Rh-][Cl+][Rh-]1
+tetrakis-(ethylene)-mu,mu'-dichlorodirhodium(i)	CN(/C(N(C)C)=C(N(C)C)/N(C)C)C.[Rh]Cl.[Rh]Cl
+tetrapropylammonium perruthennate	CCC[N+](CCC)(CCC)CCC.O=[Ru](=O)([O-])=O
+thf-d8 (tetrahydrofuran-d8)	[2H]C1([2H])C([2H])([2H])C([2H])([2H])C([2H])([2H])O1
+tin(ll) chloride	Cl[Sn]Cl
+titanium(iv) isopropylate	CC([O-])C.CC([O-])C.CC([O-])C.CC([O-])C.[Ti+4]
+trans-di(mu-acetato)bis[o-(di-o-tolylphosphino)benzyl]dipalladium(ii)	CC(O[Pd]CC1=C(P(C2=C(C)C=CC=C2)C3=C(C)C=CC=C3)C=CC=C1)=O.CC(O[Pd]CC4=C(P(C5=C(C)C=CC=C5)C6=C(C)C=CC=C6)C=CC=C4)=O
+tri(tert-butyl)phosphonium tetrafluoroboronate	CC([PH+](C(C)(C)C)C(C)(C)C)(C)C.F[B-](F)(F)F
+tri-ruthenium(0)dodecacarbonyl	[C-]#[O+].[C-]#[O+].[C-]#[O+].[C-]#[O+].[C-]#[O+].[C-]#[O+].[C-]#[O+].[C-]#[O+].[C-]#[O+].[C-]#[O+].[C-]#[O+].[C-]#[O+].[Ru].[Ru].[Ru]
+trifluorormethanesulfonic acid	C(F)(F)(F)S(=O)(=O)O
+tris(dibenzylideneacetone)dipalladium(0) chloroform complex	ClC(Cl)Cl.O=C(/C=C/c1ccccc1)/C=C/c2ccccc2.O=C(/C=C/c3ccccc3)/C=C/c4ccccc4.O=C(/C=C/c5ccccc5)/C=C/c6ccccc6.[Pd].[Pd]
+tris(dimethylamino)-sulphonium difluorotrimethylsilicate	F[Si-](F)(C)(C)C.N([S+](N(C)C)N(C)C)(C)C
+tris(dimethylamino)sulfonium difluorotrimethylsilicate(tasf)	F[Si-](F)(C)(C)C.N([S+](N(C)C)N(C)C)(C)C
+various solvent(s)	
+w(co)6	O=C=[W](=C=O)(=C=O)(=C=O)(=C=O)=C=O
