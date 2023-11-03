@@ -903,3 +903,6 @@ scratch/
 
 # Ignore large data
 data/processed/
+data/raw/
+data/report/
+data/tmp

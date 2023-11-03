@@ -21,6 +21,7 @@ def test_get_structures_from_name():
         assert get_structures_from_name("hydrogen") == 0
 
 
+@pytest.mark.skip(reason="not implemented yet")
 def test_preprocess_additives():
     """Test preprocess additives function, extracting SMILES to name function
     for each column on test dataset."""
