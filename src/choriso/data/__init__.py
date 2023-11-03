@@ -1,4 +1,3 @@
-"""Dataset processing and analysis."""
+"""Dataset preprocessing."""
 
-from .analysis import *
 from .processing import *
