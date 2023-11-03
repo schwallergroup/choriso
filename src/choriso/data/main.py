@@ -3,8 +3,8 @@
 import os
 
 import click
-import wandb
 
+import wandb
 from choriso.data import *
 
 
@@ -36,7 +36,7 @@ def df_cleaning_step(data_dir, raw_file_name, out_dir, name, logger):
         logger (Logger): Logger object.
 
     """
-    
+
     if name == "cjhif":
         # Get SMILES from text using leadmine
         df = preproc.preprocess_additives(data_dir, raw_file_name, "cjhif", logger)
@@ -219,9 +219,7 @@ def df_splitting_step(data_dir, out_dir, file_name, mode, low_mw, high_mw, augme
 @click.option("-o", "--out-dir", type=click.Path(), default="data/processed/")
 @click.option("--download_raw", is_flag=True)
 @click.option("--download_processed", is_flag=True)
-@click.option(
-    "--run", "-r", type=click.Choice(["clean", "atom_map", "split"]), multiple=True
-)
+@click.option("--run", "-r", type=click.Choice(["clean", "atom_map", "split"]), multiple=True)
 @click.option("--wandb_log", is_flag=True, help="Log results using Weights and Biases.")
 @click.option("--uspto", is_flag=True, help="Run preprocessing also on the USPTO full dataset.")
 @click.option("--batch", default=200, help="Batch size for rxnmapper")
@@ -244,7 +242,6 @@ def df_splitting_step(data_dir, out_dir, file_name, mode, low_mw, high_mw, augme
 )
 @click.option("--low_mw", default=150, help="Lower MW threshold for dataset splitting by MW")
 @click.option("--high_mw", default=700, help="Higher MW threshold for dataset splitting by MW")
-
 def main(
     data_dir,
     report_dir,

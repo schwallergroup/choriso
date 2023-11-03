@@ -91,7 +91,7 @@ def flag_regio_problem(rxn):
     Out:
         bool, True if the reaction is regioselective, False otherwise
     """
-    
+
     def _sanitize_filter_prods(prods):
         good = []
         for prod in prods:
@@ -168,18 +168,16 @@ def flag_stereo_problem(rxn):
     template = template_smarts_from_mapped_smiles(map_rxn)
 
     if template:
-        
         try:
             temp_prods = template.split(">>")[1].split(".")
             # check if any of the strings in prods contain '@'
             if any("@" in prod for prod in temp_prods):
                 return True
-            
+
             else:
                 return False
         except:
             return False
-
 
 
 class Evaluator:
