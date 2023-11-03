@@ -20,13 +20,14 @@ from rxn.chemutils.reaction_smiles import (
 )
 from tqdm.auto import tqdm
 from pandarallel import pandarallel
+from rdkit.Chem.rdChemReactions import ReactionFromSmarts
 
+from choriso.data.processing.custom_logging import print
 from choriso.data.processing import rxn_utils
-from choriso.data.processing.logging import print
 
-pandarallel.initialize(progress_bar=True)
+pandarallel.initialize(progress_bar=True, nb_workers=22)
 
-# Get correction dictionary (combination)
+# Get correction dictionary (combination of the one obtained with Pyopsin + PubChem and manual correction)
 try:
     #load general dictionary
     df_general_dict = pd.read_csv("data/helper/cjhif_translation_table.tsv", sep="\t",
@@ -40,6 +41,11 @@ try:
 
     #merge dictionaries
     full_dict = {**general_dict, **correct_dict}
+    
+    #replace nan values with "empty_translation"
+    for key, value in full_dict.items():
+        if type(value) == float:
+            full_dict[key] = "empty_translation"
 
 except:
     full_dict = {}
@@ -108,7 +114,7 @@ def parse_entities(entity):
     else:
         try:
             smiles = full_dict[entity]
-
+            
             if smiles is not None:
                 return smiles
 
@@ -118,9 +124,10 @@ def parse_entities(entity):
         except KeyError:
             return "empty_translation"
         
-def get_structures_from_name(names, format_bond=True):
+
+def get_structures_from_name(names, format_bond=False):
     """Convert text with chemical structures to their corresponding SMILES
-    using LeadMine.
+    using Pyopsin and Pubchem dictionary.
 
     Args:
         names: str or set, text containing chemical structures separated by the '|' character
@@ -131,7 +138,7 @@ def get_structures_from_name(names, format_bond=True):
         structures: set, chemical entities SMILES from text
     
     """
-
+    
     # split names by '|'
     names_list = names.split("|")
 
@@ -139,6 +146,7 @@ def get_structures_from_name(names, format_bond=True):
     structures = [parse_entities(name) for name in names_list]
 
     if format_bond:
+
         structures = [structure.replace(".", "~") for structure in structures]
 
     structures = ".".join(structures)
@@ -172,6 +180,17 @@ def preprocess_additives(data_dir, file_name, name="cjhif", logger=False):
         - Drop AMM and FG columns
         - Rename columns
         - Map additives' names to structures (SMILES) in new columns.
+        - Drop rows where translation was faulty
+        - Drop rows where reactants, catalyst and solvent columns are empty
+    
+    Args:
+        data_dir: str, path to raw data
+        file_name: str, name of the file containing raw data
+        name: str, name of the dataset
+        logger: bool, if True, log information about the preprocessing
+    
+    Returns:
+        cjhif_no_empties: pd.DataFrame, preprocessed dataset
     """
 
     # Create df with raw data
@@ -191,6 +210,8 @@ def preprocess_additives(data_dir, file_name, name="cjhif", logger=False):
         .rename(columns={0: "rxn_smiles", 3: "reagent", 4: "solvent", 5: "catalyst", 6: "yield"})
     )
 
+    ##DELETE THIS WHEN PUSHING
+    cjhif = cjhif.sample(10000, random_state=33)
     # Map reagent text to SMILES
     print("Getting reagent SMILES")
     cjhif["reagent_SMILES"] = cjhif["reagent"].parallel_apply(get_structures_from_name)
@@ -219,15 +240,19 @@ def preprocess_additives(data_dir, file_name, name="cjhif", logger=False):
 
     cjhif = cjhif[filt]
 
+    #drop rows where reactants, catalyst and solvent columns are empty
+    cjhif_no_empties = cjhif[(cjhif['reagent'] != "empty") | (cjhif['catalyst'] != "empty") | (cjhif['solvent'] != "empty")]
+
     if logger:
         logger.log(
             {
                 f"faulty rows text2smiles: {name}": (~filt).mean(),
                 f"rows after additives preprocessing: {name}": len(cjhif),
+                f"rows after total empties drop: {name}": len(cjhif_no_empties),
             }
         )
 
-    return cjhif
+    return cjhif_no_empties
 
 
 def get_full_reaction_smiles(df, name="cjhif", logger=False):
@@ -236,11 +261,61 @@ def get_full_reaction_smiles(df, name="cjhif", logger=False):
 
     print("Generating full reaction smiles (including additives)")
 
-    df["full_reaction_smiles"] = df.progress_apply(rxn_utils.join_additives, axis=1)
+    df["full_reaction_smiles"] = df.parallel_apply(rxn_utils.join_additives, axis=1)
 
     if logger:
         logger.log({f"rows after join additives: {name}": len(df)})
     return df
+
+
+
+def create_atom_dict(mols):
+    '''Create a dictionary with the number of atoms of each type in a molecule
+    
+    Args:
+        mols: list of rdkit.Chem.rdchem.Mol objects
+        
+    Returns:
+            atom_dict: dict, dictionary with the number of atoms of each type in the molecule
+    
+    '''
+    atom_dict = {}
+
+    for mol in mols:
+        for atom in mol.GetAtoms():
+            atom_symbol = atom.GetSymbol()
+            atom_dict[atom_symbol] = atom_dict.get(atom_symbol, 0) + 1
+
+    return atom_dict
+
+
+def alchemic_filter(rxn_smiles):
+    """Flag reaction SMILES if products contain atoms that are not in the reactants
+    
+    Args:
+        rxn_smiles: str, reaction SMILES
+
+    Returns:
+        flag: bool, True if reaction is flagged, False otherwise
+    """
+    
+    # Parse the reaction SMILES into a ChemicalReaction object
+    reaction = ReactionFromSmarts(rxn_smiles)
+        
+    # Get reactants and products
+    reactants = reaction.GetReactants()
+    products = reaction.GetProducts()
+    
+    # Create atom count dictionaries for reactants and products
+    reactant_atom_dict = create_atom_dict(reactants)
+    product_atom_dict = create_atom_dict(products)
+    
+    # Check for discrepancies
+    for atom, count in product_atom_dict.items():
+        if atom not in reactant_atom_dict or count > reactant_atom_dict[atom]:
+            return True  # Found an atom in products that's not in reactants or its count is higher
+    
+    return False  # No discrepancies found
 
 
 def canonicalize_filter_reaction(df, column, name="cjhif", by_yield=False, logger=False):
@@ -260,15 +335,15 @@ def canonicalize_filter_reaction(df, column, name="cjhif", by_yield=False, logge
     print("Generating canonical reaction smiles (including additives)")
 
     # Canonicalize reaction SMILES, create new column for that
-    df["canonic_rxn"] = df[column].progress_apply(lambda x: rxn_utils.canonical_rxn(x))
+    df["canonic_rxn"] = df[column].parallel_apply(lambda x: rxn_utils.canonical_rxn(x))
 
     # Drop invalid SMILES
-    df = df[df["canonic_rxn"] != "Invalid SMILES"].reset_index(drop=True)
+    df = df[df["canonic_rxn"] != "Invalid SMILES"]
 
     if by_yield:
         # take repeated reaction with highest yield
         high_duplicates = df.iloc[
-            df[df.duplicated(subset=["canonic_rxn"], keep=False)]
+            df[df.duplicated(subset=["canonic_rxn"], keep=False)].reset_index(drop=False)
             .groupby("canonic_rxn")["yield"]
             .idxmax()
             .values
@@ -276,21 +351,30 @@ def canonicalize_filter_reaction(df, column, name="cjhif", by_yield=False, logge
 
         # create clean df (no duplicated SMILES)
         filtered_df = pd.concat(
-            [df.drop_duplicates("canonic_rxn", keep=False), high_duplicates], ignore_index=True
+            [df.drop_duplicates("canonic_rxn", keep=False), high_duplicates]
         )
 
     else:
         filtered_df = df.drop_duplicates("canonic_rxn")
 
+    #last, apply alchemic filter to delete reactions with products with atoms that are not in the reactants
+    print("Applying alchemic filter")
+    filtered_df_alchemic = filtered_df[~filtered_df["canonic_rxn"].parallel_apply(alchemic_filter)]
+
+    #drop full_reaction_smiles column
+    filtered_df_alchemic = filtered_df_alchemic.drop(columns=["full_reaction_smiles"])
+
     if logger:
         logger.log(
             {
                 f"rows after canonicalization: {name}": len(df),
-                f"rows after filter by yield: {name}": len(filtered_df),
+                f"rows after filter duplicates by yield: {name}": len(filtered_df),
+                f"rows after alchemic filter: {name}": len(filtered_df_alchemic),
+
             }
         )
 
-    return filtered_df
+    return filtered_df_alchemic
 
 
 def clean_USPTO(df, logger=False):
@@ -350,3 +434,12 @@ def clean_USPTO(df, logger=False):
             }
         )
     return filtered_df
+
+
+if __name__ == '__main__':
+    
+    print(full_dict['tetrabutyl ammonium fluoride'])
+    cjhif = preprocess_additives("data/raw/", 'data_from_CJHIF_utf8')
+    cjhif.to_csv("data/cjhif_filtered.tsv", sep="\t")
+    canon = canonicalize_filter_reaction(cjhif, "rxn_smiles", by_yield=True)
+    canon.to_csv("data/cjhif_canonical.tsv", sep="\t")

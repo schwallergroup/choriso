@@ -435,6 +435,7 @@ def df_splitting_step(data_dir, out_dir, file_name, mode, low_mw, high_mw, augme
 )
 @click.option("--low_mw", default=150, help="Lower MW threshold for dataset splitting by MW")
 @click.option("--high_mw", default=700, help="Higher MW threshold for dataset splitting by MW")
+
 def main(
     data_dir,
     report_dir,
@@ -473,7 +474,7 @@ def main(
         download_processed_data(out_dir)
 
     # Start cleaning/preprocessing
-    if "clean" in run and leadmine_flag:
+    if "clean" in run:
         if not os.path.exists(out_dir + "cjhif_processed_clean.tsv"):
             df_cleaning_step(data_dir, "data_from_CJHIF_utf8", out_dir, "cjhif", logger)
         if uspto:
