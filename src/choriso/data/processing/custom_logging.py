@@ -55,7 +55,7 @@ class Logger:
 
         if type(data) == dict:
             if self.wandb:
-                wandb.log(data)
+                wandb.log(data)  # type: ignore
             else:
                 for k in data.keys():
                     self.log_file.write(f"{k}: {data[k]}\n")

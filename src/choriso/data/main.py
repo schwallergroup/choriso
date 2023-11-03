@@ -3,8 +3,8 @@
 import os
 
 import click
-import wandb
 
+import wandb
 from choriso.data import *
 
 
@@ -27,7 +27,16 @@ def df_cleaning_step(data_dir, raw_file_name, out_dir, name, logger):
     Process additives: text2smiles w leadmine
     Combine reagents
     Reaction smiles canonicalization
+
+    Args:
+        data_dir (str): Directory where the raw data is stored.
+        raw_file_name (str): Name of the raw file.
+        out_dir (str): Directory where the processed data will be stored.
+        name (str): Name of the dataset.
+        logger (Logger): Logger object.
+
     """
+
     if name == "cjhif":
         # Get SMILES from text using leadmine
         df = preproc.preprocess_additives(data_dir, raw_file_name, "cjhif", logger)
@@ -168,197 +177,6 @@ def df_atom_map_step(
     df.to_csv(out_dir + f"{name}_atom_mapped_dataset.tsv", sep="\t", index=False)
 
 
-def df_analysis_step(data_dir, report_dir, out_dir, logger):
-    """Analysis step for both datasets. Create plots for different properties computed for the datasets.
-
-    Args:
-        data_dir (str): Directory where the raw data is stored.
-        report_dir (str): Directory where the report will be stored.
-        out_dir (str): Directory where the processed data is stored.
-        logger (Logger): Logger object.
-    """
-
-    # Helper functions
-    def _get_properties_dataset(out_dir, df, ds_name="uspto"):
-        """Helper function to compute properties for both datasets"""
-
-        # Compute properties for a dataset
-        print(f"Computing {ds_name} properties")
-        if ds_name == "uspto":
-            rxn_col = "full_reaction_smiles"
-        else:
-            rxn_col = "rxn_smiles"
-        df_prop = analysis.compute_properties(df, rxn_col)
-        df_prop.to_csv(out_dir + f"{ds_name}_properties.csv", sep="\t", index=False)
-        return df_prop
-
-    def _load_datasets():
-        """Load datasets. Attempt to load atom mapped if possible."""
-
-        aam_cjhif, aam_uspto = False, False
-        # Read CJHIF
-        if os.path.isfile(out_dir + "cjhif_atom_mapped_dataset.tsv"):
-            cjhif = pd.read_csv(out_dir + "cjhif_atom_mapped_dataset.tsv", sep="\t")
-            aam_cjhif = True
-        else:
-            cjhif = pd.read_csv(
-                out_dir + "cjhif_processed_clean.tsv",
-                sep="\t",
-            )
-
-        # Read full USPTO
-        if os.path.isfile(out_dir + "uspto_atom_mapped_dataset.tsv"):
-            uspto = pd.read_csv(out_dir + "uspto_atom_mapped_dataset.tsv", sep="\t")
-            aam_uspto = True
-        else:
-            uspto = pd.read_csv(
-                out_dir + "uspto_processed_clean.tsv",
-                sep="\t",
-            )
-        return cjhif, uspto, len(cjhif), len(uspto), aam_cjhif, aam_uspto
-
-    # List of properties to analyze
-
-    # Categorical props
-    properties_cat = [
-        "NumHAcceptors",
-        "NumHDonors",
-        "RingCount",
-        "stereocenters",
-        "NumAromaticHeterocycles",
-        "has_Pd",
-        "has_Al",
-        "has_Mg",
-        "has_Li",
-    ]
-
-    # Numerical props
-    properties_num = [
-        "TPSA",
-        "MolLogP",
-        "MolWt",
-    ]
-    ###############################
-    ###############################
-
-    #### Starting analysis
-    print("Running analysis of CJHIF, USPTO and choriso")
-
-    # Check if properties files exist:
-    uspto_check = os.path.isfile(out_dir + "uspto_properties.csv")
-    choriso_check = os.path.isfile(out_dir + "choriso_properties.csv")
-
-    if uspto_check and choriso_check:
-        uspto_prop = pd.read_csv(out_dir + "uspto_properties.csv", sep="\t")
-        cjhif_prop = pd.read_csv(out_dir + "cjhif_properties.csv", sep="\t")
-        choriso_prop = pd.read_csv(out_dir + "choriso_properties.csv", sep="\t")
-
-        cjhif, uspto, len_cjhif, len_uspto, aam_cjhif, aam_uspto = _load_datasets()
-        choriso = cjhif.query("aam_matches")
-
-    # if not, load them
-    else:
-        # Load datasets
-        cjhif, uspto, len_cjhif, len_uspto, aam_cjhif, aam_uspto = _load_datasets()
-        # Get cleaned version of cjhif
-        choriso = cjhif.query("aam_matches")
-
-        uspto_prop = _get_properties_dataset(out_dir, uspto, "uspto")
-        cjhif_prop = _get_properties_dataset(out_dir, cjhif, "cjhif")
-        choriso_prop = _get_properties_dataset(out_dir, choriso, "choriso")
-
-    log_dataset_info(uspto_prop, len_uspto, "USPTO", logger)
-    log_dataset_info(cjhif_prop, len_cjhif, "CJHIF", logger)
-    log_dataset_info(choriso_prop, len_cjhif, "choriso", logger)
-
-    ### Plot distrib. of number of reactions per product
-    plot.n_reactions_per_product(
-        [cjhif_prop, uspto_prop, choriso_prop], ["cjhif", "uspto", "choriso"], logger
-    )
-
-    ### Plot k most common products
-    for df, name in [(uspto_prop, "uspto"), (cjhif_prop, "cjhif"), (choriso_prop, "choriso")]:
-        plot.top_k_products(df, 20, name, (16, 16), logger)
-
-    ### Plot histograms of properties
-    plot.properties_histogram(
-        [cjhif_prop, uspto_prop, choriso_prop],
-        properties_cat,
-        ["cjhif", "uspto", "choriso"],
-        logger,
-        cat=True,
-    )
-
-    plot.properties_histogram(
-        [cjhif_prop, uspto_prop, choriso_prop],
-        properties_num,
-        ["cjhif", "uspto", "choriso"],
-        logger,
-        cat=False,
-    )
-
-    ### Analyses requiring atom mapping
-    if aam_cjhif & aam_uspto:
-        # Create a dictionary mapping super-classes numbers to rxn category
-        rxn_class_map = {
-            "0": "Unassigned",
-            "1": "Heteroatom alkylation/arylation",
-            "2": "Acylation",
-            "3": "C-C bond formation",
-            "4": "Heterocycle formation",
-            "5": "Protection",
-            "6": "Deprotection",
-            "7": "Reduction",
-            "8": "Oxidation",
-            "9": "FGI",
-            "10": "FGA",
-            "11": "Resolution",
-            "12": "Miscelaneous",
-            "nan": "nan",
-        }
-
-        ### Plot distributions of reaction types
-        cjhif_rxn_lvls = analysis.distrib_reaction_types(cjhif_prop["rxn_class"], "cjhif")
-        uspto_rxn_lvls = analysis.distrib_reaction_types(uspto_prop["rxn_class"], "uspto")
-        choriso_rxn_lvls = analysis.distrib_reaction_types(choriso["rxn_class"], "choriso")
-
-        for i, (cjhif_lvl_i, uspto_lvl_i, choriso_lvl_i) in enumerate(
-            zip(cjhif_rxn_lvls, uspto_rxn_lvls, choriso_rxn_lvls)
-        ):
-            # Plot superclass rxn names
-            if i == 0:
-                plot.single_property_cat(
-                    [cjhif_lvl_i, uspto_lvl_i, choriso_lvl_i],
-                    f"Rxn class (level {i+1}) frequencies.",
-                    ["cjhif", "uspto"],
-                    norm=True,
-                    logger=logger,
-                    index_to_category=rxn_class_map,
-                )
-
-            else:
-                plot.single_property_cat(
-                    [cjhif_lvl_i, uspto_lvl_i, choriso_lvl_i],
-                    f"Rxn class (level {i+1}) frequencies.",
-                    ["cjhif", "uspto"],
-                    norm=True,
-                    logger=logger,
-                )
-
-        ### Distrib of number of reacting atoms
-        n_react_cjhif = analysis.n_reacting_atoms(cjhif, "cjhif")
-        n_react_uspto = analysis.n_reacting_atoms(uspto, "uspto")
-        n_react_choriso = analysis.n_reacting_atoms(choriso, "choriso")
-
-        plot.single_property_cat(
-            [n_react_cjhif, n_react_uspto, n_react_choriso],
-            "Number of atoms in reaction center",
-            ["cjhif", "uspto", "choriso"],
-            norm=True,
-            logger=logger,
-        )
-
-
 def df_splitting_step(data_dir, out_dir, file_name, mode, low_mw, high_mw, augment):
     """Split the data into train, val, test sets.
 
@@ -401,9 +219,7 @@ def df_splitting_step(data_dir, out_dir, file_name, mode, low_mw, high_mw, augme
 @click.option("-o", "--out-dir", type=click.Path(), default="data/processed/")
 @click.option("--download_raw", is_flag=True)
 @click.option("--download_processed", is_flag=True)
-@click.option(
-    "--run", "-r", type=click.Choice(["clean", "atom_map", "analysis", "split"]), multiple=True
-)
+@click.option("--run", "-r", type=click.Choice(["clean", "atom_map", "split"]), multiple=True)
 @click.option("--wandb_log", is_flag=True, help="Log results using Weights and Biases.")
 @click.option("--uspto", is_flag=True, help="Run preprocessing also on the USPTO full dataset.")
 @click.option("--batch", default=200, help="Batch size for rxnmapper")
@@ -464,7 +280,7 @@ def main(
         download_processed_data(out_dir)
 
     # Start cleaning/preprocessing
-    if "clean" in run and leadmine_flag:
+    if "clean" in run:
         if not os.path.exists(out_dir + "cjhif_processed_clean.tsv"):
             df_cleaning_step(data_dir, "data_from_CJHIF_utf8", out_dir, "cjhif", logger)
         if uspto:
@@ -475,9 +291,6 @@ def main(
 
         if uspto:
             df_atom_map_step(out_dir, "uspto", logger, batch, testing)
-
-    if "analysis" in run:
-        df_analysis_step(data_dir, report_dir, out_dir, logger)
 
     if "split" in run:
         df_splitting_step(out_dir, out_dir, split_file_name, split_mode, low_mw, high_mw, augment)

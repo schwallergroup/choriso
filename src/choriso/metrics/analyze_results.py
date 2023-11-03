@@ -253,5 +253,6 @@ def main(results_folders, path, chemistry, mapping):
         print("Computing results...")
         compute_results(path, chemistry, mapping)
 
+
 if __name__ == "__main__":
     main()
