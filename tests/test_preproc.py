@@ -5,7 +5,7 @@ import pytest
 from choriso.data.processing.preproc import *
 
 
-#skip this test
+# skip this test
 @pytest.mark.skip(reason="not implemented yet")
 def test_get_structures_from_name():
     """Test get_structures_from_name, text to SMILES function.
