@@ -217,8 +217,6 @@ def preprocess_additives(data_dir, file_name, name="cjhif", logger=False):
         .rename(columns={0: "rxn_smiles", 3: "reagent", 4: "solvent", 5: "catalyst", 6: "yield"})
     )
 
-    ##DELETE THIS WHEN PUSHING
-    cjhif = cjhif.sample(10000, random_state=33)
     # Map reagent text to SMILES
     print("Getting reagent SMILES")
     cjhif["reagent_SMILES"] = cjhif["reagent"].parallel_apply(get_structures_from_name)
