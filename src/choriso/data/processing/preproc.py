@@ -31,14 +31,18 @@ pandarallel.initialize(progress_bar=True, nb_workers=22)
 try:
     # load general dictionary
     df_general_dict = pd.read_csv(
-        "data/helper/cjhif_translation_table.tsv", sep="\t", usecols=["Compound", "pubchem"]
+        "data/helper/cjhif_translation_table.tsv",
+        sep="\t",
+        usecols=["Compound", "pubchem_isosmiles"],
     ).fillna("empty_translation")
-    general_dict = {row["Compound"]: row["pubchem"] for _, row in df_general_dict.iterrows()}
+    general_dict = {
+        row["Compound"]: row["pubchem_isosmiles"] for _, row in df_general_dict.iterrows()
+    }
 
     # load manual correction dictionary
-    df = pd.read_csv("data/helper/corrected_leadmine.csv", sep="\t", header=None, index_col=0)
+    df = pd.read_csv("data/helper/corrected_pubchem.tsv", sep="\t").fillna("empty_translation")
 
-    correct_dict = {row[0]: row[1].values[0] for row in df.iterrows()}
+    correct_dict = {row["Name"]: row["SMILES"] for _, row in df.iterrows()}
 
     # merge dictionaries
     full_dict = {**general_dict, **correct_dict}
@@ -47,6 +51,8 @@ try:
     for key, value in full_dict.items():
         if type(value) == float:
             full_dict[key] = "empty_translation"
+
+    print("Correction dictionary loaded")
 
 except:
     full_dict = {}
