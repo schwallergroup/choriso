@@ -1,33 +1,18 @@
 <p align="center">
-    <a href="https://github.com/schwallergroup/choriso-fr/actions/workflows/tests.yml">
-        <img alt="Tests" src="https://github.com/schwallergroup/choriso-fr/workflows/Tests/badge.svg" />
+    <a href="https://github.com/schwallergroup/choriso/actions/workflows/tests.yml">
+        <img alt="Tests" src="https://github.com/schwallergroup/choriso/workflows/Tests/badge.svg" />
     </a>
-    <a href="https://doi.org/10.48550/arXiv.2304.05376">
+    <a href="https://openreview.net/forum?id=yLydB04RxR">
         <img alt="DOI" src="https://zenodo.org/badge/DOI/10.48550/arXiv.2304.05376.svg" />
-    </a>
-    <a href="https://pypi.org/project/choriso">
-        <img alt="PyPI" src="https://img.shields.io/pypi/v/choriso" />
-    </a>
-    <a href="https://pypi.org/project/choriso">
-        <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/choriso" />
-    </a>
-    <a href="https://github.com/schwallergroup/choriso/blob/main/LICENSE">
-        <img alt="PyPI - License" src="https://img.shields.io/pypi/l/choriso" />
     </a>
     <a href='https://choriso.readthedocs.io/en/latest/?badge=latest'>
         <img src='https://readthedocs.org/projects/choriso/badge/?version=latest' alt='Documentation Status' />
     </a>
-    <a href="https://codecov.io/gh/schwallergroup/choriso/branch/main">
-        <img src="https://codecov.io/gh/schwallergroup/choriso/branch/main/graph/badge.svg" alt="Codecov status" />
-    </a>  
     <a href="https://github.com/cthoyt/cookiecutter-python-package">
         <img alt="Cookiecutter template from @cthoyt" src="https://img.shields.io/badge/Cookiecutter-snekpack-blue" /> 
     </a>
     <a href='https://github.com/psf/black'>
         <img src='https://img.shields.io/badge/code%20style-black-000000.svg' alt='Code style: black' />
-    </a>
-    <a href="https://github.com/schwallergroup/choriso/blob/main/.github/CODE_OF_CONDUCT.md">
-        <img src="https://img.shields.io/badge/Contributor%20Covenant-2.1-4baaaa.svg" alt="Contributor Covenant"/>
     </a>
 </p>
 
@@ -92,8 +77,10 @@ Results will be stored in the same directory as `benchmarking-results`.
 
 ---
 
+<details>
+  <summary>Advanced usage</summary>
 
-##  :brain: Advanced usage
+## 🧠 Advanced usage
 Using this repo lets you reproduce the results in the paper using different flags and modes.
 
 ### 📥 Download preprocessed dataset:
@@ -178,7 +165,7 @@ choriso --run analysis \
 will execute the analysis step and upload all results (plots, metrics) to W&B.
 
 ##  📈  Metrics
-You can also use the implemented metrics from the paper to evaluate your own results. We have adapted the evaluation pipeline to the files from the benchmarking repo (). As an example:
+You can also use the implemented metrics from the paper to evaluate your own results. We have adapted the evaluation pipeline to the files from the [benchmarking repo](https://github.com/schwallergroup/choriso-models). As an example:
 ```
 analyse --results_folders='OpenNMT_Transformer'
 
@@ -190,6 +177,28 @@ The program computes the chemistry metrics by default. In order to compute this,
 ```
 analyse --results_folders='OpenNMT_Transformer' --mapping=True
 ```
+
+### Flagging individual reactions
+You can use the metrics functions to check if a specific reaction is regio or stereoselective. As an example:
+
+```
+from choriso.metrics.metrics.selectivity import flag_regio_problem, flag_stereo_problem
+
+regio_rxn = 'BrCc1ccccc1.C1CCOC1.C=CC(O)CO.[H-].[Na+]>>C=CC(O)COCc1ccccc1'
+stereo_rxn = 'C=C(NC(C)=O)c1ccc(OC)cc1.ClCCl.[H][H].[Rh+]>>COc1ccc([C@@H](C)NC(C)=O)cc1'
+
+print(flag_regio_problem(regio_rxn))
+print(flag_stereo_problem(stereo_rxn))
+
+```
+The output will display the flagging labels 
+
+```
+True
+True
+```
+</details>
+
 
 ## 👐 Contributing
 

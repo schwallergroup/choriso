@@ -55,6 +55,8 @@ dependencies:
      - wandb
      - pandarallel
      - reaction-utils
+     - py2opsin
+     - pubchempy
 
   # DEVELOPMENT ONLY PACKAGES (could also be kept in a separate environment file)
   - pytest
