@@ -5,34 +5,22 @@ import pytest
 from choriso.data.processing.preproc import *
 
 
-# skip this test
-@pytest.mark.skip(reason="not implemented yet")
 def test_get_structures_from_name():
-    """Test get_structures_from_name, text to SMILES function.
+    """Test get_structures_from_name, text to SMILES function."""
 
-    Check first if Leadmine is available
-    """
-
-    if leadmine_flag:
-        assert get_structures_from_name("ethanol") == "C(C)O"
-        assert get_structures_from_name("hydrogen") == "[H][H]"
-        assert get_structures_from_name("10percent pd/c") == "[Pd]"
-    else:
-        assert get_structures_from_name("hydrogen") == 0
+    assert get_structures_from_name("ethanol") == "CCO"
+    assert get_structures_from_name("hydrogen") == "[H][H]"
+    assert get_structures_from_name("10percent pd/c") == "[Pd]"
 
 
-@pytest.mark.skip(reason="not implemented yet")
 def test_preprocess_additives():
     """Test preprocess additives function, extracting SMILES to name function
     for each column on test dataset."""
 
-    if leadmine_flag:
-        true = pd.read_csv("data/test/processed_leadmine.csv", sep="\t")
-        processed = preprocess_additives("data/test/", "data_from_CJHIF_utf8")
+    true = pd.read_csv("data/test/processed_translation.tsv", sep="\t")
+    processed = preprocess_additives("data/test/", "data_from_CJHIF_utf8")
 
-        assert processed.iloc[0].equals(true.iloc[0])
-    else:
-        assert get_structures_from_name("hydrogen") == 0
+    assert processed.iloc[0].equals(true.iloc[0])
 
 
 def test_get_full_reaction_smiles():
