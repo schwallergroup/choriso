@@ -3,8 +3,8 @@
 import os
 
 import click
-
 import wandb
+
 from choriso.data import *
 
 
