@@ -106,17 +106,17 @@ def df_atom_map_step(
 
     ### Remove reactions that can't be atom mapped with either tool
     print("Cleaning dataset previous to atom mapping.")
-    df = atom_map.clean_preproc_df(df, "full_reaction_smiles", name, logger)
+    df = atom_map.clean_preproc_df(df, "canonic_rxn", name, logger)
 
     # Calculate first RXNMapper
     print(f"Calculating RXNMapper atom mapping for {name}")
-    df = atom_map.atom_map_rxnmapper(df, "full_reaction_smiles", name, logger)
+    df = atom_map.atom_map_rxnmapper(df, "canonic_rxn", name, logger)
 
     # Calculate namerxn aam
     print(f"Calculating NameRXN atom mapping for {name}")
     mapped_smi = atom_map.atom_map_hazelnut(
         df,
-        "full_reaction_smiles",
+        "canonic_rxn",
         timeout=timeout,
         batch_sz=batch_sz,
         tmp_dir=tmp_dir,
@@ -136,7 +136,7 @@ def df_atom_map_step(
     # Save this subset for posterior analysis
     (
         df.query("can_canon==0")
-        .loc[:, ["nm_aam", "full_reaction_smiles"]]
+        .loc[:, ["nm_aam", "canonic_rxn"]]
         .to_csv(out_dir + "errors_nmrxn.tsv", index=False, sep="\t")
     )
 
@@ -163,7 +163,7 @@ def df_atom_map_step(
         )
 
         # Drop redundant/no longer useful columns
-        df.drop(columns=["reagent", "catalyst", "full_reaction_smiles"], inplace=True)
+        # df.drop(columns=["reagent", "catalyst", "full_reaction_smiles"], inplace=True)
 
         # Save clean version of dataset (choriso)
         choriso = df.query("aam_matches").drop(columns=["nm_aam", "aam_matches"])
@@ -287,11 +287,15 @@ def main(
             df_cleaning_step(data_dir, "merged_USPTO.rsmi", out_dir, "uspto", logger)
 
     if "atom_map" in run:
-        df_atom_map_step(out_dir, "cjhif", logger, batch, testing)
+        if not os.path.exists(out_dir + "cjhif_atom_mapped_dataset.tsv"):
+            df_atom_map_step(out_dir, "cjhif", logger, batch, testing)
+            
 
         if uspto:
             df_atom_map_step(out_dir, "uspto", logger, batch, testing)
 
+        print("Finished atom mapping step.")
+        
     if "split" in run:
         df_splitting_step(out_dir, out_dir, split_file_name, split_mode, low_mw, high_mw, augment)
 

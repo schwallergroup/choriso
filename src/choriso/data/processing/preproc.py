@@ -84,6 +84,28 @@ def download_raw_data(data_dir="data/raw/"):
     return 0
 
 
+def download_full_USPTO(data_dir="data/raw/"):
+    """Download full USPTO.
+    This file contains the merged reactions from USPTO patents
+    and applications.
+    """
+
+    url = "https://drive.switch.ch/index.php/s/TkZc0GoLKvFuBq2/download"
+    target_path = data_dir + "full_USPTO.tar.gz"
+
+    if not os.path.isfile(target_path):
+        print("Downloading full USPTO...")
+
+        response = requests.get(url, stream=True)
+        if response.status_code == 200:
+            with open(target_path, "wb") as f:
+                f.write(response.raw.read())
+
+        # Decompress tar file
+        with tarfile.open(data_dir + "full_USPTO.tar.gz") as f:
+            f.extractall(data_dir)
+
+
 def download_processed_data(data_dir="data/processed/"):
     """Download processed data (after cleaning and atom mapping)."""
 
@@ -421,10 +443,10 @@ def clean_USPTO(df, logger=False):
         return reactants[max_idx]
 
     print("Canonicalizing USPTO")
-    df["canonic_rxn"] = df["full_reaction_smiles"].progress_apply(lambda x: _canonical_rxn(x))
+    df["canonic_rxn"] = df["full_reaction_smiles"].parallel_apply(lambda x: _canonical_rxn(x))
     df = df[df["canonic_rxn"] != "Invalid SMILES"].reset_index(drop=True)
     print("Estimating main reactants in USPTO")
-    df["main_reactant"] = df["full_reaction_smiles"].progress_apply(lambda x: _main_reactant(x))
+    df["main_reactant"] = df["full_reaction_smiles"].parallel_apply(lambda x: _main_reactant(x))
 
     filtered_df = df.drop_duplicates("canonic_rxn")
 
@@ -436,11 +458,3 @@ def clean_USPTO(df, logger=False):
             }
         )
     return filtered_df
-
-
-if __name__ == "__main__":
-    print(full_dict["tetrabutyl ammonium fluoride"])
-    cjhif = preprocess_additives("data/raw/", "data_from_CJHIF_utf8")
-    cjhif.to_csv("data/cjhif_filtered.tsv", sep="\t")
-    canon = canonicalize_filter_reaction(cjhif, "rxn_smiles", by_yield=True)
-    canon.to_csv("data/cjhif_canonical.tsv", sep="\t")
