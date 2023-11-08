@@ -17,7 +17,7 @@ recursive-include data *.rsmi
 global-exclude *.py[cod] __pycache__ *.so *.dylib .DS_Store *.gpickle
 
 include README.md LICENSE environment.yml
-include data/test/data_from_CJHIF_utf8
+include data/test/*
 exclude tox.ini .bumpversion.cfg .readthedocs.yml .cruft.json CITATION.cff docker-compose.yml Dockerfile
 
 prune data/raw
