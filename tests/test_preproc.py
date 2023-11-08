@@ -1,6 +1,7 @@
 """Test data preprocessing functions"""
 
 import pytest
+from rdkit import Chem
 
 from choriso.data.processing.preproc import *
 
@@ -8,9 +9,14 @@ from choriso.data.processing.preproc import *
 def test_get_structures_from_name():
     """Test get_structures_from_name, text to SMILES function."""
 
-    assert get_structures_from_name("ethanol") == "CCO"
-    assert get_structures_from_name("hydrogen") == "[H][H]"
-    assert get_structures_from_name("10percent pd/c") == "[Pd]"
+    def canonic(smiles: str) -> str:
+        """Return canonical SMILES"""
+        mol = Chem.MolFromSmiles(smiles)
+        return Chem.MolToSmiles(mol)
+
+    assert canonic(get_structures_from_name("ethanol")) == "CCO"
+    assert canonic(get_structures_from_name("hydrogen")) == "[H][H]"
+    assert canonic(get_structures_from_name("10percent pd/c")) == "[Pd]"
 
 
 def test_preprocess_additives():
