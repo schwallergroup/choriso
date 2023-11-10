@@ -51,7 +51,7 @@ cd choriso
 
 Set up and activate the environment:
 
-```
+```bash
 conda env create -f environment.yml
 conda activate choriso
 pip install rxnmapper --no-deps
@@ -59,7 +59,7 @@ pip install rxnmapper --no-deps
 
 ## 🔥 Quick start
 To download the preprocessed dataset and split it randomly, run the following command:
-```
+```bash
 choriso --download_processed \
 	--run split \
 	--split_mode products
@@ -67,7 +67,7 @@ choriso --download_processed \
 
 After executing `some command from choriso-models`, run the analysis of your model's results using:
 
-```
+```bash
 analyse --results_folders='path/to/results/folder' \
 	 --chemistry=True \
 	 --mapping=True
@@ -85,7 +85,7 @@ Using this repo lets you reproduce the results in the paper using different flag
 
 ### 📥 Download preprocessed dataset:
 
-```
+```bash
 choriso --download_processed \
 	--out-dir data/processed/
 ```
@@ -96,7 +96,7 @@ Get the raw datasets (CJHIF, USPTO) and preprocess:
 
 **NOTE: To run the `clean` step you need to have Leadmine (v3.18.1) and NameRXN (v3.4.0) installed.**
 
-```
+```bash
 choriso --download_raw \
 	--uspto \
     	--data-dir=data/raw/ \
@@ -116,12 +116,12 @@ choriso --run analysis
 ### :heavy_division_sign: Splitting
 In the paper, we describe 3 data splits which can be obtained using the flag `--run split` specifying a `--split_mode`
 - random split
-```
+```bash
 choriso --run split \
 	--split_mode random
 ```
 - split by product
-```
+```bash
 choriso --run split \
 	--split_mode products
 ```
@@ -130,21 +130,21 @@ choriso --run split \
   - test on low MW
 
    For example, to create a split by MW, testing on low MW with a threshold of 150 a.m.u., and another split on high MW with threshold of 700 a.m.u. run
-```
+```bash
 choriso --run split \
 	--split_mode mw \
 	--low_mw=150
 	--high_mw=700
 ```
 
-You can optionally augment the SMILES to double the size of the trainig set for the product split:
-```
+You can optionally augment the SMILES to double the size of the training set for the product split:
+```bash
 choriso --run split \
 	--split_mode products \
 	--augment
 ```
 By default, the splitting will be done on the choriso dataset, which is called `choriso.tsv`. If you want to split a different dataset, you can specify the path to the dataset using the `--split_file_name` option. For example, to split the USPTO dataset by products, run:
-```
+```bash
 choriso --run split \
     --split_mode products \
     --split_file_name=uspto_atom_mapped_dataset.tsv
@@ -158,13 +158,13 @@ By default the execution of any step will store all results locally.
 Optionally, you can log all results from the preprocessing and analysis to W&B using the `wandb_log` flag at any step.
 
 As an example
-```
+```bash
 choriso --run analysis \
 	--wandb_log
 ```
 will execute the analysis step and upload all results (plots, metrics) to W&B.
 
-##  📈  Metrics
+##  📈 Metrics
 You can also use the implemented metrics from the paper to evaluate your own results. We have adapted the evaluation pipeline to the files from the [benchmarking repo](https://github.com/schwallergroup/choriso-models). As an example:
 ```
 analyse --results_folders='OpenNMT_Transformer'
@@ -174,14 +174,14 @@ This will launch the analysis on all the files of the `OpenNMT_Transformer` fold
 
 The program computes the chemistry metrics by default. In order to compute this, your test set needs to include the templates with radius=0 and radius=1 of each reaction. If you want to compute the mapping and templates, you need to specify the `--mapping` flag.
 
-```
+```bash
 analyse --results_folders='OpenNMT_Transformer' --mapping=True
 ```
 
 ### Flagging individual reactions
 You can use the metrics functions to check if a specific reaction is regio or stereoselective. As an example:
 
-```
+```python
 from choriso.metrics.metrics.selectivity import flag_regio_problem, flag_stereo_problem
 
 regio_rxn = 'BrCc1ccccc1.C1CCOC1.C=CC(O)CO.[H-].[Na+]>>C=CC(O)COCc1ccccc1'
@@ -193,7 +193,7 @@ print(flag_stereo_problem(stereo_rxn))
 ```
 The output will display the flagging labels 
 
-```
+```python
 True
 True
 ```
