@@ -35,6 +35,10 @@ try:
         sep="\t",
         usecols=["Compound", "pubchem_isosmiles"],
     ).fillna("empty_translation")
+
+    #if something is empty, replace with empty_translation (so we can filter it later)
+    df_general_dict.replace("empty", "empty_translation", inplace=True)
+
     general_dict = {
         row["Compound"]: row["pubchem_isosmiles"] for _, row in df_general_dict.iterrows()
     }
@@ -366,22 +370,10 @@ def canonicalize_filter_reaction(df, column, name="cjhif", by_yield=False, logge
     # Drop invalid SMILES
     df = df[df["canonic_rxn"] != "Invalid SMILES"]
 
-    if by_yield:
-        # take repeated reaction with highest yield
-        high_duplicates = df.iloc[
-            df[df.duplicated(subset=["canonic_rxn"], keep=False)]
-            .reset_index(drop=False)
-            .groupby("canonic_rxn")["yield"]
-            .idxmax()
-            .values
-        ]
-
-        # create clean df (no duplicated SMILES)
-        filtered_df = pd.concat([df.drop_duplicates("canonic_rxn", keep=False), high_duplicates])
-
-    else:
-        filtered_df = df.drop_duplicates("canonic_rxn")
-
+    # Filter duplicates
+    print("Filtering duplicates")
+    filtered_df = df.drop_duplicates("canonic_rxn")
+   
     # last, apply alchemic filter to delete reactions with products with atoms that are not in the reactants
     print("Applying alchemic filter")
     filtered_df_alchemic = filtered_df[~filtered_df["canonic_rxn"].parallel_apply(alchemic_filter)]
