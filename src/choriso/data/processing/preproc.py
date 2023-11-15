@@ -9,6 +9,7 @@ import numpy as np
 import pandas as pd
 import requests
 from pandarallel import pandarallel
+from rdkit.Chem import AllChem
 from rdkit.Chem.rdChemReactions import ReactionFromSmarts
 from rxn.chemutils.reaction_equation import (
     canonicalize_compounds,
@@ -36,7 +37,7 @@ try:
         usecols=["Compound", "pubchem_isosmiles"],
     ).fillna("empty_translation")
 
-    #if something is empty, replace with empty_translation (so we can filter it later)
+    # if something is empty, replace with empty_translation (so we can filter it later)
     df_general_dict.replace("empty", "empty_translation", inplace=True)
 
     general_dict = {
@@ -251,6 +252,11 @@ def preprocess_additives(data_dir, file_name, name="cjhif", logger=False):
     print("Getting solvent SMILES")
     cjhif["solvent_SMILES"] = cjhif["solvent"].parallel_apply(get_structures_from_name)
 
+    # get only unique solvents
+    cjhif["solvent_SMILES"] = cjhif["solvent_SMILES"].parallel_apply(
+        lambda x: ".".join(set(x.split(".")))
+    )
+
     # Map catalyst text to SMILES
     print("Getting catalyst SMILES")
     cjhif["catalyst_SMILES"] = cjhif["catalyst"].parallel_apply(get_structures_from_name)
@@ -373,7 +379,7 @@ def canonicalize_filter_reaction(df, column, name="cjhif", by_yield=False, logge
     # Filter duplicates
     print("Filtering duplicates")
     filtered_df = df.drop_duplicates("canonic_rxn")
-   
+
     # last, apply alchemic filter to delete reactions with products with atoms that are not in the reactants
     print("Applying alchemic filter")
     filtered_df_alchemic = filtered_df[~filtered_df["canonic_rxn"].parallel_apply(alchemic_filter)]

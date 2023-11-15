@@ -4,6 +4,7 @@ import re
 
 import numpy as np
 from rdkit import Chem
+from rdkit.Chem import AllChem
 from rxn.chemutils.conversion import smiles_to_mol
 from rxn.chemutils.miscellaneous import is_valid_smiles
 from rxn.chemutils.reaction_equation import (
@@ -20,23 +21,36 @@ def canonical_rxn(rxn_smi):
     SMILES is not correct. The function handles fragment bonds (containing '~')
 
     Args:
-        -rxn_smi: str, reaction SMILES to be canonicalized
+        rxn_smi: str, reaction SMILES to be canonicalized
 
     Out:
-       rxn: canonicalized and cleaned reaction SMILES, including fragment bonds
+        new_reaction_smiles: str, canonicalized and cleaned reaction SMILES, including fragment bonds
     """
     try:
         # set reaction type to use fragment bonds (~)
         rxn_type = ReactionFormat.STANDARD_WITH_TILDE
 
+        # first remove isotopes
+        rxn_mol = AllChem.ReactionFromSmarts(rxn_smi)
+
+        # Iterate over reactants, agents, and products
+        for mol_list in [rxn_mol.GetReactants(), rxn_mol.GetAgents(), rxn_mol.GetProducts()]:
+            for mol in mol_list:
+                for atom in mol.GetAtoms():
+                    # Set isotope number to 0
+                    atom.SetIsotope(0)
+
+        rxn = AllChem.ReactionToSmiles(rxn_mol)
+
         # parse full reaction SMILES
-        ReactEq = parse_reaction_smiles(rxn_smi, rxn_type)
+        ReactEq = parse_reaction_smiles(rxn, rxn_type)
 
         # Standard reaction: canonicalize reaction and sort compounds
         std_rxn = sort_compounds(canonicalize_compounds(merge_reactants_and_agents(ReactEq)))
 
         # Create final reaction SMILES
         rxn = to_reaction_smiles(std_rxn, rxn_type)
+
         return rxn
 
     except:
