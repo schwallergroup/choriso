@@ -1,10 +1,11 @@
 """Main preprocessing pipeline"""
 
 import os
+import time
 
 import click
-import wandb
 
+import wandb
 from choriso.data import *
 
 
@@ -82,6 +83,14 @@ def df_atom_map_step(
     - RXNMapper
     - NameRXN
     Compare results by comparing active entities in the reaction, as classified using the different aam methods.
+
+    Args:
+        out_dir (str): Directory where the processed data is stored.
+        name (str): Name of the dataset.
+        logger (Logger): Logger object.
+        batch_size (int): Batch size for NameRXN.
+        testing (bool, optional): Testing code. Use testing parameters for batching (smaller set). Defaults to False.
+
     """
     filepath = out_dir + f"{name}_processed_clean.tsv"
 
@@ -177,6 +186,49 @@ def df_atom_map_step(
     df.to_csv(out_dir + f"{name}_atom_mapped_dataset.tsv", sep="\t", index=False)
 
 
+def df_stereo_check_step(data_dir, name, logger):
+    """Check stereochemistry of reactions and remove wrong ones."""
+    filepath = data_dir + f"{name}_atom_mapped_dataset.tsv"
+
+    # open file
+    df = pd.read_csv(
+        filepath,
+        sep="\t",
+    )
+
+    # flag reactions with stereo issues
+    df["stereo_wrong"] = df["canonic_rxn"].parallel_apply(stereo.flag_stereoalchemy)
+
+    # correct stereo issues (we simply remove the stereocenters so we keep the reaction)
+    df["canonic_rxn"] = df.parallel_apply(
+        lambda x: stereo.remove_chiral_centers(x["canonic_rxn"])
+        if x["stereo_wrong"] == True
+        else x["canonic_rxn"],
+        axis=1,
+    )
+
+    print("Saving final dataset.")
+    # save the final dataset and a public version which we will share (without info from nameRXN)
+    df.to_csv(data_dir + f"{name}_final_dataset.tsv", sep="\t", index=False)
+
+    if name == "uspto":
+        df_public = df[["canonic_rxn", "rxnmapper_aam", "yield"]]
+
+    else:
+        # pick only canonical_rxn and rxnmapper_amm columns
+        df_public = df[["canonic_rxn", "rxnmapper_aam", "reagent", "solvent", "catalyst", "yield"]]
+
+    # save public version
+    df_public.to_csv(data_dir + f"{name}_public.tsv", sep="\t", index=False)
+
+    # logger.log(
+    #     {
+    #         f"Wrong stereo reactions:": len(stereo_wrong),
+    #         f"Number of reactions in final dataset:": len(stereo_good),
+    #     }
+    # )
+
+
 def df_splitting_step(data_dir, out_dir, file_name, mode, low_mw, high_mw, augment):
     """Split the data into train, val, test sets.
 
@@ -219,7 +271,9 @@ def df_splitting_step(data_dir, out_dir, file_name, mode, low_mw, high_mw, augme
 @click.option("-o", "--out-dir", type=click.Path(), default="data/processed/")
 @click.option("--download_raw", is_flag=True)
 @click.option("--download_processed", is_flag=True)
-@click.option("--run", "-r", type=click.Choice(["clean", "atom_map", "split"]), multiple=True)
+@click.option(
+    "--run", "-r", type=click.Choice(["clean", "atom_map", "stereo", "split"]), multiple=True
+)
 @click.option("--wandb_log", is_flag=True, help="Log results using Weights and Biases.")
 @click.option("--uspto", is_flag=True, help="Run preprocessing also on the USPTO full dataset.")
 @click.option("--batch", default=200, help="Batch size for rxnmapper")
@@ -289,13 +343,21 @@ def main(
     if "atom_map" in run:
         if not os.path.exists(out_dir + "cjhif_atom_mapped_dataset.tsv"):
             df_atom_map_step(out_dir, "cjhif", logger, batch, testing)
-            
 
         if uspto:
             df_atom_map_step(out_dir, "uspto", logger, batch, testing)
 
         print("Finished atom mapping step.")
-        
+
+    if "stereo" in run:
+        print("Starting stereo check step.")
+        # Add stereo processing to get final dataset
+        df_stereo_check_step(out_dir, "cjhif", logger)
+
+        if uspto:
+            print("Starting stereo check step for USPTO.")
+            df_stereo_check_step(out_dir, "uspto", logger)
+
     if "split" in run:
         df_splitting_step(out_dir, out_dir, split_file_name, split_mode, low_mw, high_mw, augment)
 
