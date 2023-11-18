@@ -208,8 +208,11 @@ def df_stereo_check_step(data_dir, name, logger):
     )
 
     print("Saving final dataset.")
+    if name == "cjhif":
+        name = "choriso"
+
     # save the final dataset and a public version which we will share (without info from nameRXN)
-    df.to_csv(data_dir + f"{name}_final_dataset.tsv", sep="\t", index=False)
+    df.to_csv(data_dir + f"{name}.tsv", sep="\t", index=False)
 
     if name == "uspto":
         df_public = df[["canonic_rxn", "rxnmapper_aam", "yield"]]
@@ -221,16 +224,11 @@ def df_stereo_check_step(data_dir, name, logger):
     # save public version
     df_public.to_csv(data_dir + f"{name}_public.tsv", sep="\t", index=False)
 
-    # logger.log(
-    #     {
-    #         f"Wrong stereo reactions:": len(stereo_wrong),
-    #         f"Number of reactions in final dataset:": len(stereo_good),
-    #     }
-    # )
-
 
 def df_splitting_step(data_dir, out_dir, file_name, mode, low_mw, high_mw, augment):
-    """Split the data into train, val, test sets.
+    """Split the data into multiple splits. We get training and validation splits by product,
+    and test splits by product, MW and random. Optionally you can also get an augemented
+    training set.
 
     Args:
         data_dir (str): path to data directory

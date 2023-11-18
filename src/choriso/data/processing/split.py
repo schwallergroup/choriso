@@ -82,7 +82,7 @@ def data_split_random(data_path, out_folder, test_frac=0.1, val_frac=0.1, replac
         val = val.replace("~", ".", regex=True)
         test = test.replace("~", ".", regex=True)
 
-    columns = ["canonic_rxn", "rxnmapper_aam", "rxnmapper_confidence", "yield"]
+    columns = ["canonic_rxn", "rxnmapper_aam", "yield"]
 
     if "template_r0" in df.columns:
         columns = columns + ["template_r0", "template_r1"]
@@ -127,7 +127,15 @@ def rotate_rxn(rxn):
 
 
 def data_split_by_prod(
-    data_path, out_folder, file_name, test_frac=0.1, val_frac=0.1, replace_tilde=True, augment=False
+    data_path,
+    out_folder,
+    file_name,
+    low_mw=150,
+    high_mw=700,
+    test_frac=0.1,
+    val_frac=0.1,
+    replace_tilde=True,
+    augment=False,
 ):
     """Function to split data for reaction forward prediction based on products.
 
@@ -148,55 +156,79 @@ def data_split_by_prod(
     print("Reading dataset")
     df = pd.read_csv(data_path, sep="\t")
 
-    # Create products column
-    df["products"] = df["canonic_rxn"].apply(lambda x: x.split(">>")[1])
-
-    # Split dataset into train, validation and test based on reaction products
-    print("Splitting data")
-    train, test = dataset_product_split(df, test_frac)
-
-    train, val = dataset_product_split(train, val_frac)
-
-    shuffled_train = train.sample(frac=1.0, random_state=42)
-
     if replace_tilde:
-        shuffled_train = shuffled_train.replace("~", ".", regex=True)
-        val = val.replace("~", ".", regex=True)
-        test = test.replace("~", ".", regex=True)
+        df.replace("~", ".", regex=True, inplace=True)
 
-    columns = ["canonic_rxn", "rxnmapper_aam", "rxnmapper_confidence", "yield"]
+    # columns to keep when saving the splits
+    columns = ["canonic_rxn", "rxnmapper_aam", "yield"]
 
     if "template_r0" in df.columns:
         columns = columns + ["template_r0", "template_r1"]
 
-    # Save the datasets but keep only some columns
-    shuffled_train = shuffled_train[columns]
+    # create folder to save splits
+    saving_path = out_folder + f'{file_name.split(".")[0]}_splits/'
+
+    if not os.path.isdir(saving_path):
+        os.mkdir(saving_path)
+
+    # Create products column
+    df["products"] = df["canonic_rxn"].apply(lambda x: x.split(">>")[1])
+
+    # Calculate MW
+    print("Calculating Molecular Weight for all products")
+    calc = MolecularDescriptorCalculator(["MolWt"])
+    df = df[df["products"].parallel_apply(is_valid_smiles)]
+    prod_mols = df["products"].apply(Chem.MolFromSmiles)
+    df["MolWt"] = prod_mols.apply(calc.CalcDescriptors).parallel_apply(lambda x: x[0])
+
+    print("Splitting by MW")
+    high_mw_test = df[df["MolWt"] >= high_mw]
+    low_mw_test = df[df["MolWt"] < low_mw]
+    medium_mw = df[(df["MolWt"] < high_mw) & (df["MolWt"] >= low_mw)]
+
+    # save high and low mw test sets
+    high_mw_test[columns].to_csv(saving_path + file_name.split(".")[0] + "_high_test.tsv", sep="\t")
+    low_mw_test[columns].to_csv(saving_path + file_name.split(".")[0] + "_low_test.tsv", sep="\t")
+
+    # split by product
+    print("Splitting by product")
+
+    remainder_prod, test_prod = dataset_product_split(medium_mw, test_frac)
+
+    # check if products in remainder_prod and test_prod overlap
+    assert len(set(remainder_prod["products"]).intersection(set(test_prod["products"]))) == 0
+
+    # save test set
+    test_prod[columns].to_csv(saving_path + file_name.split(".")[0] + "_prod_test.tsv", sep="\t")
+
+    train, val = dataset_product_split(remainder_prod, val_frac)
+
+    # save val set
+    val[columns].to_csv(saving_path + file_name.split(".")[0] + "_prod_val.tsv", sep="\t")
+
+    shuffled_train = train.sample(frac=1.0, random_state=33)
+
+    # finally get random split from the shuffled train set
+    final_train, rand = train_test_split(shuffled_train, test_size=test_frac, random_state=33)
+
+    # save random split and train by prod
+    rand[columns].to_csv(saving_path + file_name.split(".")[0] + "_random_test.tsv", sep="\t")
+    final_train[columns].to_csv(saving_path + file_name.split(".")[0] + "_prod_train.tsv", sep="\t")
 
     if augment:
         print("Augmenting SMILES...")
         # create a copy of train df
-        train_aug = shuffled_train.copy()
+        train_aug = final_train.copy()
         # rotate reactants
-        train_aug["canonic_rxn"] = train_aug["canonic_rxn"].apply(lambda x: rotate_rxn(x))
+        train_aug["canonic_rxn"] = train_aug["canonic_rxn"].parallel_apply(lambda x: rotate_rxn(x))
         # mix original and rotated rxns
         shuffled_train = pd.concat([shuffled_train, train_aug], ignore_index=True)
         # shuffle
         shuffled_train = shuffled_train.sample(frac=1.0, random_state=33)
-
-    test = test[columns]
-    val = val[columns]
-    df = df[columns]
-
-    # Save splits
-    products_path = out_folder + "products_split/"
-    if not os.path.isdir(products_path):
-        os.mkdir(products_path)
-
-    name = file_name.split(".")[0]
-
-    shuffled_train.to_csv(products_path + name + "_products_train.tsv", sep="\t")
-    test.to_csv(products_path + name + "_products_test.tsv", sep="\t")
-    val.to_csv(products_path + name + "_products_val.tsv", sep="\t")
+        # save augmented train set
+        shuffled_train[columns].to_csv(
+            saving_path + file_name.split(".")[0] + "_train_aug.tsv", sep="\t"
+        )
 
 
 def data_split_mw(data_path, file_name, low_mw=150, high_mw=700):
