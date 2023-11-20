@@ -187,7 +187,16 @@ def df_atom_map_step(
 
 
 def df_stereo_check_step(data_dir, name, logger):
-    """Check stereochemistry of reactions and remove wrong ones."""
+    """Check stereochemistry of reactions and remove wrong ones. We can add 
+    additional checks here if needed.
+    
+    Args:
+        data_dir (str): Directory where the processed data is stored.
+        name (str): Name of the dataset.
+        logger (Logger): Logger object.
+    
+    """
+    
     filepath = data_dir + f"{name}_atom_mapped_dataset.tsv"
 
     # open file
@@ -206,6 +215,15 @@ def df_stereo_check_step(data_dir, name, logger):
         else x["canonic_rxn"],
         axis=1,
     )
+
+    #remove reactions where products do not contain carbon, this is mainly due to an issue with USPTO
+    df['has_carbon'] = df['canonic_rxn'].parallel_apply(lambda x: stereo.has_carbon(x.split('>>')[1]))
+
+    df = df[df['has_carbon'] == True]
+    
+    if name =='uspto':
+        #remove this specific reaction (it's giving problems when featurizing for G2S)
+        df = df[~df['canonic_rxn'].str.contains('C.O>>C.O.O.O.O.O')]
 
     print("Saving final dataset.")
     if name == "cjhif":
@@ -243,24 +261,10 @@ def df_splitting_step(data_dir, out_dir, file_name, mode, low_mw, high_mw, augme
     # path to clean df
     path = data_dir + file_name
 
-    if mode == "mw":
-        # Produce two splits by MW
-        processing.split.data_split_mw(
-            data_dir,
-            file_name,
-            low_mw=low_mw,
-            high_mw=high_mw,
-        )
-
-    elif mode == "products":
-        # Split data by products to train, val, test sets
-        processing.split.data_split_by_prod(
-            path, out_dir, file_name, test_frac=0.07, val_frac=0.077, augment=augment
-        )
-
-    elif mode == "random":
-        # Produce random split
-        processing.split.data_split_random(path, out_dir, test_frac=0.07, val_frac=0.077)
+    # Split data by products to train, val, test sets
+    processing.split.data_split_by_prod(
+        path, out_dir, file_name, low_mw=low_mw, high_mw=high_mw, test_frac=0.07, val_frac=0.077, augment=augment
+    )
 
 
 @click.command()

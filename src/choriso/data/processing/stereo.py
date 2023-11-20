@@ -37,6 +37,10 @@ def flag_stereoalchemy(rxn):
     else:
         return False
 
+def has_carbon(smiles):
+    """Check if a SMILES contains carbon."""
+    mol = Chem.MolFromSmiles(smiles)
+    return mol.HasSubstructMatch(Chem.MolFromSmarts('[#6]'))
 
 def remove_chiral_centers(reaction_smiles):
     """Remove chiral centers from a reaction SMILES.
