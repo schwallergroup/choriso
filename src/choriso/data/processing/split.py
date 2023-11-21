@@ -186,10 +186,6 @@ def data_split_by_prod(
     low_mw_test = df[df["MolWt"] < low_mw]
     medium_mw = df[(df["MolWt"] < high_mw) & (df["MolWt"] >= low_mw)]
 
-    # save high and low mw test sets
-    high_mw_test[columns].to_csv(saving_path + file_name.split(".")[0] + "_high_test.tsv", sep="\t")
-    low_mw_test[columns].to_csv(saving_path + file_name.split(".")[0] + "_low_test.tsv", sep="\t")
-
     # split by product
     print("Splitting by product")
 
@@ -197,9 +193,6 @@ def data_split_by_prod(
 
     # check if products in remainder_prod and test_prod overlap
     assert len(set(remainder_prod["products"]).intersection(set(test_prod["products"]))) == 0
-
-    # save test set
-    test_prod[columns].to_csv(saving_path + file_name.split(".")[0] + "_prod_test.tsv", sep="\t")
 
     train, val = dataset_product_split(remainder_prod, val_frac)
 
@@ -211,8 +204,7 @@ def data_split_by_prod(
     # finally get random split from the shuffled train set
     final_train, rand = train_test_split(shuffled_train, test_size=test_frac, random_state=33)
 
-    # save random split and train by prod
-    rand[columns].to_csv(saving_path + file_name.split(".")[0] + "_random_test.tsv", sep="\t")
+    # save train by product
     final_train[columns].to_csv(saving_path + file_name.split(".")[0] + "_prod_train.tsv", sep="\t")
 
     if augment:
@@ -229,6 +221,23 @@ def data_split_by_prod(
         shuffled_train[columns].to_csv(
             saving_path + file_name.split(".")[0] + "_train_aug.tsv", sep="\t"
         )
+
+    # here create big test file with all the test sets
+    # for each split (high, low, prod, random), take the corresponding columns and add an extra column with the split name
+    # then concatenate all the splits and save the big test file
+    print("Creating big test file...")
+    high_test = high_mw_test[columns]
+    high_test["split"] = "high"
+    low_test = low_mw_test[columns]
+    low_test["split"] = "low"
+    prod_test = test_prod[columns]
+    prod_test["split"] = "prod"
+    rand_test = rand[columns]
+    rand_test["split"] = "random"
+
+    big_test = pd.concat([high_test, low_test, prod_test, rand_test], ignore_index=False)
+
+    big_test.to_csv(saving_path + file_name.split(".")[0] + "_all_test.tsv", sep="\t")
 
 
 def data_split_mw(data_path, file_name, low_mw=150, high_mw=700):
