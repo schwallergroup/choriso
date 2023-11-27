@@ -15,7 +15,9 @@ def print(s):
 class Logger:
     """Custom logger. Handle writing to disk and/or wandb logging."""
 
-    def __init__(self, wandb_log=False, report_dir="data/report/", wandb_project=None):
+    def __init__(
+        self, wandb_log=False, report_dir="data/report/", wandb_project=None
+    ):
         """Custom logger.
         Args:
             wandb_log: Bool. whether to log results to wandb.

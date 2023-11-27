@@ -213,10 +213,14 @@ class Evaluator:
 
             if "template_r0" not in self.file.columns:
                 print("Extracting templates...")
-                self.file["template_r0"] = self.file["mapped_rxn"].parallel_apply(
+                self.file["template_r0"] = self.file[
+                    "mapped_rxn"
+                ].parallel_apply(
                     lambda x: template_smarts_from_mapped_smiles(x)
                 )
-                self.file["template_r1"] = self.file["mapped_rxn"].parallel_apply(
+                self.file["template_r1"] = self.file[
+                    "mapped_rxn"
+                ].parallel_apply(
                     lambda x: template_smarts_from_mapped_smiles(x, radius=1)
                 )
                 if self.save == True:
@@ -405,7 +409,9 @@ class Evaluator:
 
         if "stereo_flag" not in self.file.columns:
             # flag reactions with stereochem problems
-            self.file["stereo_flag"] = self.file["template_r0"].apply(self.flag_stereo_problem)
+            self.file["stereo_flag"] = self.file["template_r0"].apply(
+                self.flag_stereo_problem
+            )
             if self.save == True:
                 self.file.to_csv(self.file_path, index=False)
 

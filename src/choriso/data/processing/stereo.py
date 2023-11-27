@@ -37,10 +37,12 @@ def flag_stereoalchemy(rxn):
     else:
         return False
 
+
 def has_carbon(smiles):
     """Check if a SMILES contains carbon."""
     mol = Chem.MolFromSmiles(smiles)
-    return mol.HasSubstructMatch(Chem.MolFromSmarts('[#6]'))
+    return mol.HasSubstructMatch(Chem.MolFromSmarts("[#6]"))
+
 
 def remove_chiral_centers(reaction_smiles):
     """Remove chiral centers from a reaction SMILES.
@@ -117,7 +119,7 @@ def template_smarts_from_mapped_smiles(mapped_smiles, radius=0):
         return False
 
 
-def flag_regio_problem(rxn, template=None):
+def _flag_regio_problem(rxn, template=None):
     """Flag regioselectivity problems. For the moment only one-product
     reactions. The function extracts the reaction template (only reacting atoms) and then checks
     if the matching atoms in the product can generate several products.
@@ -194,7 +196,7 @@ def flag_regio_problem(rxn, template=None):
         return False
 
 
-def flag_stereo_problem(template=None, rxn_smiles=None):
+def _flag_stereo_problem(template=None, rxn_smiles=None):
     """Flag stereoselectivity problems.
     Args:
         template: str (optional), reaction template (r=0). If not provided,

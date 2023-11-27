@@ -4,8 +4,8 @@ import os
 import time
 
 import click
-
 import wandb
+
 from choriso.data import *
 
 
@@ -40,7 +40,9 @@ def df_cleaning_step(data_dir, raw_file_name, out_dir, name, logger):
 
     if name == "cjhif":
         # Get SMILES from text using leadmine
-        df = preproc.preprocess_additives(data_dir, raw_file_name, "cjhif", logger)
+        df = preproc.preprocess_additives(
+            data_dir, raw_file_name, "cjhif", logger
+        )
 
         # Create full reaction SMILES
         df = preproc.get_full_reaction_smiles(df, "cjhif", logger)
@@ -60,7 +62,12 @@ def df_cleaning_step(data_dir, raw_file_name, out_dir, name, logger):
             data_dir + raw_file_name,
             sep="\t",
             usecols=["ReactionSmiles", "CalculatedYield"],
-        ).rename(columns={"ReactionSmiles": "full_reaction_smiles", "CalculatedYield": "yield"})
+        ).rename(
+            columns={
+                "ReactionSmiles": "full_reaction_smiles",
+                "CalculatedYield": "yield",
+            }
+        )
 
         df = clean_USPTO(df, logger)
 
@@ -75,6 +82,7 @@ def df_atom_map_step(
     name,
     logger,
     batch_size,
+    namerxn=False,
     testing=False,
 ):
     """Atom mapping based calculations.
@@ -89,6 +97,7 @@ def df_atom_map_step(
         name (str): Name of the dataset.
         logger (Logger): Logger object.
         batch_size (int): Batch size for NameRXN.
+        namerxn (bool, optional): Whether to calculate NameRXN aam. Defaults to False.
         testing (bool, optional): Testing code. Use testing parameters for batching (smaller set). Defaults to False.
 
     """
@@ -121,69 +130,79 @@ def df_atom_map_step(
     print(f"Calculating RXNMapper atom mapping for {name}")
     df = atom_map.atom_map_rxnmapper(df, "canonic_rxn", name, logger)
 
-    # Calculate namerxn aam
-    print(f"Calculating NameRXN atom mapping for {name}")
-    mapped_smi = atom_map.atom_map_hazelnut(
-        df,
-        "canonic_rxn",
-        timeout=timeout,
-        batch_sz=batch_sz,
-        tmp_dir=tmp_dir,
-        logger=logger,
-    )
-
-    if type(mapped_smi) != int:
-        df = pd.concat([df, mapped_smi], axis=1)
-
-    print(f"\nFinished calculating atom mappings for {name}.\n")
-
-    ######### Handling inconsistencies in aams
-
-    n_bad_format = (mapped_smi["can_canon"] == 0).sum()
-    logger.log({f"rxns NameRXN bad formatting: {name}": n_bad_format})
-
-    # Save this subset for posterior analysis
-    (
-        df.query("can_canon==0")
-        .loc[:, ["nm_aam", "canonic_rxn"]]
-        .to_csv(out_dir + "errors_nmrxn.tsv", index=False, sep="\t")
-    )
-
-    # Change these by nan, so they're replaced by RXNMapper aam
-    df["nm_aam"].replace("pailas socio", np.nan, inplace=True)
-
-    # Fill timeouts in nm_aam with values from rxnmapper
-    df["nm_aam"].fillna(df["rxnmapper_aam"], inplace=True)
-
-    ################## Finish filling inconsistencies
-
-    # Comparing aams through reagent classification
-    if name == "cjhif":
-        rgt_set_rxnmapper = df["rxnmapper_aam"].apply(aam_reagent_classify).astype(str)
-        rgt_set_namerxn = df["nm_aam"].apply(aam_reagent_classify).astype(str)
-
-        # Flag rows where active entities match.
-        df["aam_matches"] = rgt_set_rxnmapper == rgt_set_namerxn
-        logger.log(
-            {
-                f"aam agreement cjhif abs:": df["aam_matches"].sum(),
-                f"aam agreement cjhif percent:": df["aam_matches"].sum() / df.shape[0],
-            }
+    if namerxn:
+        # Calculate namerxn aam
+        print(f"Calculating NameRXN atom mapping for {name}")
+        mapped_smi = atom_map.atom_map_hazelnut(
+            df,
+            "canonic_rxn",
+            timeout=timeout,
+            batch_sz=batch_sz,
+            tmp_dir=tmp_dir,
+            logger=logger,
         )
 
-        # Drop redundant/no longer useful columns
-        # df.drop(columns=["reagent", "catalyst", "full_reaction_smiles"], inplace=True)
+        if type(mapped_smi) != int:
+            df = pd.concat([df, mapped_smi], axis=1)
 
-        # Save clean version of dataset (choriso)
-        choriso = df.query("aam_matches").drop(columns=["nm_aam", "aam_matches"])
+        print(f"\nFinished calculating atom mappings for {name}.\n")
 
-        choriso.to_csv(out_dir + f"choriso.tsv", sep="\t", index=False)
+        ######### Handling inconsistencies in aams
 
-        logger.log({"final dataset size": choriso.shape[0]})
+        n_bad_format = (mapped_smi["can_canon"] == 0).sum()
+        logger.log({f"rxns NameRXN bad formatting: {name}": n_bad_format})
+
+        # Save this subset for posterior analysis
+        (
+            df.query("can_canon==0")
+            .loc[:, ["nm_aam", "canonic_rxn"]]
+            .to_csv(out_dir + "errors_nmrxn.tsv", index=False, sep="\t")
+        )
+
+        # Change these by nan, so they're replaced by RXNMapper aam
+        df["nm_aam"].replace("pailas socio", np.nan, inplace=True)
+
+        # Fill timeouts in nm_aam with values from rxnmapper
+        df["nm_aam"].fillna(df["rxnmapper_aam"], inplace=True)
+
+        ################## Finish filling inconsistencies
+
+        # Comparing aams through reagent classification
+        if name == "cjhif":
+            rgt_set_rxnmapper = (
+                df["rxnmapper_aam"].apply(aam_reagent_classify).astype(str)
+            )
+            rgt_set_namerxn = (
+                df["nm_aam"].apply(aam_reagent_classify).astype(str)
+            )
+
+            # Flag rows where active entities match.
+            df["aam_matches"] = rgt_set_rxnmapper == rgt_set_namerxn
+            logger.log(
+                {
+                    f"aam agreement cjhif abs:": df["aam_matches"].sum(),
+                    f"aam agreement cjhif percent:": df["aam_matches"].sum()
+                    / df.shape[0],
+                }
+            )
+
+            # Drop redundant/no longer useful columns
+            # df.drop(columns=["reagent", "catalyst", "full_reaction_smiles"], inplace=True)
+
+            # Save clean version of dataset (choriso)
+            choriso = df.query("aam_matches").drop(
+                columns=["nm_aam", "aam_matches"]
+            )
+
+            choriso.to_csv(out_dir + f"choriso.tsv", sep="\t", index=False)
+
+            logger.log({"final dataset size": choriso.shape[0]})
 
     # Save original version of dataset too
     # Works for both cjhif and uspto
-    df.to_csv(out_dir + f"{name}_atom_mapped_dataset.tsv", sep="\t", index=False)
+    df.to_csv(
+        out_dir + f"{name}_atom_mapped_dataset.tsv", sep="\t", index=False
+    )
 
 
 def df_stereo_check_step(data_dir, name, logger):
@@ -206,7 +225,9 @@ def df_stereo_check_step(data_dir, name, logger):
     )
 
     # flag reactions with stereo issues
-    df["stereo_wrong"] = df["canonic_rxn"].parallel_apply(stereo.flag_stereoalchemy)
+    df["stereo_wrong"] = df["canonic_rxn"].parallel_apply(
+        stereo.flag_stereoalchemy
+    )
 
     # correct stereo issues (we simply remove the stereocenters so we keep the reaction)
     df["canonic_rxn"] = df.parallel_apply(
@@ -239,13 +260,24 @@ def df_stereo_check_step(data_dir, name, logger):
 
     else:
         # pick only canonical_rxn and rxnmapper_amm columns
-        df_public = df[["canonic_rxn", "rxnmapper_aam", "reagent", "solvent", "catalyst", "yield"]]
+        df_public = df[
+            [
+                "canonic_rxn",
+                "rxnmapper_aam",
+                "reagent",
+                "solvent",
+                "catalyst",
+                "yield",
+            ]
+        ]
 
     # save public version
     df_public.to_csv(data_dir + f"{name}_public.tsv", sep="\t", index=False)
 
 
-def df_splitting_step(data_dir, out_dir, file_name, mode, low_mw, high_mw, augment):
+def df_splitting_step(
+    data_dir, out_dir, file_name, mode, low_mw, high_mw, augment
+):
     """Split the data into multiple splits. We get training and validation splits by product,
     and test splits by product, MW and random. Optionally you can also get an augemented
     training set.
@@ -283,11 +315,25 @@ def df_splitting_step(data_dir, out_dir, file_name, mode, low_mw, high_mw, augme
 @click.option("--download_raw", is_flag=True)
 @click.option("--download_processed", is_flag=True)
 @click.option(
-    "--run", "-r", type=click.Choice(["clean", "atom_map", "stereo", "split"]), multiple=True
+    "--run",
+    "-r",
+    type=click.Choice(["clean", "atom_map", "stereo", "split"]),
+    multiple=True,
 )
-@click.option("--wandb_log", is_flag=True, help="Log results using Weights and Biases.")
-@click.option("--uspto", is_flag=True, help="Run preprocessing also on the USPTO full dataset.")
+@click.option(
+    "--wandb_log", is_flag=True, help="Log results using Weights and Biases."
+)
+@click.option(
+    "--uspto",
+    is_flag=True,
+    help="Run preprocessing also on the USPTO full dataset.",
+)
 @click.option("--batch", default=200, help="Batch size for rxnmapper")
+@click.option(
+    "--namerxn",
+    is_flag=True,
+    help="Run atom mapping with Namerxn and comparison with RXNMapper.",
+)
 @click.option(
     "--testing",
     is_flag=True,
@@ -305,8 +351,16 @@ def df_splitting_step(data_dir, out_dir, file_name, mode, low_mw, high_mw, augme
     is_flag=True,
     help="Augment SMILES by creating one additional random SMILES for each product",
 )
-@click.option("--low_mw", default=150, help="Lower MW threshold for dataset splitting by MW")
-@click.option("--high_mw", default=700, help="Higher MW threshold for dataset splitting by MW")
+@click.option(
+    "--low_mw",
+    default=150,
+    help="Lower MW threshold for dataset splitting by MW",
+)
+@click.option(
+    "--high_mw",
+    default=700,
+    help="Higher MW threshold for dataset splitting by MW",
+)
 def main(
     data_dir,
     report_dir,
@@ -317,6 +371,7 @@ def main(
     wandb_log,
     uspto,
     batch,
+    namerxn,
     testing,
     split_mode,
     split_file_name,
@@ -347,16 +402,20 @@ def main(
     # Start cleaning/preprocessing
     if "clean" in run:
         if not os.path.exists(out_dir + "cjhif_processed_clean.tsv"):
-            df_cleaning_step(data_dir, "data_from_CJHIF_utf8", out_dir, "cjhif", logger)
+            df_cleaning_step(
+                data_dir, "data_from_CJHIF_utf8", out_dir, "cjhif", logger
+            )
         if uspto:
-            df_cleaning_step(data_dir, "merged_USPTO.rsmi", out_dir, "uspto", logger)
+            df_cleaning_step(
+                data_dir, "merged_USPTO.rsmi", out_dir, "uspto", logger
+            )
 
     if "atom_map" in run:
         if not os.path.exists(out_dir + "cjhif_atom_mapped_dataset.tsv"):
-            df_atom_map_step(out_dir, "cjhif", logger, batch, testing)
+            df_atom_map_step(out_dir, "cjhif", logger, batch, namerxn, testing)
 
         if uspto:
-            df_atom_map_step(out_dir, "uspto", logger, batch, testing)
+            df_atom_map_step(out_dir, "uspto", logger, batch, namerxn, testing)
 
         print("Finished atom mapping step.")
 
@@ -370,7 +429,15 @@ def main(
             df_stereo_check_step(out_dir, "uspto", logger)
 
     if "split" in run:
-        df_splitting_step(out_dir, out_dir, split_file_name, split_mode, low_mw, high_mw, augment)
+        df_splitting_step(
+            out_dir,
+            out_dir,
+            split_file_name,
+            split_mode,
+            low_mw,
+            high_mw,
+            augment,
+        )
 
 
 if __name__ == "__main__":

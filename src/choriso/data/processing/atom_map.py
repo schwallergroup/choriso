@@ -51,7 +51,9 @@ def clean_preproc_df(df, col, ds_name, logger):
     suspect = df.loc[df[col].str.len() >= 512]
     logger.log("Removing reactions longer than 512 tokens.")
     query = suspect[
-        suspect[col].apply(rxn_utils.has_more_than_max_tokens, rxnmapper=rxnmapper)
+        suspect[col].apply(
+            rxn_utils.has_more_than_max_tokens, rxnmapper=rxnmapper
+        )
     ].index
     high_token_count = len(query)
     df = df.drop(query)
@@ -66,7 +68,9 @@ def clean_preproc_df(df, col, ds_name, logger):
     return df
 
 
-def atom_map_hazelnut(df, name, batch_sz=3000, timeout=500, tmp_dir="data/tmp/", logger=False):
+def atom_map_hazelnut(
+    df, name, batch_sz=3000, timeout=500, tmp_dir="data/tmp/", logger=False
+):
     """
     Calculate atom mapping using HazELNut's atom mapper.
     """
@@ -121,13 +125,19 @@ def atom_map_hazelnut(df, name, batch_sz=3000, timeout=500, tmp_dir="data/tmp/",
             os.kill(p.pid, signal.SIGTERM)
 
             # Return a timeout flag for this batch
-            mapped_i = pd.DataFrame(np.repeat([[np.nan, "0.0", 1]], df_i.shape[0], axis=0))
+            mapped_i = pd.DataFrame(
+                np.repeat([[np.nan, "0.0", 1]], df_i.shape[0], axis=0)
+            )
 
             # In next step, replace all this timeouts by whatever the RXNMapper outputs.
             if logger:
                 logger.log("* Timeout during NameRXN application.")
 
-        mapped_smiles.append(mapped_i.rename(columns={0: "nm_aam", 1: "rxn_class", 2: "can_canon"}))
+        mapped_smiles.append(
+            mapped_i.rename(
+                columns={0: "nm_aam", 1: "rxn_class", 2: "can_canon"}
+            )
+        )
 
     # Concat list into single df
     mapped_df = pd.concat(mapped_smiles).reset_index(drop=True)
@@ -145,7 +155,8 @@ def atom_map_rxnmapper(df, col, name, logger, batch_size=200):
     def _atom_map(df, col, batch_size=batch_size):
         map_rxn = []
         for batch in tqdm(
-            gen_batches(df.shape[0], batch_size), total=df.shape[0] // batch_size + 1
+            gen_batches(df.shape[0], batch_size),
+            total=df.shape[0] // batch_size + 1,
         ):
             df_slice = df[batch]
             map_rxn += rxnmapper.get_attention_guided_atom_maps(
@@ -154,7 +165,10 @@ def atom_map_rxnmapper(df, col, name, logger, batch_size=200):
         return pd.DataFrame(map_rxn)
 
     aam_rxns = _atom_map(df, col).rename(
-        columns={"mapped_rxn": f"rxnmapper_aam", "confidence": f"rxnmapper_confidence"}
+        columns={
+            "mapped_rxn": f"rxnmapper_aam",
+            "confidence": f"rxnmapper_confidence",
+        }
     )
     # Merge results in dataframe
     new_df = df.reset_index(drop=True).merge(
@@ -196,4 +210,6 @@ def aam_reagent_classify(smi):
     reactsl = smi.split(">>")[0].split(".")
 
     # Classify
-    return sorted([rxn_utils.canonical_smiles_mol(r) for r in reactsl if _is_reagent(r)])
+    return sorted(
+        [rxn_utils.canonical_smiles_mol(r) for r in reactsl if _is_reagent(r)]
+    )

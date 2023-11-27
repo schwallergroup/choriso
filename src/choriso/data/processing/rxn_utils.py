@@ -34,7 +34,11 @@ def canonical_rxn(rxn_smi):
         rxn_mol = AllChem.ReactionFromSmarts(rxn_smi)
 
         # Iterate over reactants, agents, and products
-        for mol_list in [rxn_mol.GetReactants(), rxn_mol.GetAgents(), rxn_mol.GetProducts()]:
+        for mol_list in [
+            rxn_mol.GetReactants(),
+            rxn_mol.GetAgents(),
+            rxn_mol.GetProducts(),
+        ]:
             for mol in mol_list:
                 for atom in mol.GetAtoms():
                     # Set isotope number to 0
@@ -46,7 +50,9 @@ def canonical_rxn(rxn_smi):
         ReactEq = parse_reaction_smiles(rxn, rxn_type)
 
         # Standard reaction: canonicalize reaction and sort compounds
-        std_rxn = sort_compounds(canonicalize_compounds(merge_reactants_and_agents(ReactEq)))
+        std_rxn = sort_compounds(
+            canonicalize_compounds(merge_reactants_and_agents(ReactEq))
+        )
 
         # Create final reaction SMILES
         rxn = to_reaction_smiles(std_rxn, rxn_type)
@@ -98,7 +104,9 @@ def is_reaction_valid(rxn):
     rxn = re.sub(r"\"", "", rxn)
 
     mols = re.sub(">>", ".", rxn).split(".")
-    return np.all(list(map(lambda m: is_valid_smiles(m, check_valence=False), mols)))
+    return np.all(
+        list(map(lambda m: is_valid_smiles(m, check_valence=False), mols))
+    )
 
 
 def has_more_than_max_tokens(rxn, rxnmapper):
