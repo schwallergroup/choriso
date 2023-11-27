@@ -98,7 +98,7 @@ def flag_regio_problem(rxn):
             try:
                 x = Chem.SanitizeMol(prod[0])
                 good.append(Chem.MolToSmiles(prod[0]))
-            except:
+            except Chem.MolSanitizeException:
                 pass
         return set(good)
 
@@ -188,10 +188,10 @@ class Evaluator:
     def __init__(self, file, mapping=False, sample=False, save=False):
         """
         Args:
-        file: file path where data is stored
-        mapping: Bool. is aam provided in the data file?
-        sample: Bool. evaluate on a subsample of the dataset.
-        save: Bool. Whether to save results.
+            file: file path where data is stored
+            mapping: Bool. is aam provided in the data file?
+            sample: Bool. evaluate on a subsample of the dataset.
+            save: Bool. Whether to save results.
         """
 
         self.file_path = file
@@ -268,7 +268,7 @@ class Evaluator:
                 try:
                     x = Chem.SanitizeMol(prod[0])
                     good.append(Chem.MolToSmiles(prod[0]))
-                except:
+                except Chem.MolSanitizeException:
                     pass
             return set(good)
 
@@ -276,7 +276,7 @@ class Evaluator:
             try:
                 reaction = AllChem.ReactionFromSmarts(temp)
                 return True
-            except:
+            except ValueError:
                 return False
 
         # proceed only if template exists
@@ -335,6 +335,7 @@ class Evaluator:
 
         Args:
             df: pd.DataFrame, dataframe with predictions
+            negative_acc: bool
 
         Returns:
             acc: float, top-1 accuracy for reactions where regioselectivity is an issue
@@ -348,7 +349,7 @@ class Evaluator:
                 ),
                 axis=1,
             )
-            if self.save == True:
+            if self.save:
                 self.file.to_csv(self.file_path, index=False)
 
         df_true = self.file[self.file["regio_flag"] == True]
@@ -374,7 +375,7 @@ class Evaluator:
         else:
             return acc
 
-    def flag_stereo_problem(self, template):
+    def flag_stereo_problem(self, template: str) -> bool:
         """Flag stereoselectivity problems.
         Args:
             template: str, extracted template with radius=0 from reaction SMILES
@@ -383,16 +384,13 @@ class Evaluator:
             bool, True if the reaction has stereoselectivity issues, False otherwise
         """
 
-        if template:
-            try:
-                temp_prods = template.split(">>")[1].split(".")
-                # check if any of the strings in prods contain '@'
-                if any("@" in prod for prod in temp_prods):
-                    return True
+        if isinstance(template, str) and ">>" in template:
+            temp_prods = template.split(">>")[1].split(".")
+            # check if any of the strings in prods contain '@'
+            if any("@" in prod for prod in temp_prods):
+                return True
 
-                else:
-                    return False
-            except:
+            else:
                 return False
 
     def stereo_score(self, negative_acc=False):
@@ -412,7 +410,7 @@ class Evaluator:
             self.file["stereo_flag"] = self.file["template_r0"].apply(
                 self.flag_stereo_problem
             )
-            if self.save == True:
+            if self.save:
                 self.file.to_csv(self.file_path, index=False)
 
         df_true = self.file[self.file["stereo_flag"] == True]
