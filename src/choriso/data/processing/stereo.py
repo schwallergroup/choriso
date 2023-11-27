@@ -2,8 +2,6 @@
 regioselectivity."""
 import signal
 import warnings
-from collections import defaultdict
-from typing import Iterator, List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -59,9 +57,8 @@ def remove_chiral_centers(reaction_smiles):
 
     # Function to remove chiral centers from a molecule
     def remove_chirality(mol):
-        "Remove chiral centers from a molecule"
-        for atom in mol.GetAtoms():
-            atom.SetChiralTag(Chem.rdchem.ChiralType.CHI_UNSPECIFIED)
+        "Remove any stereochemical information from a molecule"
+        Chem.RemoveStereochemistry(mol)
         return mol
 
     # Process reactants and products
@@ -139,7 +136,7 @@ def _flag_regio_problem(rxn, template=None):
             try:
                 x = Chem.SanitizeMol(prod[0])
                 good.append(Chem.MolToSmiles(prod[0]))
-            except:
+            except Chem.MolSanitizeException:
                 pass
         return set(good)
 

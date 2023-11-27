@@ -203,7 +203,7 @@ class Evaluator:
         self.save = save
 
         # check if file has mapped_rxn column, and if not, create it and save it
-        if self.mapping == True:
+        if self.mapping:
             if "mapped_rxn" not in self.file.columns:
                 print("Mapping reactions...")
                 maps = aam_from_smiles(self.file["canonical_rxn"].values)
@@ -361,7 +361,7 @@ class Evaluator:
         acc = true_prods == pred_prods
         acc = round(np.sum(acc) / len(acc) * 100, 1)
 
-        if negative_acc == True:
+        if negative_acc:
             # check if products are the same
             true_prods = np.array(df_false["target"].values)
             pred_prods = np.array(df_false["pred_0"].values)

@@ -10,7 +10,7 @@ from tqdm import tqdm
 from choriso.metrics.metrics.selectivity import Evaluator, co2_transform
 
 
-def extract_results(names):
+def extract_results(names: list[str]):
     """Extract the results from the folders and save them in a csv file in the 'predictions' folder
     for subsequent analysis. The results are saved in a csv file with the name of the model.
 
@@ -26,7 +26,7 @@ def extract_results(names):
 
     for name in names:
         # First, walk through each directory and locate the subfolders with the results
-        folders = list(os.walk(name))[0][1]
+        folders = list(os.walk(name))[0][1]  # list of subfolders
 
         # Then, for each folder, extract the results if they contain the subfolder 'results'
         for folder in folders:
@@ -42,29 +42,15 @@ def extract_results(names):
                     )
 
                     # select only 'canonical_rxn', 'target', 'pred_0', 'pred_1' columns and templates (if available)
-                    if "template_r0" in df.columns:
-                        df = df[
-                            [
-                                "canonical_rxn",
-                                "target",
-                                "pred_0",
-                                "pred_1",
-                                "pred_2",
-                                "mapped_rxn",
-                                "template_r0",
-                                "template_r1",
-                            ]
-                        ]
+                    defaults = ["canonical_rxn", "target", "pred_0", "pred_1", "pred_2", "split"]
+                    templates_mapped = ["mapped_rxn", "template_r0", "template_r1"]
+
+                    if all(elem in df.columns for elem in templates_mapped):
+                        defaults.extend(templates_mapped)
+                        df = df[defaults]
+
                     else:
-                        df = df[
-                            [
-                                "canonical_rxn",
-                                "target",
-                                "pred_0",
-                                "pred_1",
-                                "pred_2",
-                            ]
-                        ]
+                        df = df[defaults]
 
                     # Save the results in 'predictions' folder renaming the file with the name of the model
                     df.to_csv(
@@ -72,49 +58,56 @@ def extract_results(names):
                         index=False,
                     )
 
-                    # Read the CO2 CSV files into dataframes
-                    predict_df = pd.read_csv(
-                        name + "/" + folder + "/results/predict_emission.csv",
-                        index_col=0,
-                    )
-                    preprocess_df = pd.read_csv(
-                        name
-                        + "/"
-                        + folder
-                        + "/results/preprocess_emission.csv",
-                        index_col=0,
-                    )
-                    train_df = pd.read_csv(
-                        name + "/" + folder + "/results/train_emission.csv",
-                        index_col=0,
-                    )
+                    emission_file = os.path.join(path, "results/predict_emission.csv")
+                    train_file = os.path.join(path, "results/train_emission.csv")
 
-                    # Add a new column to each dataframe to store the original filename
-                    predict_df["Source"] = "predict"
-                    preprocess_df["Source"] = "preprocess"
-                    train_df["Source"] = "train"
+                    if os.path.exists(emission_file) and os.path.exists(train_file):
 
-                    # Concatenate the dataframes (only last result in case we have multiple runs)
-                    merged_df = pd.concat(
-                        [
-                            predict_df.tail(1),
-                            preprocess_df.tail(1),
-                            train_df.tail(1),
-                        ]
-                    )
+                        # Read the CO2 CSV files into dataframes
+                        predict_df = pd.read_csv(
+                            name + "/" + folder + "/results/predict_emission.csv",
+                            index_col=0,
+                        )
+                        preprocess_df = pd.read_csv(
+                            name
+                            + "/"
+                            + folder
+                            + "/results/preprocess_emission.csv",
+                            index_col=0,
+                        )
+                        train_df = pd.read_csv(
+                            name + "/" + folder + "/results/train_emission.csv",
+                            index_col=0,
+                        )
 
-                    # save the merged dataframe to a csv file in results/co2 folder
-                    merged_df.to_csv(
-                        "results/sustainability/"
-                        + name
-                        + "_"
-                        + folder
-                        + ".csv",
-                        index=False,
-                    )
+                        # Add a new column to each dataframe to store the original filename
+                        predict_df["Source"] = "predict"
+                        preprocess_df["Source"] = "preprocess"
+                        train_df["Source"] = "train"
+
+                        # Concatenate the dataframes (only last result in case we have multiple runs)
+                        merged_df = pd.concat(
+                            [
+                                predict_df.tail(1),
+                                preprocess_df.tail(1),
+                                train_df.tail(1),
+                            ]
+                        )
+
+                        # save the merged dataframe to a csv file in results/co2 folder
+                        merged_df.to_csv(
+                            "results/sustainability/"
+                            + name
+                            + "_"
+                            + folder
+                            + ".csv",
+                            index=False,
+                        )
+                    else:
+                        print("No data on CO2 emissions found in " + path)
 
                 else:
-                    print("No results in " + path)
+                    print(f"No results found in {path}")
 
 
 # use a list of paths and extract file
@@ -128,7 +121,6 @@ def compute_results(path, chemistry, mapping):
     """
 
     # First compute metrics without CO2
-
     results_path = os.path.join(path, "predictions")
 
     files = sorted(os.listdir(results_path))
@@ -142,7 +134,7 @@ def compute_results(path, chemistry, mapping):
     # write results to file
     with open(os.path.join(results_path, "results.txt"), "w") as f:
         # create df to store results
-        df = pd.DataFrame(columns=["top-1", "top-2", "stereo", "regio"])
+        df = pd.DataFrame(columns=["top-1", "top-2", "stereo", "regio", "split"])
 
         # write LATeX table header
         f.write(r"\begin{tabular}{|| c | c | c | c | c | c ||}")
@@ -281,14 +273,14 @@ def compute_results(path, chemistry, mapping):
 def main(results_folders, path, chemistry, mapping):
     """Main results analysis pipeline for the metrics.
     Args:
-    results_folders: Path. If previous results exist, load them from this path
-    path: Compute results and store them in this path
-    chemistry: Bool. whether the model is a chemistry model or not
-    mapping: str. mapping to use to compute the metrics
+        results_folders: Path. If previous results exist, load them from this path
+        path: Compute results and store them in this path
+        chemistry: bool. whether the model is a chemistry model or not
+        mapping: bool. whether to compute mapping or not
     """
 
     if results_folders:
-        print("Extracting results from folders...")
+        print(f"Extracting results from {len(results_folders)} folder(s)...")
         extract_results(results_folders)
 
     if path:
