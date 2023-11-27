@@ -39,7 +39,10 @@ def test_get_full_reaction_smiles():
     raw["solvent_SMILES"] = raw["solvent_SMILES"].apply(lambda x: str(x))
     processed = get_full_reaction_smiles(raw)
 
-    assert true.loc[0, "full_reaction_smiles"] == processed.loc[0, "full_reaction_smiles"]
+    assert (
+        true.loc[0, "full_reaction_smiles"]
+        == processed.loc[0, "full_reaction_smiles"]
+    )
 
 
 def test_canonicalize_filter_reaction():

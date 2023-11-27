@@ -34,8 +34,12 @@ def extract_results(names):
 
             if "results" in os.listdir(path):
                 # Extract the results if the path exists
-                if os.path.exists(os.path.join(path, "results/all_results.csv")):
-                    df = pd.read_csv(os.path.join(path, "results/all_results.csv"))
+                if os.path.exists(
+                    os.path.join(path, "results/all_results.csv")
+                ):
+                    df = pd.read_csv(
+                        os.path.join(path, "results/all_results.csv")
+                    )
 
                     # select only 'canonical_rxn', 'target', 'pred_0', 'pred_1' columns and templates (if available)
                     if "template_r0" in df.columns:
@@ -52,20 +56,37 @@ def extract_results(names):
                             ]
                         ]
                     else:
-                        df = df[["canonical_rxn", "target", "pred_0", "pred_1", "pred_2"]]
+                        df = df[
+                            [
+                                "canonical_rxn",
+                                "target",
+                                "pred_0",
+                                "pred_1",
+                                "pred_2",
+                            ]
+                        ]
 
                     # Save the results in 'predictions' folder renaming the file with the name of the model
-                    df.to_csv("results/predictions/" + name + "_" + folder + ".csv", index=False)
+                    df.to_csv(
+                        "results/predictions/" + name + "_" + folder + ".csv",
+                        index=False,
+                    )
 
                     # Read the CO2 CSV files into dataframes
                     predict_df = pd.read_csv(
-                        name + "/" + folder + "/results/predict_emission.csv", index_col=0
+                        name + "/" + folder + "/results/predict_emission.csv",
+                        index_col=0,
                     )
                     preprocess_df = pd.read_csv(
-                        name + "/" + folder + "/results/preprocess_emission.csv", index_col=0
+                        name
+                        + "/"
+                        + folder
+                        + "/results/preprocess_emission.csv",
+                        index_col=0,
                     )
                     train_df = pd.read_csv(
-                        name + "/" + folder + "/results/train_emission.csv", index_col=0
+                        name + "/" + folder + "/results/train_emission.csv",
+                        index_col=0,
                     )
 
                     # Add a new column to each dataframe to store the original filename
@@ -75,12 +96,21 @@ def extract_results(names):
 
                     # Concatenate the dataframes (only last result in case we have multiple runs)
                     merged_df = pd.concat(
-                        [predict_df.tail(1), preprocess_df.tail(1), train_df.tail(1)]
+                        [
+                            predict_df.tail(1),
+                            preprocess_df.tail(1),
+                            train_df.tail(1),
+                        ]
                     )
 
                     # save the merged dataframe to a csv file in results/co2 folder
                     merged_df.to_csv(
-                        "results/sustainability/" + name + "_" + folder + ".csv", index=False
+                        "results/sustainability/"
+                        + name
+                        + "_"
+                        + folder
+                        + ".csv",
+                        index=False,
                     )
 
                 else:
@@ -128,7 +158,10 @@ def compute_results(path, chemistry, mapping):
             print(file)
             # use evaluator to compute metrics
             evaluator = Evaluator(
-                os.path.join(results_path, file), mapping=mapping, sample=False, save=True
+                os.path.join(results_path, file),
+                mapping=mapping,
+                sample=False,
+                save=True,
             )
             evaluator.compute_metrics(chemistry=chemistry)
 
@@ -143,7 +176,9 @@ def compute_results(path, chemistry, mapping):
             name = file[:-4].replace("_", " ")
 
             if chemistry:
-                f.write(f"{name} & {top_1} & {top_2} & {stereo} & {regio} \\\\  [1ex]")
+                f.write(
+                    f"{name} & {top_1} & {top_2} & {stereo} & {regio} \\\\  [1ex]"
+                )
                 f.write("\n")
                 f.write(r"\hline")
                 f.write("\n")
@@ -218,17 +253,24 @@ def compute_results(path, chemistry, mapping):
 
     # round all values to 2 decimals and save
     df_pred = df_pred.round(2)
-    df_pred.to_csv(os.path.join(sustainability_path, "sustainability_prediction.csv"))
+    df_pred.to_csv(
+        os.path.join(sustainability_path, "sustainability_prediction.csv")
+    )
 
     df_train = df_train.round(2)
-    df_train.to_csv(os.path.join(sustainability_path, "sustainability_train.csv"))
+    df_train.to_csv(
+        os.path.join(sustainability_path, "sustainability_train.csv")
+    )
 
 
 @click.command()
 @click.option("--results_folders", "-r", type=str, multiple=True)
 @click.option("--path", type=str, default="results")
 @click.option(
-    "--chemistry", type=bool, default=True, help="Whether to compute chemistry metrics or not."
+    "--chemistry",
+    type=bool,
+    default=True,
+    help="Whether to compute chemistry metrics or not.",
 )
 @click.option(
     "--mapping",

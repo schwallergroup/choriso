@@ -41,11 +41,14 @@ try:
     df_general_dict.replace("empty", "empty_translation", inplace=True)
 
     general_dict = {
-        row["Compound"]: row["pubchem_isosmiles"] for _, row in df_general_dict.iterrows()
+        row["Compound"]: row["pubchem_isosmiles"]
+        for _, row in df_general_dict.iterrows()
     }
 
     # load manual correction dictionary
-    df = pd.read_csv("data/helper/corrected_pubchem.tsv", sep="\t").fillna("empty_translation")
+    df = pd.read_csv("data/helper/corrected_pubchem.tsv", sep="\t").fillna(
+        "empty_translation"
+    )
 
     correct_dict = {row["Name"]: row["SMILES"] for _, row in df.iterrows()}
 
@@ -70,7 +73,9 @@ def download_raw_data(data_dir="data/raw/"):
     url = "https://drive.switch.ch/index.php/s/uthL9jTERVQJJoW/download"
     target_path = data_dir + "raw_cjhif.tar.gz"
 
-    if not os.path.isfile(target_path):  # Only download if file doesn't already exist
+    if not os.path.isfile(
+        target_path
+    ):  # Only download if file doesn't already exist
         response = requests.get(url, stream=True)
         if response.status_code == 200:
             with open(target_path, "wb") as f:
@@ -81,7 +86,9 @@ def download_raw_data(data_dir="data/raw/"):
         f.extractall(data_dir)
 
     # Substitute "§" with tabs in extracted file
-    subprocess.call([f"sed -i -e 's/§/\t/g' {data_dir}data_from_CJHIF_utf8"], shell=True)
+    subprocess.call(
+        [f"sed -i -e 's/§/\t/g' {data_dir}data_from_CJHIF_utf8"], shell=True
+    )
 
     # Load data
     raw_df = pd.read_csv(data_dir + "data_from_CJHIF_utf8", sep="\t")
@@ -241,16 +248,28 @@ def preprocess_additives(data_dir, file_name, name="cjhif", logger=False):
         # Drop columns 1 and 2
         .drop(columns=[1, 2], axis=1)
         # Rename columns
-        .rename(columns={0: "rxn_smiles", 3: "reagent", 4: "solvent", 5: "catalyst", 6: "yield"})
+        .rename(
+            columns={
+                0: "rxn_smiles",
+                3: "reagent",
+                4: "solvent",
+                5: "catalyst",
+                6: "yield",
+            }
+        )
     )
 
     # Map reagent text to SMILES
     print("Getting reagent SMILES")
-    cjhif["reagent_SMILES"] = cjhif["reagent"].parallel_apply(get_structures_from_name)
+    cjhif["reagent_SMILES"] = cjhif["reagent"].parallel_apply(
+        get_structures_from_name
+    )
 
     # Map solvent text to SMILES
     print("Getting solvent SMILES")
-    cjhif["solvent_SMILES"] = cjhif["solvent"].parallel_apply(get_structures_from_name)
+    cjhif["solvent_SMILES"] = cjhif["solvent"].parallel_apply(
+        get_structures_from_name
+    )
 
     # get only unique solvents
     cjhif["solvent_SMILES"] = cjhif["solvent_SMILES"].parallel_apply(
@@ -259,13 +278,19 @@ def preprocess_additives(data_dir, file_name, name="cjhif", logger=False):
 
     # Map catalyst text to SMILES
     print("Getting catalyst SMILES")
-    cjhif["catalyst_SMILES"] = cjhif["catalyst"].parallel_apply(get_structures_from_name)
+    cjhif["catalyst_SMILES"] = cjhif["catalyst"].parallel_apply(
+        get_structures_from_name
+    )
 
     # Check if reagents and catalyst name have been correctly processed by Leadmine
     print("Checking reagent number")
-    reagent_flag = cjhif["reagent_SMILES"].parallel_apply(lambda x: column_check(x))
+    reagent_flag = cjhif["reagent_SMILES"].parallel_apply(
+        lambda x: column_check(x)
+    )
     print("Checking catalyst number")
-    catalyst_flag = cjhif["catalyst_SMILES"].parallel_apply(lambda x: column_check(x))
+    catalyst_flag = cjhif["catalyst_SMILES"].parallel_apply(
+        lambda x: column_check(x)
+    )
 
     # Remove rows where text2smiles translation is faulty
     # Don't consider solvent in this
@@ -285,7 +310,9 @@ def preprocess_additives(data_dir, file_name, name="cjhif", logger=False):
             {
                 f"faulty rows text2smiles: {name}": (~filt).mean(),
                 f"rows after additives preprocessing: {name}": len(cjhif),
-                f"rows after total empties drop: {name}": len(cjhif_no_empties),
+                f"rows after total empties drop: {name}": len(
+                    cjhif_no_empties
+                ),
             }
         )
 
@@ -298,7 +325,9 @@ def get_full_reaction_smiles(df, name="cjhif", logger=False):
 
     print("Generating full reaction smiles (including additives)")
 
-    df["full_reaction_smiles"] = df.parallel_apply(rxn_utils.join_additives, axis=1)
+    df["full_reaction_smiles"] = df.parallel_apply(
+        rxn_utils.join_additives, axis=1
+    )
 
     if logger:
         logger.log({f"rows after join additives: {name}": len(df)})
@@ -354,7 +383,9 @@ def alchemic_filter(rxn_smiles):
     return False  # No discrepancies found
 
 
-def canonicalize_filter_reaction(df, column, name="cjhif", by_yield=False, logger=False):
+def canonicalize_filter_reaction(
+    df, column, name="cjhif", by_yield=False, logger=False
+):
     """
     Canonicalize reaction smiles, drop invalid SMILES, filter duplicated SMILES
     (take SMILES with highest yield).
@@ -371,7 +402,9 @@ def canonicalize_filter_reaction(df, column, name="cjhif", by_yield=False, logge
     print("Generating canonical reaction smiles (including additives)")
 
     # Canonicalize reaction SMILES, create new column for that
-    df["canonic_rxn"] = df[column].parallel_apply(lambda x: rxn_utils.canonical_rxn(x))
+    df["canonic_rxn"] = df[column].parallel_apply(
+        lambda x: rxn_utils.canonical_rxn(x)
+    )
 
     # Drop invalid SMILES
     df = df[df["canonic_rxn"] != "Invalid SMILES"]
@@ -382,17 +415,25 @@ def canonicalize_filter_reaction(df, column, name="cjhif", by_yield=False, logge
 
     # last, apply alchemic filter to delete reactions with products with atoms that are not in the reactants
     print("Applying alchemic filter")
-    filtered_df_alchemic = filtered_df[~filtered_df["canonic_rxn"].parallel_apply(alchemic_filter)]
+    filtered_df_alchemic = filtered_df[
+        ~filtered_df["canonic_rxn"].parallel_apply(alchemic_filter)
+    ]
 
     # drop full_reaction_smiles column
-    filtered_df_alchemic = filtered_df_alchemic.drop(columns=["full_reaction_smiles"])
+    filtered_df_alchemic = filtered_df_alchemic.drop(
+        columns=["full_reaction_smiles"]
+    )
 
     if logger:
         logger.log(
             {
                 f"rows after canonicalization: {name}": len(df),
-                f"rows after filter duplicates by yield: {name}": len(filtered_df),
-                f"rows after alchemic filter: {name}": len(filtered_df_alchemic),
+                f"rows after filter duplicates by yield: {name}": len(
+                    filtered_df
+                ),
+                f"rows after alchemic filter: {name}": len(
+                    filtered_df_alchemic
+                ),
             }
         )
 
@@ -411,14 +452,18 @@ def clean_USPTO(df, logger=False):
             rxn_type = ReactionFormat.STANDARD_WITH_TILDE
 
             # parse full reaction SMILES
-            ReactEq = parse_extended_reaction_smiles(rxn_smi, remove_atom_maps=True)
+            ReactEq = parse_extended_reaction_smiles(
+                rxn_smi, remove_atom_maps=True
+            )
 
             # If no reactants or no products, return invalid smiles
             if len(ReactEq.reactants) * len(ReactEq.products) == 0:
                 return "Invalid SMILES"
 
             # Standard reaction: canonicalize reaction and sort compounds
-            std_rxn = sort_compounds(canonicalize_compounds(merge_reactants_and_agents(ReactEq)))
+            std_rxn = sort_compounds(
+                canonicalize_compounds(merge_reactants_and_agents(ReactEq))
+            )
 
             # Create final reaction SMILES
             rxn = to_reaction_smiles(std_rxn, rxn_type)
@@ -433,7 +478,9 @@ def clean_USPTO(df, logger=False):
         reactants = parse_extended_reaction_smiles(smiles).reactants
 
         # remove non-atom characters
-        simple_reacts = [re.sub(r"[\[\]\+\-.=()#~*@]", "", i) for i in reactants]
+        simple_reacts = [
+            re.sub(r"[\[\]\+\-.=()#~*@]", "", i) for i in reactants
+        ]
 
         # Take index of longest SMILES as a rough estimation of main reactant
         max_idx = np.argmax(np.array([len(i) for i in simple_reacts]))
@@ -441,10 +488,14 @@ def clean_USPTO(df, logger=False):
         return reactants[max_idx]
 
     print("Canonicalizing USPTO")
-    df["canonic_rxn"] = df["full_reaction_smiles"].parallel_apply(lambda x: _canonical_rxn(x))
+    df["canonic_rxn"] = df["full_reaction_smiles"].parallel_apply(
+        lambda x: _canonical_rxn(x)
+    )
     df = df[df["canonic_rxn"] != "Invalid SMILES"].reset_index(drop=True)
     print("Estimating main reactants in USPTO")
-    df["main_reactant"] = df["full_reaction_smiles"].parallel_apply(lambda x: _main_reactant(x))
+    df["main_reactant"] = df["full_reaction_smiles"].parallel_apply(
+        lambda x: _main_reactant(x)
+    )
 
     filtered_df = df.drop_duplicates("canonic_rxn")
 
