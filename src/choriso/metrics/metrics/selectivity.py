@@ -167,16 +167,12 @@ def flag_stereo_problem(rxn):
     map_rxn = aam_from_smiles([rxn])[0]["mapped_rxn"]
     template = template_smarts_from_mapped_smiles(map_rxn)
 
-    if template:
-        try:
-            temp_prods = template.split(">>")[1].split(".")
-            # check if any of the strings in prods contain '@'
-            if any("@" in prod for prod in temp_prods):
-                return True
-
-            else:
-                return False
-        except:
+    if template and ">>" in template:
+        temp_prods = template.split(">>")[1].split(".")
+        # check if any of the strings in prods contain '@'
+        if any("@" in prod for prod in temp_prods):
+            return True
+        else:
             return False
 
 

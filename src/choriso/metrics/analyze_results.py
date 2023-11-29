@@ -45,12 +45,30 @@ def extract_results(names: list[str]):
                     defaults = ["canonical_rxn", "target", "pred_0", "pred_1", "pred_2", "split"]
                     templates_mapped = ["mapped_rxn", "template_r0", "template_r1"]
 
+                    if not all(elem in df.columns for elem in defaults):
+                        print("all_results.csv does not contain the required columns")
+                        continue
+
                     if all(elem in df.columns for elem in templates_mapped):
                         defaults.extend(templates_mapped)
                         df = df[defaults]
 
                     else:
-                        df = df[defaults]
+                        # try to extract the mapping and the templates from the original test.tsv file
+                        if os.path.exists(os.path.join(f"data/{folder}", "test.tsv")):
+                            print(f"Retrieving templates and mapping from data/{folder}/test.tsv")
+                            df_test = pd.read_csv(os.path.join(f"data/{folder}", "test.tsv"), sep="\t")
+                            if all(elem in df_test.columns for elem in templates_mapped):
+                                # add the columns to the dataframe df
+                                df.concat(df_test[templates_mapped])
+
+                            else:
+                                print("test.tsv does not contain the required columns")
+                                continue
+
+                        else:
+                            print("Mapping and templates not found")
+                            df = df[defaults]
 
                     # Save the results in 'predictions' folder renaming the file with the name of the model
                     df.to_csv(
