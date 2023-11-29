@@ -156,7 +156,7 @@ def data_split_by_prod(
     Out:
         train, val, test: tuple, pd.Dfs containing train, validation and test data
     """
-
+    
     # Read dataset
     print("Reading dataset")
     df = pd.read_csv(data_path, sep="\t")
@@ -190,6 +190,9 @@ def data_split_by_prod(
 
     print("Splitting by MW")
     high_mw_test = df[df["MolWt"] >= high_mw]
+    #if choriso, we have to modify high_mw_test to remove some problematic reactions for G2S 
+    if file_name == "choriso.tsv":
+        high_mw_test = pd.concat((high_mw_test.iloc[:90000], high_mw_test.iloc[100000:]), ignore_index=True)
     low_mw_test = df[df["MolWt"] < low_mw]
     medium_mw = df[(df["MolWt"] < high_mw) & (df["MolWt"] >= low_mw)]
 

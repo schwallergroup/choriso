@@ -276,7 +276,7 @@ def df_stereo_check_step(data_dir, name, logger):
 
 
 def df_splitting_step(
-    data_dir, out_dir, file_name, mode, low_mw, high_mw, augment
+    data_dir, out_dir, file_name, low_mw, high_mw, augment
 ):
     """Split the data into multiple splits. We get training and validation splits by product,
     and test splits by product, MW and random. Optionally you can also get an augemented
@@ -286,7 +286,6 @@ def df_splitting_step(
         data_dir (str): path to data directory
         out_dir (str): path to output directory
         file_name (str): name of the file to split
-        mode (str): mode of splitting
         low_mw (float): lower bound of MW for splitting by MW
         high_mw (float): upper bound of MW for splitting by MW
         augment (bool): whether to augment SMILES for the product split
@@ -339,12 +338,6 @@ def df_splitting_step(
     is_flag=True,
     help="Testing code. Use testing parameters for batching (smaller set)",
 )
-@click.option(
-    "--split_mode",
-    type=click.Choice(["random", "products", "mw"]),
-    default="random",
-    help="Mode for dataset splitting",
-)
 @click.option("--split_file_name", default="choriso.tsv")
 @click.option(
     "--augment",
@@ -373,7 +366,6 @@ def main(
     batch,
     namerxn,
     testing,
-    split_mode,
     split_file_name,
     low_mw,
     high_mw,
@@ -433,7 +425,6 @@ def main(
             out_dir,
             out_dir,
             split_file_name,
-            split_mode,
             low_mw,
             high_mw,
             augment,
