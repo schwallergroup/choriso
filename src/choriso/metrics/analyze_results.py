@@ -10,7 +10,7 @@ from tqdm import tqdm
 from choriso.metrics.metrics.selectivity import Evaluator, co2_transform
 
 
-def extract_results(names: list[str]):
+def extract_results(names):
     """Extract the results from the folders and save them in a csv file in the 'predictions' folder
     for subsequent analysis. The results are saved in a csv file with the name of the model.
 
@@ -219,24 +219,10 @@ def compute_results(path, chemistry, mapping):
         sust_files.remove("sustainability_train.csv")
 
     # create a df to store predictions and another to store train
-    df_pred = pd.DataFrame(
-        columns=[
-            "duration(s)",
-            "power_consumption(kWh)",
-            "kwh_scaled",
-            "CO2_emissions(kg)",
-            "co2_scaled",
-        ]
-    )
-    df_train = pd.DataFrame(
-        columns=[
-            "duration(s)",
-            "power_consumption(kWh)",
-            "kwh_scaled",
-            "CO2_emissions(kg)",
-            "co2_scaled",
-        ]
-    )
+    sust_columns = ["duration(s)", "power_consumption(kWh)", "kwh_scaled", "CO2_emissions(kg)", "co2_scaled"]
+
+    df_pred = pd.DataFrame(columns=sust_columns)
+    df_train = pd.DataFrame(columns=sust_columns)
 
     for file in sust_files:
         df = pd.read_csv(os.path.join(sustainability_path, file))

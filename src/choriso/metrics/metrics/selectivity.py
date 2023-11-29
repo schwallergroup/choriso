@@ -371,7 +371,7 @@ class Evaluator:
         else:
             return acc
 
-    def flag_stereo_problem(self, template: str) -> bool:
+    def flag_stereo_problem(self, template):
         """Flag stereoselectivity problems.
         Args:
             template: str, extracted template with radius=0 from reaction SMILES
