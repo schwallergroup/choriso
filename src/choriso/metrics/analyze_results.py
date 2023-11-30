@@ -20,9 +20,9 @@ def extract_results(names):
     """
 
     if not os.path.exists("results/predictions"):
-        os.mkdir("results/predictions")
+        os.makedirs("results/predictions")
     if not os.path.exists("results/sustainability"):
-        os.mkdir("results/sustainability")
+        os.makedirs("results/sustainability")
 
     for name in names:
         # First, walk through each directory and locate the subfolders with the results
@@ -30,6 +30,7 @@ def extract_results(names):
 
         # Then, for each folder, extract the results if they contain the subfolder 'results'
         for folder in folders:
+            
             path = os.path.join(name, folder)
 
             if "results" in os.listdir(path):
@@ -42,8 +43,8 @@ def extract_results(names):
                     )
 
                     # select only 'canonical_rxn', 'target', 'pred_0', 'pred_1' columns and templates (if available)
-                    defaults = ["canonical_rxn", "target", "pred_0", "pred_1", "pred_2", "split"]
-                    templates_mapped = ["mapped_rxn", "template_r0", "template_r1"]
+                    defaults = ["canonical_rxn", "target", "pred_0", "pred_1", "pred_2"]
+                    templates_mapped = ["rxnmapper_aam", "template_r0", "template_r1"]
 
                     if not all(elem in df.columns for elem in defaults):
                         print("all_results.csv does not contain the required columns")
@@ -60,7 +61,7 @@ def extract_results(names):
                             df_test = pd.read_csv(os.path.join(f"data/{folder}", "test.tsv"), sep="\t")
                             if all(elem in df_test.columns for elem in templates_mapped):
                                 # add the columns to the dataframe df
-                                df.concat(df_test[templates_mapped])
+                                df = pd.concat((df[defaults], df_test[templates_mapped]))
 
                             else:
                                 print("test.tsv does not contain the required columns")
@@ -274,11 +275,12 @@ def compute_results(path, chemistry, mapping):
     default=False,
     help="Whether to compute mapping and templates or not (these are required for chemistry metrics).",
 )
+
 def main(results_folders, path, chemistry, mapping):
     """Main results analysis pipeline for the metrics.
     Args:
-        results_folders: Path. If previous results exist, load them from this path
-        path: Compute results and store them in this path
+        results_folders: str, path to results, if previous results exist, load them from this path
+        path: str, compute results and store them in this path
         chemistry: bool. whether the model is a chemistry model or not
         mapping: bool. whether to compute mapping or not
     """
@@ -287,9 +289,9 @@ def main(results_folders, path, chemistry, mapping):
         print(f"Extracting results from {len(results_folders)} folder(s)...")
         extract_results(results_folders)
 
-    if path:
-        print("Computing results...")
-        compute_results(path, chemistry, mapping)
+    # if path:
+    #     print("Computing results...")
+    #     compute_results(path, chemistry, mapping)
 
 
 if __name__ == "__main__":
