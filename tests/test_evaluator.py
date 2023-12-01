@@ -4,7 +4,7 @@ import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
 
-from choriso.metrics.metrics.selectivity import Evaluator, flag_regio_problem, flag_stereo_problem
+from choriso.metrics.selectivity import Evaluator, flag_regio_problem, flag_stereo_problem
 
 
 @pytest.mark.skip(reason="dude be takin ages")

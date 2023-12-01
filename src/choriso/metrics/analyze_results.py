@@ -7,7 +7,7 @@ import click
 import pandas as pd
 from tqdm import tqdm
 
-from choriso.metrics.metrics.selectivity import Evaluator, co2_transform
+from choriso.metrics.selectivity import co2_transform, flag_regio_problem, flag_stereo_problem
 
 
 def extract_results(names):
@@ -44,7 +44,7 @@ def extract_results(names):
 
                     # select only 'canonical_rxn', 'target', 'pred_0', 'pred_1' columns and templates (if available)
                     defaults = ["canonical_rxn", "target", "pred_0", "pred_1", "pred_2"]
-                    templates_mapped = ["rxnmapper_aam", "template_r0", "template_r1"]
+                    templates_mapped = ["rxnmapper_aam", "template_r0", "template_r1", "split"]
 
                     if not all(elem in df.columns for elem in defaults):
                         print("all_results.csv does not contain the required columns")
@@ -61,7 +61,7 @@ def extract_results(names):
                             df_test = pd.read_csv(os.path.join(f"data/{folder}", "test.tsv"), sep="\t")
                             if all(elem in df_test.columns for elem in templates_mapped):
                                 # add the columns to the dataframe df
-                                df = pd.concat((df[defaults], df_test[templates_mapped]))
+                                df = pd.concat((df[defaults], df_test[templates_mapped]), axis=1)
 
                             else:
                                 print("test.tsv does not contain the required columns")
@@ -128,6 +128,39 @@ def extract_results(names):
                 else:
                     print(f"No results found in {path}")
 
+def compute_flags(path):
+    """Compute the flags for the predictions
+    
+    Args:
+        path (str): path to the folder containing the results of the models
+    
+    """
+    # First compute metrics without CO2
+    results_path = os.path.join(path, "predictions")
+
+    files = sorted(os.listdir(results_path))
+
+    for file in tqdm(files):
+        #read csv file
+        df = pd.read_csv(os.path.join(results_path, file)).sample(1000, random_state=33)
+        #replace nan with False
+        df = df.fillna(False)
+        print(df.columns)
+        print(df.head())
+
+        #compute flags for regio and stereo if not present
+        if "regio" not in df.columns:
+            df["regio_flag"] = df.apply(
+                lambda x: flag_regio_problem(
+                    x["canonical_rxn"], (x["rxnmapper_aam"], x["template_r1"]
+                )),
+                axis=1
+                )
+            
+        if "stereo" not in df.columns:
+            df["stereo_flag"] = df["template_r0"].parallel_apply(lambda x: flag_stereo_problem(x))
+
+        df.to_csv(os.path.join(results_path, file), index=False)
 
 # use a list of paths and extract file
 def compute_results(path, chemistry, mapping):
@@ -153,7 +186,7 @@ def compute_results(path, chemistry, mapping):
     # write results to file
     with open(os.path.join(results_path, "results.txt"), "w") as f:
         # create df to store results
-        df = pd.DataFrame(columns=["top-1", "top-2", "stereo", "regio", "split"])
+        df = pd.DataFrame(columns=["top-1", "top-2", "stereo", "regio"])
 
         # write LATeX table header
         f.write(r"\begin{tabular}{|| c | c | c | c | c | c ||}")
@@ -166,7 +199,12 @@ def compute_results(path, chemistry, mapping):
         f.write("\n")
 
         for file in tqdm(files):
-            print(file)
+            #read csv file
+            df = pd.read_csv(os.path.join(results_path, file))
+
+            #compute flags for regio and stereo if not present
+            if "regio" not in df.columns:
+                pass
             # use evaluator to compute metrics
             evaluator = Evaluator(
                 os.path.join(results_path, file),
@@ -289,9 +327,11 @@ def main(results_folders, path, chemistry, mapping):
         print(f"Extracting results from {len(results_folders)} folder(s)...")
         extract_results(results_folders)
 
-    # if path:
-    #     print("Computing results...")
-    #     compute_results(path, chemistry, mapping)
+    if path:
+        print("Computing flags...")
+        compute_flags(path)
+
+        # compute_results(path, chemistry, mapping)
 
 
 if __name__ == "__main__":

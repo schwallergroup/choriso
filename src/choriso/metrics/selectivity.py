@@ -16,23 +16,6 @@ pandarallel.initialize(progress_bar=True, nb_workers=22)
 logging.set_verbosity_error()  # Only log errors
 
 
-def co2_transform(absval, mode="co2"):
-    """Transform absolute CO2 and kWh into relative scale.
-
-    Args:
-        absval: float, CO2 or kWh value
-        mode: str, 'co2' or 'kwh', default 'co2'
-    """
-
-    if mode == "co2":
-        k = 5e-1
-    elif mode == "kwh":
-        k = 5e-2
-
-    y = 100 * np.exp(-k * absval)
-
-    return y
-
 
 def aam_from_smiles(list_rxn_smiles):
     """Get attention guided atom maps from a list of reaction SMILES.
@@ -80,17 +63,72 @@ def template_smarts_from_mapped_smiles(mapped_smiles, radius=0):
         return False
 
 
-def flag_regio_problem(rxn):
+def co2_transform(absval, mode="co2"):
+    """Transform absolute CO2 and kWh into relative scale.
+
+    Args:
+        absval: float, CO2 or kWh value
+        mode: str, 'co2' or 'kwh', default 'co2'
+    """
+
+    if mode == "co2":
+        k = 5e-1
+    elif mode == "kwh":
+        k = 5e-2
+
+    y = 100 * np.exp(-k * absval)
+
+    return y
+
+
+def top_n_accuracy(df, n):
+        """Take predicition dataframe and compute top-n accuracy
+
+        Args:
+            df (pd.DataFrame): dataframe with predictions
+            n (int): number of top predictions to consider
+
+        Returns:
+            float: top-n accuracy
+        """
+
+        correct = 0
+
+        for i, row in df.iterrows():
+            for i in range(n):
+                if row["target"] == row[f"pred_{i}"]:
+                    correct += 1
+                    break
+
+        accuracy = round(correct / len(df) * 100, 1)
+
+        return accuracy
+
+
+def flag_regio_problem(rxn, *args):
     """Flag regioselectivity problems. For the moment only one-product
     reactions. The function extracts the reaction template (only reacting atoms) and then checks
     if the matching atoms in the product can generate several products.
 
     Args:
         rxn: str, reaction SMILES
+        *args: tuple, optional reaction mapping and template with radius=1. 
+                If not provided, they are computed.
 
     Out:
         bool, True if the reaction is regioselective, False otherwise
     """
+    print(args)
+    print(len(args))
+    if len(args) == 1:
+        map_rxn, template = args[0][0], args[0][1]
+        if template == False:
+            return False
+        
+    elif len(args) == 0:
+        # extract rxn template
+        map_rxn = aam_from_smiles([rxn])[0]["mapped_rxn"]
+        template = template_smarts_from_mapped_smiles(map_rxn, radius=1)
 
     def _sanitize_filter_prods(prods):
         good = []
@@ -102,11 +140,17 @@ def flag_regio_problem(rxn):
                 pass
         return set(good)
 
-    # extract rxn template
-    map_rxn = aam_from_smiles([rxn])[0]["mapped_rxn"]
-    template = template_smarts_from_mapped_smiles(map_rxn, radius=1)
+    def _check_template(temp):
+            try:
+                reaction = AllChem.ReactionFromSmarts(temp)
+                return True
+            except ValueError:
+                return False
 
-    if template:
+    # proceed only if template exists
+    check = _check_template(template)
+
+    if check:
         products = rxn.split(">>")[1]
 
         if "@" in products:
@@ -154,26 +198,107 @@ def flag_regio_problem(rxn):
         return False
 
 
-def flag_stereo_problem(rxn):
+def regio_score(df, negative_acc=False):
+        """Regioselectivity classification score. Top1 accuracy for reactions with regioselectivity
+        problems.
+
+        Args:
+            df: pd.DataFrame, dataframe with predictions and flags
+            negative_acc: bool
+
+        Returns:
+            acc: float, top-1 accuracy for reactions where regioselectivity is an issue
+        """
+
+        if "regio_flag" not in df.columns:
+            raise ValueError("regio_flag column not found in dataframe")
+
+        df_true = df[df["regio_flag"] == True]
+        df_false = df[df["regio_flag"] == False]
+
+        # check if products are the same
+        true_prods = np.array(df_true["target"].values)
+        pred_prods = np.array(df_true["pred_0"].values)
+
+        acc = true_prods == pred_prods
+        acc = round(np.sum(acc) / len(acc) * 100, 1)
+
+        if negative_acc:
+            # check if products are the same
+            true_prods = np.array(df_false["target"].values)
+            pred_prods = np.array(df_false["pred_0"].values)
+
+            acc_neg = true_prods == pred_prods
+            acc_neg = round(np.sum(acc_neg) / len(acc_neg) * 100, 1)
+
+            return acc, acc_neg
+
+        else:
+            return acc
+
+def flag_stereo_problem(template, rxn=False):
     """Flag stereoselectivity problems.
     Args:
-        rxn: str, reaction SMILES
+        template: str, extracted template with radius=0 from reaction SMILES
+        rxn: str, reaction SMILES (in case template is not provided)
 
     Out:
         bool, True if the reaction has stereoselectivity issues, False otherwise
     """
 
-    # extract rxn template
-    map_rxn = aam_from_smiles([rxn])[0]["mapped_rxn"]
-    template = template_smarts_from_mapped_smiles(map_rxn)
+    if rxn:
+        # extract rxn template
+        map_rxn = aam_from_smiles([rxn])[0]["mapped_rxn"]
+        template = template_smarts_from_mapped_smiles(map_rxn)
 
-    if template and ">>" in template:
+    try:
         temp_prods = template.split(">>")[1].split(".")
         # check if any of the strings in prods contain '@'
         if any("@" in prod for prod in temp_prods):
             return True
         else:
             return False
+        
+    except AttributeError:
+        return False
+        
+def stereo_score(df, negative_acc=False):
+    """Stereoselectivity classification score. Top1 accuracy for reactions with stereoselectivity
+    problems.
+
+    Args:
+        df: pd.DataFrame, dataframe with predictions
+
+    Returns:
+        acc: float, top-1 accuracy for reactions where stereoselectivity is an issue
+        negative_acc: float, top-1 accuracy for reactions where stereoselectivity is not an issue
+    """
+
+    if "stereo_flag" not in df.columns:
+        raise ValueError("stereo_flag column not found in dataframe")
+    
+    df_true = df[df["stereo_flag"] == True]
+    df_false = df[df["stereo_flag"] == False]
+
+    # check if products are the same
+    true_prods = np.array(df_true["target"].values)
+    pred_prods = np.array(df_true["pred_0"].values)
+
+    acc = true_prods == pred_prods
+    acc = round(np.sum(acc) / len(acc) * 100, 1)
+
+    if negative_acc:
+        # check if products are the same
+        true_prods = np.array(df_false["target"].values)
+        pred_prods = np.array(df_false["pred_0"].values)
+
+        acc_neg = true_prods == pred_prods
+        acc_neg = round(np.sum(acc_neg) / len(acc_neg), 1)
+
+        return acc, acc_neg
+
+    else:
+        return acc
 
 
 class Evaluator:
