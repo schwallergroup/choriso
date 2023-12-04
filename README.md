@@ -68,9 +68,7 @@ choriso --download_processed \
 After executing `some command from choriso-models`, run the analysis of your model's results using:
 
 ```bash
-analyse --results_folders='path/to/results/folder' \
-	 --chemistry=True \
-	 --mapping=True
+analyse --results_folders='path/to/results/folder' 
 ```
 
 Results will be stored in the same directory as `benchmarking-results`. 
@@ -170,13 +168,7 @@ You can also use the implemented metrics from the paper to evaluate your own res
 analyse --results_folders='OpenNMT_Transformer'
 
 ```
-This will launch the analysis on all the files of the `OpenNMT_Transformer` folder. The output files should have the same structure as the ones included in the benchmarking repo.
-
-The program computes the chemistry metrics by default. In order to compute this, your test set needs to include the templates with radius=0 and radius=1 of each reaction. If you want to compute the mapping and templates, you need to specify the `--mapping` flag.
-
-```bash
-analyse --results_folders='OpenNMT_Transformer' --mapping=True
-```
+This will launch the analysis on all the files of the `OpenNMT_Transformer` folder. The output files should have the same structure as the one included on the benchmarking repo as an example. The program computes the chemistry metrics by default, which require the presence of a template with radius=0 and a template with radius=1 (these columns should be present on the test set file). 
 
 ### Flagging individual reactions
 You can use the metrics functions to check if a specific reaction is regio or stereoselective. As an example:

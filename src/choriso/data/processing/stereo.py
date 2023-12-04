@@ -68,4 +68,3 @@ def remove_chiral_centers(reaction_smiles):
 
     # Return the modified reaction SMILES
     return AllChem.ReactionToSmiles(rxn)
-
