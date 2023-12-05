@@ -244,6 +244,9 @@ def df_stereo_check_step(data_dir, name, logger):
 
     df = df[df["has_carbon"] == True]
 
+    # drop duplicates
+    df = df.drop_duplicates("canonic_rxn")
+
     if name == "uspto":
         # remove this specific reaction (it's giving problems when featurizing for G2S)
         df = df[~df["canonic_rxn"].str.contains("C.O>>C.O.O.O.O.O")]

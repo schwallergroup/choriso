@@ -282,7 +282,7 @@ def preprocess_additives(data_dir, file_name, name="cjhif", logger=False):
         get_structures_from_name
     )
 
-    # Check if reagents and catalyst name have been correctly processed by Leadmine
+    # Check if reagents and catalyst name have been correctly processed
     print("Checking reagent number")
     reagent_flag = cjhif["reagent_SMILES"].parallel_apply(
         lambda x: column_check(x)

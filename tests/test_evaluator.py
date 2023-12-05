@@ -4,9 +4,10 @@ import pandas as pd
 import pytest
 from pandas.testing import assert_frame_equal
 
-from choriso.metrics.metrics.selectivity import Evaluator, flag_regio_problem, flag_stereo_problem
+from choriso.metrics.selectivity import flag_regio_problem, flag_stereo_problem
 
 
+# Need to rewrite this test. Evaluator no longer there
 @pytest.mark.skip(reason="dude be takin ages")
 def test_flags():
     "Test if Evaluator is flagging reactions correctly"
@@ -25,6 +26,7 @@ def test_flags():
     assert_frame_equal(df, df_truth)
 
 
+# Need to rewrite this test. Evaluator no longer there
 @pytest.mark.skip(reason="dude be takin ages")
 def test_score():
     """Test if metrics are computed correctly"""
