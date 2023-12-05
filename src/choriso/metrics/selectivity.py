@@ -39,7 +39,7 @@ def template_smarts_from_mapped_smiles(
     radius=1,
     failed_template=False,
     return_raw_template=False,
-):  
+):
     """Extract reaction template from mapped reaction SMILES.
 
     Args:
@@ -51,7 +51,7 @@ def template_smarts_from_mapped_smiles(
     Out:
         template: str, reaction template
     """
-    
+
     if type(mapped_smiles) == str:
         rxn = ChemicalReaction(mapped_smiles, clean_smiles=False)
         failed_templates = []
@@ -311,4 +311,3 @@ def stereo_score(df, negative_acc=False):
 
     else:
         return acc
-
