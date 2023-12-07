@@ -4,8 +4,8 @@ import os
 import time
 
 import click
-import wandb
 
+import wandb
 from choriso.data import *
 
 
@@ -237,6 +237,14 @@ def df_stereo_check_step(data_dir, name, logger):
         axis=1,
     )
 
+    # correct mapping for reactions with stereo issues
+    df["rxnmapper_aam"] = df.parallel_apply(
+        lambda x: stereo.remove_chiral_centers(x["rxnmapper_aam"])
+        if x["stereo_wrong"] == True
+        else x["rxnmapper_aam"],
+        axis=1,
+    )
+
     # remove reactions where products do not contain carbon, this is mainly due to an issue with USPTO
     df["has_carbon"] = df["canonic_rxn"].parallel_apply(
         lambda x: stereo.has_carbon(x.split(">>")[1])
@@ -245,7 +253,8 @@ def df_stereo_check_step(data_dir, name, logger):
     df = df[df["has_carbon"] == True]
 
     # drop duplicates
-    df = df.drop_duplicates("canonic_rxn")
+    df = df.drop_duplicates(subset=["canonic_rxn"])
+    
 
     if name == "uspto":
         # remove this specific reaction (it's giving problems when featurizing for G2S)
@@ -279,7 +288,7 @@ def df_stereo_check_step(data_dir, name, logger):
 
 
 def df_splitting_step(
-    data_dir, out_dir, file_name, low_mw, high_mw, augment
+    data_dir, out_dir, file_name, low_mw, high_mw, augment, templates
 ):
     """Split the data into multiple splits. We get training and validation splits by product,
     and test splits by product, MW and random. Optionally you can also get an augemented
@@ -292,6 +301,7 @@ def df_splitting_step(
         low_mw (float): lower bound of MW for splitting by MW
         high_mw (float): upper bound of MW for splitting by MW
         augment (bool): whether to augment SMILES for the product split
+        templates (bool): whether to compute templates on the test set
 
     """
     # path to clean df
@@ -307,6 +317,7 @@ def df_splitting_step(
         test_frac=0.07,
         val_frac=0.077,
         augment=augment,
+        templates=templates,
     )
 
 
@@ -343,6 +354,11 @@ def df_splitting_step(
 )
 @click.option("--split_file_name", default="choriso.tsv")
 @click.option(
+    "--templates",
+    is_flag=True,
+    help="Compute templates on the test set",
+)
+@click.option(
     "--augment",
     is_flag=True,
     help="Augment SMILES by creating one additional random SMILES for each product",
@@ -373,6 +389,7 @@ def main(
     low_mw,
     high_mw,
     augment,
+    templates,
 ):
     """Main data preprocessing pipeline."""
 
@@ -431,6 +448,7 @@ def main(
             low_mw,
             high_mw,
             augment,
+            templates,
         )
 
 

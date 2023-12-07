@@ -9,6 +9,8 @@ from rdkit.ML.Descriptors.MoleculeDescriptors import MolecularDescriptorCalculat
 from rxn.chemutils.miscellaneous import is_valid_smiles
 from sklearn.model_selection import train_test_split
 
+from choriso.metrics.selectivity import template_smarts_from_mapped_smiles
+
 
 def dataset_product_split(data, frac):
     """Split reactions dataframe in train and test sets keeping reactions
@@ -141,6 +143,7 @@ def data_split_by_prod(
     val_frac=0.1,
     replace_tilde=True,
     augment=False,
+    templates=False,
 ):
     """Function to split data for reaction forward prediction based on products.
 
@@ -156,7 +159,7 @@ def data_split_by_prod(
     Out:
         train, val, test: tuple, pd.Dfs containing train, validation and test data
     """
-    
+
     # Read dataset
     print("Reading dataset")
     df = pd.read_csv(data_path, sep="\t")
@@ -190,11 +193,14 @@ def data_split_by_prod(
 
     print("Splitting by MW")
     high_mw_test = df[df["MolWt"] >= high_mw]
-    #if choriso, we have to modify high_mw_test to remove some problematic reactions for G2S 
-    if file_name == "choriso.tsv":
-        high_mw_test = pd.concat((high_mw_test.iloc[:90000], high_mw_test.iloc[100000:]), ignore_index=True)
+    # if choriso, we have to modify high_mw_test to remove some problematic reactions for G2S
+    if 'choriso' in file_name:
+        high_mw_test = pd.concat(
+            (high_mw_test.iloc[:90000], high_mw_test.iloc[100000:]),
+            ignore_index=True,
+        )
     low_mw_test = df[df["MolWt"] < low_mw]
-    medium_mw = df[(df["MolWt"] < high_mw) & (df["MolWt"] >= low_mw)]
+    medium_mw = df[(df["MolWt"] < high_mw_test) & (df["MolWt"] >= low_mw)]
 
     # split by product
     print("Splitting by product")
@@ -265,6 +271,14 @@ def data_split_by_prod(
     big_test = pd.concat(
         [high_test, low_test, prod_test, rand_test], ignore_index=False
     )
+
+    if templates:
+        big_test["template_r0"] = big_test["canonical_rxn"].parallel_apply(
+            lambda x: template_smarts_from_mapped_smiles(x, radius=0)
+        )
+        big_test["template_r1"] = big_test["canonical_rxn"].parallel_apply(
+            lambda x: template_smarts_from_mapped_smiles(x, radius=1)
+        )
 
     big_test.to_csv(
         saving_path + file_name.split(".")[0] + "_all_test.tsv", sep="\t"

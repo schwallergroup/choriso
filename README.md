@@ -58,11 +58,10 @@ pip install rxnmapper --no-deps
 ```
 
 ## 🔥 Quick start
-To download the preprocessed dataset and split it randomly, run the following command:
+To download the preprocessed dataset and split it to obtain the corresponding train, validation and test sets, run the following command:
 ```bash
 choriso --download_processed \
-	--run split \
-	--split_mode products
+	--run split
 ```
 
 After executing `some command from choriso-models`, run the analysis of your model's results using:
@@ -90,7 +89,7 @@ choriso --download_processed \
 
 ### :gear: Preprocessing:
 
-Get the raw datasets (CJHIF, USPTO) and preprocess:
+Get the raw datasets (CJHIF, USPTO) and preprocess. The `--upsto` command runs the same processing pipeline for the raw USPTO data:
 
 **NOTE: To run the `clean` step you need to have Leadmine (v3.18.1) and NameRXN (v3.4.0) installed.**
 
@@ -103,49 +102,38 @@ choriso --download_raw \
 	--run atom_map
 ```
 
-### :mag: Data analysis:
+### :mag: Stereo check
 
-For this step you need to have either downloaded the preprocessed dataset, or running the preprocessing pipeline.
+For this step you need to have either downloaded the preprocessed dataset, or running the preprocessing pipeline. The step checks reactions where there are stereochemistry issues and corrects the dataset.
 
 ```
 choriso --run analysis
 ```
 
 ### :heavy_division_sign: Splitting
-In the paper, we describe 3 data splits which can be obtained using the flag `--run split` specifying a `--split_mode`
-- random split
-```bash
-choriso --run split \
-	--split_mode random
-```
-- split by product
-```bash
-choriso --run split \
-	--split_mode products
-```
-- split by Molecular Weight:
-  - test on high MW
-  - test on low MW
+In the paper, we describe a splitting scheme to obtain test splits by product, product molecular weight and random. When doing the splitting, all the testing reactions go to a single test set file, with the `split` column indicating to which split they belong. To run the splitting:
 
-   For example, to create a split by MW, testing on low MW with a threshold of 150 a.m.u., and another split on high MW with threshold of 700 a.m.u. run
+```bash
+choriso --run split 
+```
+
+By default, reactions with products below 150 a.m.u go to the low MW set and reactions with products above 700 a.m.u go to the high MW set.These values can be modified and adapted to your preferences. For example, to create a split to test on low MW with a threshold of 100 a.m.u., and another split on high MW with threshold of 750 a.m.u. run:
+
 ```bash
 choriso --run split \
-	--split_mode mw \
 	--low_mw=150
 	--high_mw=700
 ```
 
-You can optionally augment the SMILES to double the size of the training set for the product split:
+You can optionally augment the SMILES to double the size of the training set:
 ```bash
 choriso --run split \
-	--split_mode products \
 	--augment
 ```
-By default, the splitting will be done on the choriso dataset, which is called `choriso.tsv`. If you want to split a different dataset, you can specify the path to the dataset using the `--split_file_name` option. For example, to split the USPTO dataset by products, run:
+By default, the splitting will be done on the choriso dataset, which is called `choriso.tsv`. If you want to split a different dataset, you can specify the path to the dataset using the `--split_file_name` option. For example, to split the USPTO dataset, run:
 ```bash
 choriso --run split \
-    --split_mode products \
-    --split_file_name=uspto_atom_mapped_dataset.tsv
+    --split_file_name=uspto.tsv
 ```
 ---
 
@@ -153,11 +141,11 @@ choriso --run split \
 
 By default the execution of any step will store all results locally.
 
-Optionally, you can log all results from the preprocessing and analysis to W&B using the `wandb_log` flag at any step.
+Optionally, you can log all results from the preprocessing to W&B using the `wandb_log` flag at any step.
 
 As an example
 ```bash
-choriso --run analysis \
+choriso --run clean \
 	--wandb_log
 ```
 will execute the analysis step and upload all results (plots, metrics) to W&B.
@@ -174,7 +162,7 @@ This will launch the analysis on all the files of the `OpenNMT_Transformer` fold
 You can use the metrics functions to check if a specific reaction is regio or stereoselective. As an example:
 
 ```python
-from choriso.metrics.metrics.selectivity import flag_regio_problem, flag_stereo_problem
+from choriso.metrics.selectivity import flag_regio_problem, flag_stereo_problem
 
 regio_rxn = 'BrCc1ccccc1.C1CCOC1.C=CC(O)CO.[H-].[Na+]>>C=CC(O)COCc1ccccc1'
 stereo_rxn = 'C=C(NC(C)=O)c1ccc(OC)cc1.ClCCl.[H][H].[Rh+]>>COc1ccc([C@@H](C)NC(C)=O)cc1'
