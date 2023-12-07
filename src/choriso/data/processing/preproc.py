@@ -121,8 +121,8 @@ def download_full_USPTO(data_dir="data/raw/"):
 def download_processed_data(data_dir="data/processed/"):
     """Download processed data (after cleaning and atom mapping)."""
 
-    # CHANGE THIS WITH THE CORRECTED CHORISO (CLEAN CJHIF + USPTO)
-    base_url = "https://drive.switch.ch/index.php/s/VaSVBCiXrmzYzGD/download?path=%2F&files={}"
+
+    base_url = "https://drive.switch.ch/index.php/s/t9uvLpScEu1esIy/download?path=%2F&files={}"
 
     print("Downloading processed datasets...")
 
