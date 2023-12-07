@@ -36,7 +36,7 @@ We release:
 
 
 It is derived from the [CJHIF dataset](https://ieeexplore.ieee.org/document/9440947/footnotes#footnotes-id-fn7).
-This repo provides all the code use for dataset curation, splitting and analysis reported in the paper, as well as the metrics for evaluation of models.
+This repo provides all the code used for dataset curation, splitting and analysis reported in the paper, as well as the metrics for evaluation of models.
 
 ---
 
@@ -87,11 +87,11 @@ choriso --download_processed \
 	--out-dir data/processed/
 ```
 
-### :gear: Preprocessing:
+### :gear: Preprocessing
 
 Get the raw datasets (CJHIF, USPTO) and preprocess. The `--upsto` command runs the same processing pipeline for the raw USPTO data:
 
-**NOTE: To run the `clean` step you need to have Leadmine (v3.18.1) and NameRXN (v3.4.0) installed.**
+**NOTE: To run the `clean` step you need to have NameRXN (v3.4.0) installed.**
 
 ```bash
 choriso --download_raw \
@@ -117,7 +117,7 @@ In the paper, we describe a splitting scheme to obtain test splits by product, p
 choriso --run split 
 ```
 
-By default, reactions with products below 150 a.m.u go to the low MW set and reactions with products above 700 a.m.u go to the high MW set.These values can be modified and adapted to your preferences. For example, to create a split to test on low MW with a threshold of 100 a.m.u., and another split on high MW with threshold of 750 a.m.u. run:
+By default, reactions with products below 150 a.m.u go to the low MW set and reactions with products above 700 a.m.u go to the high MW set. These values can be modified and adapted to your preferences. For example, to create a split to test on low MW with a threshold of 100 a.m.u., and another split on high MW with threshold of 750 a.m.u. run:
 
 ```bash
 choriso --run split \
@@ -154,7 +154,6 @@ will execute the analysis step and upload all results (plots, metrics) to W&B.
 You can also use the implemented metrics from the paper to evaluate your own results. We have adapted the evaluation pipeline to the files from the [benchmarking repo](https://github.com/schwallergroup/choriso-models). As an example:
 ```
 analyse --results_folders='OpenNMT_Transformer'
-
 ```
 This will launch the analysis on all the files of the `OpenNMT_Transformer` folder. The output files should have the same structure as the one included on the benchmarking repo as an example. The program computes the chemistry metrics by default, which require the presence of a template with radius=0 and a template with radius=1 (these columns should be present on the test set file). 
 
