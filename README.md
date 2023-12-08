@@ -26,11 +26,11 @@
 <br>
 
 
-**ChORISO** (**Ch**emical **O**rganic **R**eact**I**on **S**miles **O**mnibus) is a benchmarking suite for reaction prediction machine learning models.
+**CHORISO** (**CH**emical **O**rganic **R**eact**I**on **S**miles **O**mnibus) is a benchmarking suite for reaction prediction machine learning models.
 
 We release:
 
-- A highly curated dataset of academic chemical reactions ([download ChORISO and splits](https://drive.switch.ch/index.php/s/VaSVBCiXrmzYzGD))
+- A highly curated dataset of academic chemical reactions ([download ChORISO and splits](https://figshare.com/s/5e57a3399c52701cbc15))
 - A suite of standardized evaluation metrics
 - A compilation of models for reaction prediction ([choriso-models](https://github.com/schwallergroup/choriso-models))
 
