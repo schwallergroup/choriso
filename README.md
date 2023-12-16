@@ -2,7 +2,7 @@
     <a href="https://github.com/schwallergroup/choriso/actions/workflows/tests.yml">
         <img alt="Tests" src="https://github.com/schwallergroup/choriso/workflows/Tests/badge.svg" />
     </a>
-    <a href="https://openreview.net/forum?id=yLydB04RxR">
+    <a href="https://arxiv.org/abs/2312.09004">
         <img alt="DOI" src="https://zenodo.org/badge/DOI/10.48550/arXiv.2304.05376.svg" />
     </a>
     <a href='https://choriso.readthedocs.io/en/latest/?badge=latest'>
@@ -36,7 +36,7 @@ We release:
 
 
 It is derived from the [CJHIF dataset](https://ieeexplore.ieee.org/document/9440947/footnotes#footnotes-id-fn7).
-This repo provides all the code used for dataset curation, splitting and analysis reported in the paper, as well as the metrics for evaluation of models.
+This repo provides all the code used for dataset curation, splitting and analysis reported in the [paper](https://arxiv.org/abs/2312.09004), as well as the metrics for evaluation of models.
 
 ---
 
