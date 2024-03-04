@@ -2,7 +2,7 @@
     <a href="https://github.com/schwallergroup/choriso/actions/workflows/tests.yml">
         <img alt="Tests" src="https://github.com/schwallergroup/choriso/workflows/Tests/badge.svg" />
     </a>
-    <a href="https://openreview.net/forum?id=yLydB04RxR">
+    <a href="https://arxiv.org/abs/2312.09004">
         <img alt="DOI" src="https://zenodo.org/badge/DOI/10.48550/arXiv.2304.05376.svg" />
     </a>
     <a href='https://choriso.readthedocs.io/en/latest/?badge=latest'>
@@ -26,17 +26,17 @@
 <br>
 
 
-**ChORISO** (**Ch**emical **O**rganic **R**eact**I**on **S**miles **O**mnibus) is a benchmarking suite for reaction prediction machine learning models.
+**CHORISO** (**CH**emical **O**rganic **R**eact**I**on **S**miles **O**mnibus) is a benchmarking suite for reaction prediction machine learning models.
 
 We release:
 
-- A highly curated dataset of academic chemical reactions ([download ChORISO and splits](https://drive.switch.ch/index.php/s/VaSVBCiXrmzYzGD))
+- A highly curated dataset of academic chemical reactions ([download ChORISO and splits](https://figshare.com/s/5e57a3399c52701cbc15))
 - A suite of standardized evaluation metrics
 - A compilation of models for reaction prediction ([choriso-models](https://github.com/schwallergroup/choriso-models))
 
 
 It is derived from the [CJHIF dataset](https://ieeexplore.ieee.org/document/9440947/footnotes#footnotes-id-fn7).
-This repo provides all the code use for dataset curation, splitting and analysis reported in the paper, as well as the metrics for evaluation of models.
+This repo provides all the code used for dataset curation, splitting and analysis reported in the [paper](https://arxiv.org/abs/2312.09004), as well as the metrics for evaluation of models.
 
 ---
 
@@ -51,26 +51,23 @@ cd choriso
 
 Set up and activate the environment:
 
-```
+```bash
 conda env create -f environment.yml
 conda activate choriso
 pip install rxnmapper --no-deps
 ```
 
 ## 🔥 Quick start
-To download the preprocessed dataset and split it randomly, run the following command:
-```
+To download the preprocessed dataset and split it to obtain the corresponding train, validation and test sets, run the following command:
+```bash
 choriso --download_processed \
-	--run split \
-	--split_mode products
+	--run split
 ```
 
 After executing `some command from choriso-models`, run the analysis of your model's results using:
 
-```
-analyse --results_folders='path/to/results/folder' \
-	 --chemistry=True \
-	 --mapping=True
+```bash
+analyse --results_folders='path/to/results/folder' 
 ```
 
 Results will be stored in the same directory as `benchmarking-results`. 
@@ -85,18 +82,18 @@ Using this repo lets you reproduce the results in the paper using different flag
 
 ### 📥 Download preprocessed dataset:
 
-```
+```bash
 choriso --download_processed \
 	--out-dir data/processed/
 ```
 
-### :gear: Preprocessing:
+### :gear: Preprocessing
 
-Get the raw datasets (CJHIF, USPTO) and preprocess:
+Get the raw datasets (CJHIF, USPTO) and preprocess. The `--upsto` command runs the same processing pipeline for the raw USPTO data:
 
-**NOTE: To run the `clean` step you need to have Leadmine (v3.18.1) and NameRXN (v3.4.0) installed.**
+**NOTE: To run the `clean` step you need to have NameRXN (v3.4.0) installed.**
 
-```
+```bash
 choriso --download_raw \
 	--uspto \
     	--data-dir=data/raw/ \
@@ -105,49 +102,38 @@ choriso --download_raw \
 	--run atom_map
 ```
 
-### :mag: Data analysis:
+### :mag: Stereo check
 
-For this step you need to have either downloaded the preprocessed dataset, or running the preprocessing pipeline.
+For this step you need to have either downloaded the preprocessed dataset, or running the preprocessing pipeline. The step checks reactions where there are stereochemistry issues and corrects the dataset.
 
 ```
 choriso --run analysis
 ```
 
 ### :heavy_division_sign: Splitting
-In the paper, we describe 3 data splits which can be obtained using the flag `--run split` specifying a `--split_mode`
-- random split
-```
-choriso --run split \
-	--split_mode random
-```
-- split by product
-```
-choriso --run split \
-	--split_mode products
-```
-- split by Molecular Weight:
-  - test on high MW
-  - test on low MW
+In the paper, we describe a splitting scheme to obtain test splits by product, product molecular weight and random. When doing the splitting, all the testing reactions go to a single test set file, with the `split` column indicating to which split they belong. To run the splitting:
 
-   For example, to create a split by MW, testing on low MW with a threshold of 150 a.m.u., and another split on high MW with threshold of 700 a.m.u. run
+```bash
+choriso --run split 
 ```
+
+By default, reactions with products below 150 a.m.u go to the low MW set and reactions with products above 700 a.m.u go to the high MW set. These values can be modified and adapted to your preferences. For example, to create a split to test on low MW with a threshold of 100 a.m.u., and another split on high MW with threshold of 750 a.m.u. run:
+
+```bash
 choriso --run split \
-	--split_mode mw \
 	--low_mw=150
 	--high_mw=700
 ```
 
-You can optionally augment the SMILES to double the size of the trainig set for the product split:
-```
+You can optionally augment the SMILES to double the size of the training set:
+```bash
 choriso --run split \
-	--split_mode products \
 	--augment
 ```
-By default, the splitting will be done on the choriso dataset, which is called `choriso.tsv`. If you want to split a different dataset, you can specify the path to the dataset using the `--split_file_name` option. For example, to split the USPTO dataset by products, run:
-```
+By default, the splitting will be done on the choriso dataset, which is called `choriso.tsv`. If you want to split a different dataset, you can specify the path to the dataset using the `--split_file_name` option. For example, to split the USPTO dataset, run:
+```bash
 choriso --run split \
-    --split_mode products \
-    --split_file_name=uspto_atom_mapped_dataset.tsv
+    --split_file_name=uspto.tsv
 ```
 ---
 
@@ -155,34 +141,27 @@ choriso --run split \
 
 By default the execution of any step will store all results locally.
 
-Optionally, you can log all results from the preprocessing and analysis to W&B using the `wandb_log` flag at any step.
+Optionally, you can log all results from the preprocessing to W&B using the `wandb_log` flag at any step.
 
 As an example
-```
-choriso --run analysis \
+```bash
+choriso --run clean \
 	--wandb_log
 ```
 will execute the analysis step and upload all results (plots, metrics) to W&B.
 
-##  📈  Metrics
+##  📈 Metrics
 You can also use the implemented metrics from the paper to evaluate your own results. We have adapted the evaluation pipeline to the files from the [benchmarking repo](https://github.com/schwallergroup/choriso-models). As an example:
 ```
 analyse --results_folders='OpenNMT_Transformer'
-
 ```
-This will launch the analysis on all the files of the `OpenNMT_Transformer` folder. The output files should have the same structure as the ones included in the benchmarking repo.
-
-The program computes the chemistry metrics by default. In order to compute this, your test set needs to include the templates with radius=0 and radius=1 of each reaction. If you want to compute the mapping and templates, you need to specify the `--mapping` flag.
-
-```
-analyse --results_folders='OpenNMT_Transformer' --mapping=True
-```
+This will launch the analysis on all the files of the `OpenNMT_Transformer` folder. The output files should have the same structure as the one included on the benchmarking repo as an example. The program computes the chemistry metrics by default, which require the presence of a template with radius=0 and a template with radius=1 (these columns should be present on the test set file). 
 
 ### Flagging individual reactions
 You can use the metrics functions to check if a specific reaction is regio or stereoselective. As an example:
 
-```
-from choriso.metrics.metrics.selectivity import flag_regio_problem, flag_stereo_problem
+```python
+from choriso.metrics.selectivity import flag_regio_problem, flag_stereo_problem
 
 regio_rxn = 'BrCc1ccccc1.C1CCOC1.C=CC(O)CO.[H-].[Na+]>>C=CC(O)COCc1ccccc1'
 stereo_rxn = 'C=C(NC(C)=O)c1ccc(OC)cc1.ClCCl.[H][H].[Rh+]>>COc1ccc([C@@H](C)NC(C)=O)cc1'
@@ -193,7 +172,7 @@ print(flag_stereo_problem(stereo_rxn))
 ```
 The output will display the flagging labels 
 
-```
+```python
 True
 True
 ```

@@ -12,6 +12,8 @@ auto-save-list
 tramp
 .\#*
 
+#wandb
+wandb/*
 # Org-mode
 .org-id-locations
 *_archive
@@ -906,3 +908,4 @@ data/processed/
 data/raw/
 data/report/
 data/tmp
+data/test/tmp

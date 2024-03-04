@@ -17702,7 +17702,7 @@ brominating agent	2	empty
 brominating reagent	2	empty
 bromination	1	empty
 bromination agent	1	empty
-bromine	16361	[Br]
+bromine	16361	[Br][Br]
 bromine azide	7	BrN=[N+]=[N-]
 bromine bromate	1	Br(=O)(=O)[O-]~[Br+]
 bromine chloride	18	BrCl

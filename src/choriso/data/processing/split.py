@@ -9,6 +9,8 @@ from rdkit.ML.Descriptors.MoleculeDescriptors import MolecularDescriptorCalculat
 from rxn.chemutils.miscellaneous import is_valid_smiles
 from sklearn.model_selection import train_test_split
 
+from choriso.metrics.selectivity import template_smarts_from_mapped_smiles
+
 
 def dataset_product_split(data, frac):
     """Split reactions dataframe in train and test sets keeping reactions
@@ -52,7 +54,9 @@ def dataset_product_split(data, frac):
     return train, test
 
 
-def data_split_random(data_path, out_folder, test_frac=0.1, val_frac=0.1, replace_tilde=True):
+def data_split_random(
+    data_path, out_folder, test_frac=0.1, val_frac=0.1, replace_tilde=True
+):
     """Do a random split of the choriso dataset.
 
     Args:
@@ -82,7 +86,7 @@ def data_split_random(data_path, out_folder, test_frac=0.1, val_frac=0.1, replac
         val = val.replace("~", ".", regex=True)
         test = test.replace("~", ".", regex=True)
 
-    columns = ["canonic_rxn", "rxnmapper_aam", "rxnmapper_confidence", "yield"]
+    columns = ["canonic_rxn", "rxnmapper_aam", "yield"]
 
     if "template_r0" in df.columns:
         columns = columns + ["template_r0", "template_r1"]
@@ -107,7 +111,10 @@ def rotate_smiles(mol):
     n_atoms = mol.GetNumAtoms()
     rotation_index = random.randint(0, n_atoms - 1)
     atoms = list(range(n_atoms))
-    new_atoms_order = atoms[rotation_index % len(atoms) :] + atoms[: rotation_index % len(atoms)]
+    new_atoms_order = (
+        atoms[rotation_index % len(atoms) :]
+        + atoms[: rotation_index % len(atoms)]
+    )
     rotated_mol = Chem.RenumberAtoms(mol, new_atoms_order)
     return Chem.MolToSmiles(rotated_mol, canonical=False, isomericSmiles=True)
 
@@ -127,7 +134,16 @@ def rotate_rxn(rxn):
 
 
 def data_split_by_prod(
-    data_path, out_folder, file_name, test_frac=0.1, val_frac=0.1, replace_tilde=True, augment=False
+    data_path,
+    out_folder,
+    file_name,
+    low_mw=150,
+    high_mw=700,
+    test_frac=0.1,
+    val_frac=0.1,
+    replace_tilde=True,
+    augment=False,
+    templates=False,
 ):
     """Function to split data for reaction forward prediction based on products.
 
@@ -148,55 +164,125 @@ def data_split_by_prod(
     print("Reading dataset")
     df = pd.read_csv(data_path, sep="\t")
 
-    # Create products column
-    df["products"] = df["canonic_rxn"].apply(lambda x: x.split(">>")[1])
-
-    # Split dataset into train, validation and test based on reaction products
-    print("Splitting data")
-    train, test = dataset_product_split(df, test_frac)
-
-    train, val = dataset_product_split(train, val_frac)
-
-    shuffled_train = train.sample(frac=1.0, random_state=42)
-
     if replace_tilde:
-        shuffled_train = shuffled_train.replace("~", ".", regex=True)
-        val = val.replace("~", ".", regex=True)
-        test = test.replace("~", ".", regex=True)
+        df.replace("~", ".", regex=True, inplace=True)
 
-    columns = ["canonic_rxn", "rxnmapper_aam", "rxnmapper_confidence", "yield"]
+    # columns to keep when saving the splits
+    columns = ["canonic_rxn", "rxnmapper_aam", "yield"]
 
     if "template_r0" in df.columns:
         columns = columns + ["template_r0", "template_r1"]
 
-    # Save the datasets but keep only some columns
-    shuffled_train = shuffled_train[columns]
+    # create folder to save splits
+    saving_path = out_folder + f'{file_name.split(".")[0]}_splits/'
+
+    if not os.path.isdir(saving_path):
+        os.mkdir(saving_path)
+
+    # Create products column
+    df["products"] = df["canonic_rxn"].apply(lambda x: x.split(">>")[1])
+
+    # Calculate MW
+    print("Calculating Molecular Weight for all products")
+    calc = MolecularDescriptorCalculator(["MolWt"])
+    df = df[df["products"].parallel_apply(is_valid_smiles)]
+    prod_mols = df["products"].apply(Chem.MolFromSmiles)
+    df["MolWt"] = prod_mols.apply(calc.CalcDescriptors).parallel_apply(
+        lambda x: x[0]
+    )
+
+    print("Splitting by MW")
+    high_mw_test = df[df["MolWt"] >= high_mw]
+    # if choriso, we have to modify high_mw_test to remove some problematic reactions for G2S
+    if 'choriso' in file_name:
+        high_mw_test = pd.concat(
+            (high_mw_test.iloc[:90000], high_mw_test.iloc[100000:]),
+            ignore_index=True,
+        )
+    low_mw_test = df[df["MolWt"] < low_mw]
+    medium_mw = df[(df["MolWt"] < high_mw_test) & (df["MolWt"] >= low_mw)]
+
+    # split by product
+    print("Splitting by product")
+
+    remainder_prod, test_prod = dataset_product_split(medium_mw, test_frac)
+
+    # check if products in remainder_prod and test_prod overlap
+    assert (
+        len(
+            set(remainder_prod["products"]).intersection(
+                set(test_prod["products"])
+            )
+        )
+        == 0
+    )
+
+    train, val = dataset_product_split(remainder_prod, val_frac)
+
+    # save val set
+    val[columns].to_csv(
+        saving_path + file_name.split(".")[0] + "_prod_val.tsv", sep="\t"
+    )
+
+    shuffled_train = train.sample(frac=1.0, random_state=33)
+
+    # finally get random split from the shuffled train set
+    final_train, rand = train_test_split(
+        shuffled_train, test_size=test_frac, random_state=33
+    )
+
+    # save train by product
+    final_train[columns].to_csv(
+        saving_path + file_name.split(".")[0] + "_prod_train.tsv", sep="\t"
+    )
 
     if augment:
         print("Augmenting SMILES...")
         # create a copy of train df
-        train_aug = shuffled_train.copy()
+        train_aug = final_train.copy()
         # rotate reactants
-        train_aug["canonic_rxn"] = train_aug["canonic_rxn"].apply(lambda x: rotate_rxn(x))
+        train_aug["canonic_rxn"] = train_aug["canonic_rxn"].parallel_apply(
+            lambda x: rotate_rxn(x)
+        )
         # mix original and rotated rxns
-        shuffled_train = pd.concat([shuffled_train, train_aug], ignore_index=True)
+        shuffled_train = pd.concat(
+            [shuffled_train, train_aug], ignore_index=True
+        )
         # shuffle
         shuffled_train = shuffled_train.sample(frac=1.0, random_state=33)
+        # save augmented train set
+        shuffled_train[columns].to_csv(
+            saving_path + file_name.split(".")[0] + "_train_aug.tsv", sep="\t"
+        )
 
-    test = test[columns]
-    val = val[columns]
-    df = df[columns]
+    # here create big test file with all the test sets
+    # for each split (high, low, prod, random), take the corresponding columns and add an extra column with the split name
+    # then concatenate all the splits and save the big test file
+    print("Creating big test file...")
+    high_test = high_mw_test[columns]
+    high_test["split"] = "high"
+    low_test = low_mw_test[columns]
+    low_test["split"] = "low"
+    prod_test = test_prod[columns]
+    prod_test["split"] = "prod"
+    rand_test = rand[columns]
+    rand_test["split"] = "random"
 
-    # Save splits
-    products_path = out_folder + "products_split/"
-    if not os.path.isdir(products_path):
-        os.mkdir(products_path)
+    big_test = pd.concat(
+        [high_test, low_test, prod_test, rand_test], ignore_index=False
+    )
 
-    name = file_name.split(".")[0]
+    if templates:
+        big_test["template_r0"] = big_test["canonical_rxn"].parallel_apply(
+            lambda x: template_smarts_from_mapped_smiles(x, radius=0)
+        )
+        big_test["template_r1"] = big_test["canonical_rxn"].parallel_apply(
+            lambda x: template_smarts_from_mapped_smiles(x, radius=1)
+        )
 
-    shuffled_train.to_csv(products_path + name + "_products_train.tsv", sep="\t")
-    test.to_csv(products_path + name + "_products_test.tsv", sep="\t")
-    val.to_csv(products_path + name + "_products_val.tsv", sep="\t")
+    big_test.to_csv(
+        saving_path + file_name.split(".")[0] + "_all_test.tsv", sep="\t"
+    )
 
 
 def data_split_mw(data_path, file_name, low_mw=150, high_mw=700):
@@ -236,7 +322,12 @@ def data_split_mw(data_path, file_name, low_mw=150, high_mw=700):
     def _get_split(train, test):
         train, val = train_test_split(train, test_size=0.06, random_state=42)
         train = train.sample(frac=1.0, random_state=42)  # reshuffle
-        columns = ["canonic_rxn", "rxnmapper_aam", "rxnmapper_confidence", "yield"]
+        columns = [
+            "canonic_rxn",
+            "rxnmapper_aam",
+            "rxnmapper_confidence",
+            "yield",
+        ]
         if "template_r0" in df.columns:
             columns = columns + ["template_r0", "template_r1"]
 
